@@ -13,14 +13,14 @@ export class Egg extends EntityBase
     public didHatch: boolean = false;
 
     @ManyToOne(() => Chicken, (chicken) => chicken.laidEggs, { nullable: false })
-    @JoinColumn({ name: 'laidByChickenId', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'LaidByChickenId', referencedColumnName: 'id' })
     public laidByChicken?: Chicken;
 
     @ManyToOne(() => SlackUser, (user) => user.eggs, { nullable: false })
-    @JoinColumn({ name: 'ownedByUserId', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'OwnedByUserId', referencedColumnName: 'id' })
     public ownedByUser?: SlackUser;
 
     @ManyToOne(() => SlackUser, (user) => user.eggsGiven)
-    @JoinColumn({ name: 'givenByUserId', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'GivenByUserId', referencedColumnName: 'id' })
     public givenByUser?: SlackUser;
 }

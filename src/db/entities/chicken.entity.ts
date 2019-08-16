@@ -27,7 +27,7 @@ export class Chicken extends EntityBase
     public laidEggs?: Egg[];
 
     @ManyToOne(() => SlackUser, (user) => user.chickens)
-    @JoinColumn({ name: 'ownedByUserId', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'OwnedByUserId', referencedColumnName: 'id' })
     public ownedByUser?: SlackUser;
 
     constructor(gender: ChickenGender = ChickenGender.Hen)

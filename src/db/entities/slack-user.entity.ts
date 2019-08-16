@@ -9,10 +9,10 @@ import { Egg } from './egg.entity';
 @Entity(EntityName.SlackUser)
 export class SlackUser extends EntityBase
 {
-    @Column({ name: 'SlackUserId' })
+    @Column()
     public slackUserId: string = '';
 
-    @Column({ name: 'SlackWorkspaceId' })
+    @Column()
     public slackWorkspaceId: string = '';
 
     @OneToMany(() => Egg, (egg) => egg.ownedByUser)
