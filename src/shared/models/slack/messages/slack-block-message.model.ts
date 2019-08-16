@@ -9,9 +9,9 @@ export class SlackBlockMessage {
      * @param thread_ts Optionally send message as a reply to a thread
      */
     constructor(
-        public channel: string,
         public blocks: ISlackMessageLayoutBlock[],
         public text?: string,
         public thread_ts?: string,
+        public channel?: string,
     ) { }
 }
