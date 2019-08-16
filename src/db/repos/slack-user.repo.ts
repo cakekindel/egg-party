@@ -18,34 +18,33 @@ export class SlackUserRepo extends RepoBase<SlackUser>
         super(db);
     }
 
-    public async getOrCreateBySlackId(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser | undefined>
+    public async getBySlackId(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser | undefined>
     {
         const repo = await this.getRepo();
-        let user = await repo.findOne({ where: { SlackUserId: slackUserId } }) || new SlackUser();
+        const relations: Array<keyof SlackUser> = ['chickens', 'eggs', 'eggsGiven'];
+        return await repo.findOne({ where: { slackUserId, slackWorkspaceId }, relations });
+    }
 
-        if (user.id === 0)
-        {
-            user.slackUserId = slackUserId;
-            user.slackWorkspaceId = slackWorkspaceId;
+    public async create(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser | undefined>
+    {
+        const user = new SlackUser();
+        user.slackUserId = slackUserId;
+        user.slackWorkspaceId = slackWorkspaceId;
 
-            user = await this.save(user);
-        }
+        const savedUser = await this.save(user);
 
-        const chickens = await this.chickenRepo.createNewUserChickens(user);
+        const chickens = await this.chickenRepo.createNewUserChickens(savedUser);
         const hens = chickens.filter((c) => c.gender === ChickenGender.Hen);
 
         const eggs = Array.from(Array(5)).map(() => new Egg());
         eggs.forEach((egg, i) =>
         {
-            egg.ownedByUser = user;
+            egg.ownedByUser = savedUser;
             egg.laidByChicken = hens[i];
         });
 
-        const savedEggs = await this.eggRepo.save(eggs);
+        await this.eggRepo.save(eggs);
 
-        user.chickens = chickens;
-        user.eggs = savedEggs;
-
-        return this.save(user);
+        return await this.getBySlackId(slackUserId, slackWorkspaceId);
     }
 }
