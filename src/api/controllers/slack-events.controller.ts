@@ -14,19 +14,19 @@ export class SlackEventsController
     public async receiveEvent
     (
         @Req() request: Request,
-        @Res() response: Response,
+        @Res() respond: Response,
         @Body() slackEvent: ISlackEvent
-    ): Promise<string | void>
+    ): Promise<void>
     {
         const requestVerified = await this.slackApi.verifySlackRequest(request);
         if (requestVerified)
         {
-            return await this.eventHandler.handleEvent(slackEvent);
+            const response = await this.eventHandler.handleEvent(slackEvent);
+            respond.send(response);
         }
         else
         {
-            response.send(HttpStatus.UNAUTHORIZED);
-            return;
+            respond.sendStatus(HttpStatus.UNAUTHORIZED);
         }
     }
 }

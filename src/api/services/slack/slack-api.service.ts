@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { createHmac, timingSafeEqual as hashesEqual } from 'crypto';
 import { Request } from 'express';
-import * as hashJs from 'hash.js';
+
+import { EnvironmentVariables } from '../../../shared/utility';
 
 import {
     ISlackGetConversationInfoResponse,
@@ -13,10 +15,11 @@ import { SlackSendMessageRequest } from '../../../shared/models/slack/api/messag
 
 import { RequestWithRawBody } from '../../../shared/models/express/request-with-raw-body.model';
 import { ISlackResponse } from '../../../shared/models/slack/api';
-import { SlackAuthTestRequest, ISlackAuthTestResponse } from '../../../shared/models/slack/api/auth';
+import { ISlackAuthTestResponse, SlackAuthTestRequest } from '../../../shared/models/slack/api/auth';
+import { SlackOpenDirectMessageRequest } from '../../../shared/models/slack/api/conversations/slack-open-direct-message-request.model';
+import { ISlackOpenDirectMessageResponse } from '../../../shared/models/slack/api/conversations/slack-open-direct-message-response.model';
 import { ISlackConversation } from '../../../shared/models/slack/conversations';
 import { SlackBlockMessage } from '../../../shared/models/slack/messages';
-import { EnvironmentVariables } from '../../../shared/utility';
 
 @Injectable()
 export class SlackApiService
@@ -37,18 +40,15 @@ export class SlackApiService
         if (requestSignature && timestamp)
         {
             const signingSecret = EnvironmentVariables.SlackSigningSecret;
-            const rawBody = (request as RequestWithRawBody).rawBody;
 
-            const baseString = `v0:${timestamp}:${rawBody}`;
-            const computedSignature = hashJs.hmac(
-                                                hashJs.sha256 as unknown as Sha256,
-                                                EnvironmentVariables.SlackSigningSecret,
-                                                'hex'
-                                            )
-                                            .update(baseString)
-                                            .digest('hex');
+            const body = (request as RequestWithRawBody).rawBody;
+            const baseString = `v0:${timestamp}:${body}`;
+            const signature = createHmac('sha256', signingSecret).update(baseString).digest('hex');
+            const sigBuffer = Buffer.from(`v0=${signature}`);
 
-            if (computedSignature === requestSignature)
+            const requestSigBuffer = Buffer.from(requestSignature);
+
+            if (hashesEqual(sigBuffer, requestSigBuffer))
             {
                 return true;
             }
@@ -73,27 +73,26 @@ export class SlackApiService
         return response.data.user_id;
     }
 
-    public async sendMessage(message: SlackBlockMessage): Promise<void>
+    public async sendMessage(channelId: string, message: SlackBlockMessage): Promise<void>
     {
+        message.channel = channelId;
         const sendMessage = new SlackSendMessageRequest(message);
         const response = await axios.request<ISlackResponse>(sendMessage);
     }
 
-    private async getRawSlackRequestBody(request: Request): Promise<string>
+    public async sendDirectMessage(userId: string, message: SlackBlockMessage): Promise<void>
     {
-        const rawBodyPromise = new Promise<string>((resolve) =>
-        {
-            let buffer = '';
-            request.on('data', (chunk) => {
-                buffer += chunk;
-            });
+        const directMessageChannelId = await this.getDirectMessageChannelId(userId);
 
-            request.on('end', () =>
-            {
-                resolve(buffer);
-            });
-        });
+        message.channel = directMessageChannelId;
+        const sendMessage = new SlackSendMessageRequest(message);
+        await axios.request(sendMessage);
+    }
 
-        return await rawBodyPromise;
+    private async getDirectMessageChannelId(userId: string): Promise<string>
+    {
+        const openDm = new SlackOpenDirectMessageRequest(userId);
+        const response = await axios.request<ISlackOpenDirectMessageResponse>(openDm);
+        return response.data.channel.id;
     }
 }
