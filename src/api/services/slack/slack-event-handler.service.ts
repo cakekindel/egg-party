@@ -43,6 +43,7 @@ export class SlackEventHandlerService
 
     private async handleMessagePosted(event: ISlackEventMessagePosted, workspaceId: string): Promise<void>
     {
+        // TODO: handle message.edited
         if (event.subtype)
         {
             return;
@@ -53,16 +54,25 @@ export class SlackEventHandlerService
 
         if (botIsInChannel && event.user && mentions.length && event.text.includes(':egg:'))
         {
-            const slackUser = await this.userRepo.getOrCreateBySlackId(event.user, workspaceId);
-            const users = mentions.map((m) => m.replace(/[\<\>]/g, ''));
-            const eggCount = (event.text.match(/:egg:/g) || []).length;
+            const slackUser = await this.userRepo.getBySlackId(event.user, workspaceId);
+            if (!slackUser)
+            {
+                const newUser = await this.userRepo.create(event.user, workspaceId);
+                // await this.api.sendDirectMessage(event.user, this.messageBuilder.newUserWelcomeMessage());
+            }
+
+            await this.api.sendDirectMessage(event.user, this.messageBuilder.newUserWelcomeMessage(event.user));
+
+            const usersToGiveEggs = mentions.map((m) => m.replace(/[\<\>]/g, ''));
+            const numberOfEggsToGiveEach = (event.text.match(/:egg:/g) || []).length;
+            const numberOfEggsTotal = numberOfEggsToGiveEach * usersToGiveEggs.length;
 
             // if (userCanGiveEggs(event.user))
             // {
 
             // }
 
-            this.api.sendMessage(this.messageBuilder.testGiveEggsResponse(mentions, eggCount, event.channel));
+            await this.api.sendMessage(event.channel, this.messageBuilder.testGiveEggsResponse(mentions, numberOfEggsToGiveEach));
         }
     }
 }
