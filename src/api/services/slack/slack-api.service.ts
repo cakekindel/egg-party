@@ -40,18 +40,10 @@ export class SlackApiService
         if (requestSignature && timestamp)
         {
             const signingSecret = EnvironmentVariables.SlackSigningSecret;
-
             const body = (request as RequestWithRawBody).rawBody;
-            const baseString = `v0:${timestamp}:${body}`;
-            const signature = createHmac('sha256', signingSecret).update(baseString).digest('hex');
-            const sigBuffer = Buffer.from(`v0=${signature}`);
+            const signature = createHmac('sha256', signingSecret).update(`v0:${timestamp}:${body}`).digest('hex');
 
-            const requestSigBuffer = Buffer.from(requestSignature);
-
-            if (hashesEqual(sigBuffer, requestSigBuffer))
-            {
-                return true;
-            }
+            return hashesEqual(Buffer.from(`v0=${signature}`), Buffer.from(requestSignature));
         }
 
         return false;
