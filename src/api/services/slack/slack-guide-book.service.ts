@@ -29,6 +29,12 @@ import { SlackMessageStaticSelectElement as StaticSelect } from '../../../shared
 export class SlackGuideBookService
 {
     private pages: IGuideBookPage[] = [
+        {
+            id: GuideBookPageId.Welcome,
+            group: GuideBookPageGroup.None,
+            title: 'Welcome Page',
+            shortTitle: 'Welcome Page',
+        },
         // Learn About...
         {
             id: GuideBookPageId.LearnAboutGivingEggs,
@@ -211,7 +217,8 @@ export class SlackGuideBookService
     private buildBreedsPage(): ILayoutBlock[]
     {
         return [
-            new Section(new Text(TextType.Markdown, ``))
+            new Section(new Text(TextType.Markdown, `*Chicken Breeds*`)),
+            new Section(new Text(TextType.Markdown, ` `)),
         ];
     }
 
