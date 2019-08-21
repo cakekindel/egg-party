@@ -7,7 +7,7 @@
         "experimentalDecorators": true,
         "target": "es2017",
         "sourceMap": true,
-        "outDir": "./dist",
+        "outDir": "./egg-party-api",
         "incremental": true,
         "strictNullChecks": true,
         "strict": true,
@@ -15,6 +15,6 @@
     },
     "exclude": [
         "node_modules",
-        "dist"
+        "egg-party-api"
     ]
 }
