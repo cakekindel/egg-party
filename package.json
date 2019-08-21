@@ -2,7 +2,7 @@
     "name": "egg-party",
     "version": "1.0.0",
     "scripts": {
-        "build": "rimraf dist && tsc -p tsconfig.build.json",
+        "build": "rimraf egg-party-api && tsc && copyfiles src/function.json egg-party-api --flat",
         "migrate:gen": "typeorm migration:generate -c Local && npm run build",
         "migrate:run": "typeorm migration:run -c Local",
         "migrate:run:prod": "typeorm migration:run -c Production"
@@ -18,8 +18,7 @@
         "party",
         "slack",
         "app",
-        "plugin",
-        "heytaco"
+        "plugin"
     ],
     "author": "Orion Kindel",
     "license": "ISC",
@@ -34,6 +33,7 @@
         "@wufe/mapper": "^0.5.0",
         "automapper-ts": "^1.9.0",
         "axios": "^0.19.0",
+        "copyfiles": "^2.1.1",
         "hash.js": "^1.1.7",
         "morphism": "^1.12.0",
         "mssql": "^5.1.0",
