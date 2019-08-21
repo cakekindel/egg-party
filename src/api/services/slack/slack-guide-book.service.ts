@@ -219,6 +219,10 @@ export class SlackGuideBookService
         return [
             new Section(new Text(TextType.Markdown, `*Chicken Breeds*`)),
             new Section(new Text(TextType.Markdown, ` `)),
+            new Section(new Text(TextType.Markdown, `Chickens can come in several different *Breeds*, and each one has a unique Breed Ability!`)),
+            new Section(new Text(TextType.Markdown, `For example: the Delaware Hen lays 1 egg a day, and the Leghorn Rooster doesn't lay eggs but increase the hatch chance of the other Chickens' eggs.`)),
+            new Section(new Text(TextType.Markdown, `It's up to you and your team to discover how to raise chicks into the different breeds and discover their abilities.`)),
+            new Section(new Text(TextType.Markdown, `As you get more breeds, your Guide Book's *Chicken Breed Field Guide* section will have information on that breed's ability and how to raise them!`)),
         ];
     }
 
