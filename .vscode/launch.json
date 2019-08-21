@@ -10,11 +10,6 @@
             "name": "Launch Server (Node)",
             "program": "${workspaceFolder}\\dist\\main.js",
             "preLaunchTask": "build",
-            "env": {
-                "SlackApiToken": "xoxb-238522632339-724325041447-CzA3TpvdAOmRUojiix4WQtP8",
-                "SlackSigningSecret": "ecf32c4c33e1d7b6528ac9adf38528ef",
-                "Environment": "Local"
-            },
             "sourceMaps": true,
             "skipFiles": [
                 "<node_internals>/**",
