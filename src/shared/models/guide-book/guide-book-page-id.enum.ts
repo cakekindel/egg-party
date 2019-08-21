@@ -4,8 +4,8 @@ export enum GuideBookPageId
 
     // Learn About...
     LearnAboutGivingEggs = 'learn_giving_eggs',
-    LearnAboutChickens = 'learn_chicks',
-    LearnAboutChicks = 'learn_chickens',
+    LearnAboutChickens = 'learn_chickens',
+    LearnAboutChicks = 'learn_chicks',
     LearnAboutBreeds = 'learn_breeds',
     LearnAboutCommands = 'learn_commands',
 
