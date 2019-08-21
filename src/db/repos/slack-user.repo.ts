@@ -3,7 +3,6 @@ import { Connection } from 'typeorm';
 
 import { RepoBase } from './repo.base';
 
-import { ChickenGender } from '../../shared/enums';
 import { Egg, EntityName, SlackUser } from '../entities';
 import { ChickenRepo } from './chicken.repo';
 import { EggRepo } from './egg.repo';
@@ -34,13 +33,12 @@ export class SlackUserRepo extends RepoBase<SlackUser>
         const savedUser = await this.save(user);
 
         const chickens = await this.chickenRepo.createNewUserChickens(savedUser);
-        const hens = chickens.filter((c) => c.gender === ChickenGender.Hen);
 
         const eggs = Array.from(Array(5)).map(() => new Egg());
         eggs.forEach((egg, i) =>
         {
             egg.ownedByUser = savedUser;
-            egg.laidByChicken = hens[i];
+            egg.laidByChicken = chickens[i];
         });
 
         await this.eggRepo.save(eggs);

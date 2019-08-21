@@ -1,5 +1,14 @@
 import { Injectable } from '@nestjs/common';
+
+import { Chicken } from '../../../db/entities';
+import { SlackInteractionId } from '../../../shared/enums';
 import { SlackBlockMessage as BlockMessage } from '../../../shared/models/slack/messages';
+import {
+    SlackMessageOptionComposition as Option
+} from '../../../shared/models/slack/messages/blocks/composition/option/slack-message-option-composition.model';
+import {
+    SlackMessageOptionGroupComposition as OptionGroup
+} from '../../../shared/models/slack/messages/blocks/composition/option/slack-message-option-group-composition.model';
 import {
     SlackMessageTextCompositionType as TextType
 } from '../../../shared/models/slack/messages/blocks/composition/text/slack-message-text-composition-type.enum';
@@ -7,7 +16,10 @@ import {
     SlackMessageTextComposition as Text
 } from '../../../shared/models/slack/messages/blocks/composition/text/slack-message-text-composition.model';
 import { SlackMessageButtonElement as Button } from '../../../shared/models/slack/messages/blocks/element/button';
+import { SlackMessageStaticSelectElement as StaticSelect } from '../../../shared/models/slack/messages/blocks/element/select/static';
+import { ISlackMessageLayoutBlock as ILayoutBlock } from '../../../shared/models/slack/messages/blocks/layout';
 import { SlackMessageActionsBlock as Actions } from '../../../shared/models/slack/messages/blocks/layout/actions';
+import { SlackMessageContextBlock as Context } from '../../../shared/models/slack/messages/blocks/layout/context';
 import { SlackMessageDividerBlock as Divider } from '../../../shared/models/slack/messages/blocks/layout/divider';
 import { SlackMessageSectionBlock as Section } from '../../../shared/models/slack/messages/blocks/layout/section';
 
@@ -20,23 +32,77 @@ export class SlackMessageBuilderService
         return new BlockMessage([], `You gave ${mentions.join(', ')} each ${eggCount} egg(s)!`);
     }
 
-    public newUserWelcomeMessage(userId: string): BlockMessage
+    public manageChickens(chickens: Chicken[]): BlockMessage
+    {
+        const message = new BlockMessage([
+            new Section(new Text(TextType.Markdown, `*Your Chickens*`)),
+            new Divider(),
+        ]);
+
+        for (const chicken of chickens)
+        {
+            const renameButton = new Button(
+                SlackInteractionId.RenameChicken,
+                new Text(TextType.Plaintext, `Rename`),
+                undefined,
+                chicken.id.toString()
+            );
+
+            const chickenSection = new Section(new Text(TextType.Markdown, `:chicken: *${chicken.name}*`), undefined, renameButton);
+            message.blocks.push(chickenSection);
+        }
+
+        return message;
+    }
+
+    public renameChicken(chicken: Chicken): BlockMessage
     {
         return new BlockMessage([
-            new Section(new Text(TextType.Markdown, `*Hi! Welcome to the Egg Party!* :wave:`)),
-            new Section(new Text(TextType.Markdown, `Egg Party is a new way to give thanks to your team and have fun doing it!`)),
-            new Section(new Text(TextType.Markdown, `All you have to do is mention a teammate and throw some eggs in there! You can include a message if you'd like, but it's not required.`)),
-            new Section(new Text(TextType.Markdown, `When you first start using Egg Party, you can give out *5 eggs a day*, but you can raise that number by taking good care of chicks that hatch from eggs you're given!`)),
-            new Section(new Text(TextType.Markdown, `Think "Tamagotchi", but less copyright-infringy.`)),
-            new Section(new Text(TextType.Markdown, `For example:`)),
-            new Section(new Text(TextType.Markdown, `> <@${userId}> Thanks for using Egg Party! :egg::egg::egg:`)),
-            new Section(new Text(TextType.Markdown, `There's a lot more to Egg Party, but now you're ready to sling some yolk!`)),
-            new Divider(),
-            new Section(new Text(TextType.Markdown, `Would you like to know what you can do with your newly-harnessed fowl superpower?`)),
-            new Actions([
-                new Button('tell_me_more', new Text(TextType.Plaintext, 'I\'m sold! Tell me all about it')),
-                new Button('tell_me_a_little_more', new Text(TextType.Plaintext, 'I\'m listening...')),
-            ]),
+            new Section(new Text(TextType.Markdown, `No problem! To rename :chicken: *${chicken.name}*, just reply with the new name.`))
         ]);
+    }
+
+    public chickenRenamed(oldName: string, newName: string): BlockMessage
+    {
+        const notes = [
+            `*${newName}* just rolls off the tongue, don't you think?`,
+            `*${newName}* has a nice ring to it!`,
+            `*${newName}* is kinda fierce, don't you think?! Like ${oldName} would just sit by while ${newName} robbed a bank`,
+            `Look, it's your chicken, but I'm not sure how I feel about *${newName}*. I can't place it, but something doesn't sit right with me about it.`,
+            `*${newName}* could be the next 007 :gun::chicken:`,
+            `I love it!`,
+            `So regal!`,
+            `Someone call the Fire Department because that name is lit! _ᶦᵐ ˢᵒʳʳʸ_`,
+            `Try saying it 5 times fast: "${newName} ${newName} ${newName} ${this.garbleText(newName)} ${this.garbleText(newName)}" - man I suck at tongue twisters`
+        ];
+
+        return new BlockMessage([
+            new Section(new Text(TextType.Markdown, `:chicken: *${oldName}* is now :chicken: *${newName}*! ${this.getRandomEntry(notes)}`))
+        ]);
+    }
+
+    private garbleText(text: string): string {
+        const chars = text.split('');
+        const garbled: string[] = [];
+
+        for (let i = 0; i < chars.length; i++)
+        {
+            if (i === 0 || i === chars.length - 1)
+            {
+                garbled.push(chars[i]);
+            }
+            else
+            {
+                garbled.push(this.getRandomEntry(chars));
+            }
+        }
+
+        return garbled.join('');
+    }
+
+    private getRandomEntry<TItem>(arr: TItem[]): TItem
+    {
+        const i = Math.floor(Math.random() * arr.length);
+        return arr[i];
     }
 }

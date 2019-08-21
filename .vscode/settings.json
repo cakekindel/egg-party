@@ -1,0 +1,8 @@
+{
+    "tslint.configFile": "tslint.json",
+    "azureFunctions.deploySubpath": ".",
+    "azureFunctions.projectLanguage": "TypeScript",
+    "azureFunctions.projectRuntime": "~2",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "npm prune"
+}

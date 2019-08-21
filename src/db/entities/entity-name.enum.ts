@@ -1,6 +1,6 @@
 export enum EntityName
 {
-    SlackUser = 'SlackUser',
-    Egg = 'Egg',
-    Chicken = 'Chicken'
+    SlackUser = 'slackUser',
+    Egg = 'egg',
+    Chicken = 'chicken'
 }

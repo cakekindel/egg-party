@@ -1,3 +1,4 @@
+import { HttpRequest } from '@azure/functions';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { createHmac, timingSafeEqual as hashesEqual } from 'crypto';
@@ -24,18 +25,10 @@ import { SlackBlockMessage } from '../../../shared/models/slack/messages';
 @Injectable()
 export class SlackApiService
 {
-    public async getAllPublicChannels(): Promise<ISlackConversation[]>
+    public async verifySlackRequest(request: HttpRequest): Promise<boolean>
     {
-        const getChannels = new SlackGetConversationsListRequest();
-        const response = await axios.request<ISlackGetConversationsListResponse>(getChannels);
-
-        return response.data.channels;
-    }
-
-    public async verifySlackRequest(request: Request): Promise<boolean>
-    {
-        const requestSignature = request.header('x-slack-signature');
-        const timestamp = request.header('x-slack-request-timestamp');
+        const requestSignature = this.getHeader(request, 'x-slack-signature');
+        const timestamp = this.getHeader(request, 'x-slack-request-timestamp');
 
         if (requestSignature && timestamp)
         {
@@ -49,10 +42,20 @@ export class SlackApiService
         return false;
     }
 
+    public async getAllPublicChannels(): Promise<ISlackConversation[]>
+    {
+        const getChannels = new SlackGetConversationsListRequest();
+        const response = await axios.request<ISlackGetConversationsListResponse>(getChannels);
+        this.throwIfNotOk(response.data);
+
+        return response.data.channels;
+    }
+
     public async getChannelInfo(channelId: string): Promise<ISlackConversation>
     {
         const getChannel = new SlackGetConversationInfoRequest(channelId);
         const response = await axios.request<ISlackGetConversationInfoResponse>(getChannel);
+        this.throwIfNotOk(response.data);
 
         return response.data.channel;
     }
@@ -61,8 +64,19 @@ export class SlackApiService
     {
         const getOwnIdentity = new SlackAuthTestRequest();
         const response = await axios.request<ISlackAuthTestResponse>(getOwnIdentity);
+        this.throwIfNotOk(response.data);
 
         return response.data.user_id;
+    }
+
+    public async sendHookMessage(hookUrl: string, message: SlackBlockMessage): Promise<void>
+    {
+        const sendMessage = new SlackSendMessageRequest(message);
+        sendMessage.baseURL = '';
+        sendMessage.url = hookUrl;
+
+        const response = await axios.request<ISlackResponse>(sendMessage);
+        this.throwIfNotOk(response.data);
     }
 
     public async sendMessage(channelId: string, message: SlackBlockMessage): Promise<void>
@@ -70,21 +84,41 @@ export class SlackApiService
         message.channel = channelId;
         const sendMessage = new SlackSendMessageRequest(message);
         const response = await axios.request<ISlackResponse>(sendMessage);
+        this.throwIfNotOk(response.data);
     }
 
     public async sendDirectMessage(userId: string, message: SlackBlockMessage): Promise<void>
     {
         const directMessageChannelId = await this.getDirectMessageChannelId(userId);
-
         message.channel = directMessageChannelId;
+
         const sendMessage = new SlackSendMessageRequest(message);
-        await axios.request(sendMessage);
+        const response = await axios.request<ISlackResponse>(sendMessage);
+        this.throwIfNotOk(response.data);
     }
 
     private async getDirectMessageChannelId(userId: string): Promise<string>
     {
         const openDm = new SlackOpenDirectMessageRequest(userId);
         const response = await axios.request<ISlackOpenDirectMessageResponse>(openDm);
+        this.throwIfNotOk(response.data);
+
         return response.data.channel.id;
+    }
+
+    private throwIfNotOk(response: ISlackResponse): void
+    {
+        if (!response.ok)
+        {
+            throw new Error(response.error);
+        }
+    }
+
+    private getHeader(request: HttpRequest, header: string): string | undefined
+    {
+        const headerClean = header.trim().toLowerCase();
+        const headerKey = Object.keys(request.headers).find((h) => h.toLowerCase().trim() === headerClean);
+
+        return headerKey && request.headers[headerKey];
     }
 }

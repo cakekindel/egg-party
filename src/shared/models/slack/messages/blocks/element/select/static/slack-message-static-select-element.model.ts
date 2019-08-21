@@ -23,7 +23,7 @@ export class SlackMessageStaticSelectElement implements ISlackMessageSelectEleme
     constructor(
         public action_id: string,
         public placeholder: SlackMessageTextComposition,
-        public options: SlackMessageOptionComposition[],
+        public options?: SlackMessageOptionComposition[],
         public option_groups?: SlackMessageOptionGroupComposition[],
         public initial_option?: SlackMessageOptionComposition,
         public min_query_length?: number,

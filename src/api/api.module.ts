@@ -1,7 +1,15 @@
 import { Module } from '@nestjs/common';
 
-import { SlackEventsController } from './controllers';
-import { SlackApiService, SlackEventHandlerService, SlackMessageBuilderService } from './services/slack';
+import { SlackEventsController, SlackInteractionsController } from './controllers';
+
+import {
+    SlackApiService,
+    SlackEventHandlerService,
+    SlackGuideBookService,
+    SlackInteractionHandlerService,
+    SlackMessageBuilderService
+} from './services/slack';
+
 import { DbModule } from '../db/db.module';
 
 @Module({
@@ -9,12 +17,15 @@ import { DbModule } from '../db/db.module';
         DbModule,
     ],
     controllers: [
-        SlackEventsController
+        SlackEventsController,
+        SlackInteractionsController,
     ],
     providers: [
         SlackApiService,
         SlackMessageBuilderService,
+        SlackGuideBookService,
         SlackEventHandlerService,
+        SlackInteractionHandlerService,
     ],
     exports: [],
 })

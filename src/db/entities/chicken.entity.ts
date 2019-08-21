@@ -2,7 +2,6 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { EntityBase } from './entity.base';
 
-import { ChickenGender } from '../../shared/enums/chicken-gender.enum';
 import { ChickenGrowthState } from '../../shared/enums/chicken-growth-state.enum';
 import { Egg } from './egg.entity';
 import { EntityName } from './entity-name.enum';
@@ -20,19 +19,13 @@ export class Chicken extends EntityBase
     @Column('int')
     public growthState: ChickenGrowthState = ChickenGrowthState.Adult;
 
-    @Column('int')
-    public gender: ChickenGender;
+    @Column()
+    public awaitingRename: boolean = false;
 
     @OneToMany(() => Egg, (egg) => egg.laidByChicken)
     public laidEggs?: Egg[];
 
     @ManyToOne(() => SlackUser, (user) => user.chickens)
-    @JoinColumn({ name: 'OwnedByUserId', referencedColumnName: 'id' })
+    @JoinColumn({ name: 'ownedByUserId', referencedColumnName: 'id' })
     public ownedByUser?: SlackUser;
-
-    constructor(gender: ChickenGender = ChickenGender.Hen)
-    {
-        super();
-        this.gender = gender;
-    }
 }
