@@ -3,14 +3,14 @@
 ### Egg party is a Slack App for thanking teammates, raising chickens, and having a rowdy ol' time
 
 ---
-#### Contents
-* [Want to contribute?](#want-to-contribute?)
+#### Table of Contents
+* [Want to contribute?](#want-to-contribute)
     * [Requirements](#requirements)
     * [First-Time Setup](#first-time-setup)
         * [DB Setup](#db-setup-with-ms-sql)
         * [Slack Setup](#slack-setup)
     * [Local Configuration Files](#local-configuration-files)
-* [Running & Debugging (VS Code)](#running-&-debugging-(vs-code))
+* [Running & Debugging (VS Code)](#running--debugging-vs-code)
 * [Helpful Links](#helpful-links)
 ---
 
