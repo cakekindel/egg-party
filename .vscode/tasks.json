@@ -1,6 +1,4 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558 
-    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
         {
@@ -21,7 +19,7 @@
             }
         },
         {
-            "label": "func start",
+            "label": "start",
             "type": "func",
             "command": "host start",
             "problemMatcher": "$func-watch",
@@ -33,13 +31,8 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "dependsOn": "npm build"
-        },
-        {
-            "type": "shell",
-            "label": "npm build",
-            "command": "npm run build",
-            "problemMatcher": "$tsc"
+            "isBackground": true,
+            "dependsOn": "build"
         }
     ]
 }
