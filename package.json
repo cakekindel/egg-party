@@ -3,9 +3,9 @@
     "version": "1.0.0",
     "scripts": {
         "build": "rimraf egg-party-api && tsc && copyfiles src/function.json egg-party-api --flat",
+        "test": "mocha-typescript-watch -o ./mocha.opts",
         "migrate:gen": "typeorm migration:generate -c Local && npm run build",
-        "migrate:run": "typeorm migration:run -c Local",
-        "migrate:run:prod": "typeorm migration:run -c Production"
+        "migrate:run": "typeorm migration:run -c Local"
     },
     "description": "Egg Party",
     "main": "main.ts",
@@ -44,17 +44,21 @@
         "typeorm": "^0.2.18"
     },
     "devDependencies": {
+        "@fluffy-spoon/substitute": "^1.89.0",
         "@nestjs/testing": "^6.0.0",
         "@types/axios": "^0.14.0",
-        "@types/qs": "^6.5.3",
+        "@types/chai": "^4.2.0",
         "@types/express": "4.16.1",
-        "@types/jest": "24.0.11",
+        "@types/mocha": "^5.2.7",
         "@types/node": "11.13.4",
+        "@types/qs": "^6.5.3",
         "@types/supertest": "2.0.7",
+        "chai": "^4.2.0",
         "jest": "24.7.1",
+        "mocha": "^6.2.0",
+        "mocha-typescript": "^1.1.17",
         "prettier": "1.17.0",
         "supertest": "4.0.2",
-        "ts-jest": "24.0.2",
         "ts-node": "8.1.0",
         "tsc-watch": "2.2.1",
         "tsconfig-paths": "3.8.0",
