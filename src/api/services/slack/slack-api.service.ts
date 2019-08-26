@@ -2,9 +2,8 @@ import { HttpRequest } from '@azure/functions';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { createHmac, timingSafeEqual as hashesEqual } from 'crypto';
-import { Request } from 'express';
 
-import { EnvironmentVariables } from '../../../shared/utility';
+import { ConfigService } from '../../../shared/utility';
 
 import {
     ISlackGetConversationInfoResponse,
@@ -25,6 +24,8 @@ import { SlackBlockMessage } from '../../../shared/models/slack/messages';
 @Injectable()
 export class SlackApiService
 {
+    constructor(private config: ConfigService) { }
+
     public async verifySlackRequest(request: HttpRequest): Promise<boolean>
     {
         const requestSignature = this.getHeader(request, 'x-slack-signature');
@@ -32,7 +33,7 @@ export class SlackApiService
 
         if (requestSignature && timestamp)
         {
-            const signingSecret = EnvironmentVariables.SlackSigningSecret;
+            const signingSecret = this.config.slackSigningSecret;
             const body = (request as RequestWithRawBody).rawBody;
             const signature = createHmac('sha256', signingSecret).update(`v0:${timestamp}:${body}`).digest('hex');
 
@@ -44,7 +45,7 @@ export class SlackApiService
 
     public async getAllPublicChannels(): Promise<ISlackConversation[]>
     {
-        const getChannels = new SlackGetConversationsListRequest();
+        const getChannels = new SlackGetConversationsListRequest(this.config.slackApiToken);
         const response = await axios.request<ISlackGetConversationsListResponse>(getChannels);
         this.throwIfNotOk(response.data);
 
@@ -53,7 +54,7 @@ export class SlackApiService
 
     public async getChannelInfo(channelId: string): Promise<ISlackConversation>
     {
-        const getChannel = new SlackGetConversationInfoRequest(channelId);
+        const getChannel = new SlackGetConversationInfoRequest(this.config.slackApiToken, channelId);
         const response = await axios.request<ISlackGetConversationInfoResponse>(getChannel);
         this.throwIfNotOk(response.data);
 
@@ -62,7 +63,7 @@ export class SlackApiService
 
     public async getBotUserId(): Promise<string>
     {
-        const getOwnIdentity = new SlackAuthTestRequest();
+        const getOwnIdentity = new SlackAuthTestRequest(this.config.slackApiToken);
         const response = await axios.request<ISlackAuthTestResponse>(getOwnIdentity);
         this.throwIfNotOk(response.data);
 
@@ -71,7 +72,7 @@ export class SlackApiService
 
     public async sendHookMessage(hookUrl: string, message: SlackBlockMessage): Promise<void>
     {
-        const sendMessage = new SlackSendMessageRequest(message);
+        const sendMessage = new SlackSendMessageRequest(this.config.slackApiToken, message);
         sendMessage.baseURL = '';
         sendMessage.url = hookUrl;
 
@@ -82,7 +83,7 @@ export class SlackApiService
     public async sendMessage(channelId: string, message: SlackBlockMessage): Promise<void>
     {
         message.channel = channelId;
-        const sendMessage = new SlackSendMessageRequest(message);
+        const sendMessage = new SlackSendMessageRequest(this.config.slackApiToken, message);
         const response = await axios.request<ISlackResponse>(sendMessage);
         this.throwIfNotOk(response.data);
     }
@@ -92,14 +93,14 @@ export class SlackApiService
         const directMessageChannelId = await this.getDirectMessageChannelId(userId);
         message.channel = directMessageChannelId;
 
-        const sendMessage = new SlackSendMessageRequest(message);
+        const sendMessage = new SlackSendMessageRequest(this.config.slackApiToken, message);
         const response = await axios.request<ISlackResponse>(sendMessage);
         this.throwIfNotOk(response.data);
     }
 
     private async getDirectMessageChannelId(userId: string): Promise<string>
     {
-        const openDm = new SlackOpenDirectMessageRequest(userId);
+        const openDm = new SlackOpenDirectMessageRequest(this.config.slackApiToken, userId);
         const response = await axios.request<ISlackOpenDirectMessageResponse>(openDm);
         this.throwIfNotOk(response.data);
 

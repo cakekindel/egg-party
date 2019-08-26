@@ -1,6 +1,6 @@
 import { AxiosRequestConfig, Method } from 'axios';
 
-import { EnvironmentVariables } from '../../../../utility';
+import { ConfigService } from '../../../../utility';
 
 import { SlackBlockMessage } from '../../messages';
 import { SlackApiBaseUrl } from '../slack-api-base-url.const';
@@ -11,16 +11,11 @@ export class SlackSendMessageRequest implements AxiosRequestConfig
     public url = 'chat.postMessage';
     public method: Method = 'POST';
     public data: SlackBlockMessage;
+    public headers: { };
 
-    public headers = {
-        Authorization: 'Bearer ' + EnvironmentVariables.SlackApiToken
-    };
-
-    constructor
-    (
-        public message: SlackBlockMessage,
-    )
+    constructor(token: string, message: SlackBlockMessage)
     {
         this.data = message;
+        this.headers = { Authorization: 'Bearer ' + token };
     }
 }
