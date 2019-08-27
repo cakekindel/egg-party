@@ -41,12 +41,12 @@ export class SlackEventHandlerService
         {
             case SlackEventType.MessagePosted:
             {
-                return await this.handleMessagePosted(innerEvent as ISlackEventMessagePosted, wrapper.team_id);
+                return await this.handleMessage(innerEvent as ISlackEventMessagePosted, wrapper.team_id);
             }
         }
     }
 
-    private async handleMessagePosted(event: ISlackEventMessagePosted, workspaceId: string): Promise<void>
+    private async handleMessage(event: ISlackEventMessagePosted, workspaceId: string): Promise<void>
     {
         // TODO: handle message.edited
         if (event.subtype)
