@@ -15,12 +15,13 @@ class SlackInteractionsControllerSpec
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
     {
         // arrange
+        // - dependencies
         const slackApi = Substitute.for<SlackApiService>();
         const handler = Substitute.for<SlackInteractionHandlerService>();
-        const controller = new SlackInteractionsController(slackApi, handler);
+        const response = Substitute.for<Response>();
 
-        slackApi.verifySlackRequest(Arg.any())
-                .returns(Promise.resolve(false));
+        // - test data
+        slackApi.verifySlackRequest(Arg.any()).returns(Promise.resolve(false));
 
         const request: HttpRequest = {
             method: 'POST',
@@ -30,10 +31,11 @@ class SlackInteractionsControllerSpec
             params: { }
         };
 
-        const response = Substitute.for<Response>();
+        // - unit under test
+        const uut = new SlackInteractionsController(slackApi, handler);
 
         // act
-        await controller.handleInteraction(request, response);
+        await uut.handleInteraction(request, response);
 
         // assert
         response.received().sendStatus(401);
@@ -43,12 +45,13 @@ class SlackInteractionsControllerSpec
     public async should_callInteractionHandler_when_requestVerified(): Promise<void>
     {
         // arrange
+        // - dependencies
         const handler = Substitute.for<SlackInteractionHandlerService>();
         const slackApi = Substitute.for<SlackApiService>();
-        const controller = new SlackInteractionsController(slackApi, handler);
+        const respond = Substitute.for<Response>();
 
-        slackApi.verifySlackRequest(Arg.any())
-                .returns(Promise.resolve(true));
+        // - test data
+        slackApi.verifySlackRequest(Arg.any()).returns(Promise.resolve(true));
 
         const request: HttpRequest = {
             method: 'POST',
@@ -59,10 +62,11 @@ class SlackInteractionsControllerSpec
             params: { }
         };
 
-        const respond = Substitute.for<Response>();
+        // - unit under test
+        const uut = new SlackInteractionsController(slackApi, handler);
 
         // act
-        await controller.handleInteraction(request, respond);
+        await uut.handleInteraction(request, respond);
 
         // assert
         handler.received().handleInteraction(Arg.any());
@@ -72,15 +76,16 @@ class SlackInteractionsControllerSpec
     public async should_parsePayload_when_requestVerified(): Promise<void>
     {
         // arrange
+        // - dependencies
         const handler = Substitute.for<SlackInteractionHandlerService>();
+        const slackApi = Substitute.for<SlackApiService>();
+        const respond = Substitute.for<Response>();
+
+        // - test data
         const handleInteractionFake = fake((a: any) => { });
         handler.handleInteraction(Arg.any()).mimicks(handleInteractionFake);
 
-        const slackApi = Substitute.for<SlackApiService>();
-        slackApi.verifySlackRequest(Arg.any())
-                .returns(Promise.resolve(true));
-
-        const controller = new SlackInteractionsController(slackApi, handler);
+        slackApi.verifySlackRequest(Arg.any()).returns(Promise.resolve(true));
 
         const testPayload = { foo: 'bar' };
         const request: HttpRequest = {
@@ -92,10 +97,11 @@ class SlackInteractionsControllerSpec
             params: { }
         };
 
-        const respond = Substitute.for<Response>();
+        // - unit under test
+        const uut = new SlackInteractionsController(slackApi, handler);
 
         // act
-        await controller.handleInteraction(request, respond);
+        await uut.handleInteraction(request, respond);
 
         // assert
         const payloadWasParsed = handleInteractionFake.calledWithMatch(testPayload);

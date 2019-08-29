@@ -1,7 +1,7 @@
 import { Substitute } from '@fluffy-spoon/substitute';
+import axios, { AxiosRequestConfig } from 'axios';
 import { expect } from 'chai';
 import * as Sinon from 'sinon';
-import axios, { AxiosRequestConfig } from 'axios';
 
 import { HttpRequest } from '@azure/functions';
 import { createHmac } from 'crypto';
@@ -27,7 +27,10 @@ class SlackApiServiceSpec
     public async should_acceptAuthenticRequests_when_verifySlackRequestInvoked(): Promise<void>
     {
         // arrange
+        // - dependencies
         const config = Substitute.for<ConfigService>();
+
+        // - test data
         const signingSecret = 'test-secret';
         config.slackSigningSecret.returns(signingSecret);
 
@@ -50,30 +53,33 @@ class SlackApiServiceSpec
             params: {},
             query: {},
             url: ''
-        }
+        };
 
-        const api = new SlackApiService(config);
-        
+        // - unit under test
+        const uut = new SlackApiService(config);
+
         // act
-        const verified = await api.verifySlackRequest(request);
+        const verified = await uut.verifySlackRequest(request);
 
         // assert
-        expect(verified).to.be.true;
+        expect(verified, 'request authentic').to.be.true;
     }
 
     @test
     public async should_rejectNonAuthenticRequests_when_verifySlackRequestInvoked(): Promise<void>
     {
         // arrange
+        // - dependencies
         const config = Substitute.for<ConfigService>();
 
+        // - test data
+        const badSecret = 'i-am-a-malicious-request';
         const goodSecret = 'i-am-a-good-boy';
         config.slackSigningSecret.returns(goodSecret);
 
         const timestamp = '123456';
         const rawBody = 'test=1234&token=foobar';
 
-        const badSecret = 'i-am-a-malicious-request';
         const badHash = createHmac('sha256', badSecret).update(`v0:${timestamp}:${rawBody}`);
         const badSignature = 'v0=' + badHash.digest('hex');
 
@@ -90,31 +96,33 @@ class SlackApiServiceSpec
             params: {},
             query: {},
             url: ''
-        }
+        };
 
-        const api = new SlackApiService(config);
-        
+        // - unit under test
+        const uut = new SlackApiService(config);
+
         // act
-        const verified = await api.verifySlackRequest(request);
+        const verified = await uut.verifySlackRequest(request);
 
         // assert
-        expect(verified).to.be.false;
+        expect(verified, 'request authentic').to.be.false;
     }
 
     @test
     public async should_throwError_when_getAllPublicChannelsReceivesBadResponse(): Promise<void>
     {
         // arrange
+        // - test data
         const errorMessage = 'this is a helpful error from the slack api and definitely not a unit test';
         const notOkResponse = Promise.resolve({ data: { ok: false, error: errorMessage } });
         this.axiosRequestStub.returns(notOkResponse);
-
-        const api = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
+        // - unit under test
+        const uut = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
 
         // act
         try
         {
-            await api.getAllPublicChannels();
+            await uut.getAllPublicChannels();
             expect.fail(null, null, 'getAllPublicChannels should throw if not OK.');
         }
         catch (e)
@@ -128,16 +136,18 @@ class SlackApiServiceSpec
     public async should_throwError_when_getChannelInfoReceivesBadResponse(): Promise<void>
     {
         // arrange
+        // - test data
         const errorMessage = 'this is a helpful error from the slack api and definitely not a unit test';
         const notOkResponse = Promise.resolve({ data: { ok: false, error: errorMessage } });
         this.axiosRequestStub.returns(notOkResponse);
 
-        const api = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
+        // - unit under test
+        const uut = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
 
         // act
         try
         {
-            await api.getChannelInfo('12345');
+            await uut.getChannelInfo('12345');
             expect.fail(null, null, 'getChannelInfo should throw if not OK.');
         }
         catch (e)
@@ -151,16 +161,18 @@ class SlackApiServiceSpec
     public async should_throwError_when_getBotUserIdReceivesBadResponse(): Promise<void>
     {
         // arrange
+        // - test data
         const errorMessage = 'this is a helpful error from the slack api and definitely not a unit test';
         const notOkResponse = Promise.resolve({ data: { ok: false, error: errorMessage } });
         this.axiosRequestStub.returns(notOkResponse);
 
-        const api = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
+        // - unit under test
+        const uut = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
 
         // act
         try
         {
-            await api.getBotUserId();
+            await uut.getBotUserId();
             expect.fail(null, null, 'getBotUserId should throw if not OK.');
         }
         catch (e)
@@ -174,16 +186,18 @@ class SlackApiServiceSpec
     public async should_throwError_when_sendHookMessageReceivesBadResponse(): Promise<void>
     {
         // arrange
+        // - test data
         const errorMessage = 'this is a helpful error from the slack api and definitely not a unit test';
         const notOkResponse = Promise.resolve({ data: { ok: false, error: errorMessage } });
         this.axiosRequestStub.returns(notOkResponse);
 
-        const api = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
+        // - unit under test
+        const uut = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
 
         // act
         try
         {
-            await api.sendHookMessage('hookUrl', { blocks: [], text: 'foo' });
+            await uut.sendHookMessage('hookUrl', { blocks: [], text: 'foo' });
             expect.fail(null, null, 'sendHookMessage should throw if not OK.');
         }
         catch (e)
@@ -197,16 +211,18 @@ class SlackApiServiceSpec
     public async should_throwError_when_sendMessageReceivesBadResponse(): Promise<void>
     {
         // arrange
+        // - test data
         const errorMessage = 'this is a helpful error from the slack api and definitely not a unit test';
         const notOkResponse = Promise.resolve({ data: { ok: false, error: errorMessage } });
         this.axiosRequestStub.returns(notOkResponse);
 
-        const api = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
+        // - unit under test
+        const uut = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
 
         // act
         try
         {
-            await api.sendMessage('channelId', { blocks: [], text: 'foo' });
+            await uut.sendMessage('channelId', { blocks: [], text: 'foo' });
             expect.fail(null, null, 'sendMessage should throw if not OK.');
         }
         catch (e)
@@ -220,16 +236,18 @@ class SlackApiServiceSpec
     public async should_throwError_when_sendDirectMessageReceivesBadResponse(): Promise<void>
     {
         // arrange
+        // - test data
         const errorMessage = 'this is a helpful error from the slack api and definitely not a unit test';
         const notOkResponse = Promise.resolve({ data: { ok: false, error: errorMessage } });
         this.axiosRequestStub.returns(notOkResponse);
 
-        const api = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
+        // - unit under test
+        const uut = new SlackApiService({ slackApiToken: 'foo' } as unknown as ConfigService);
 
         // act
         try
         {
-            await api.sendDirectMessage('userId', { blocks: [], text: 'foo' });
+            await uut.sendDirectMessage('userId', { blocks: [], text: 'foo' });
             expect.fail(null, null, 'sendDirectMessage should throw if not OK.');
         }
         catch (e)
