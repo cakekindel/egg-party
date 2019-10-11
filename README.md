@@ -18,7 +18,7 @@
 
 #### **Requirements:**
 
-* Read: [Contributing Guidelines (TODO)](CONTRIBUTING.md)
+* Read: [Contributing Guidelines](CONTRIBUTING.md)
 * Install: [SQL Server Express or Developer][sql-server-download]
 * Install: [ngrok]
 * Install: [Node v10+][node-download]
@@ -108,7 +108,7 @@ ormconfig.json
 ##### Note: You'll need to change the Events Request URL and Interactions Request URL every time you start a new ngrok session.
 
 ### **Helpful Links:**
-* Making changes to the Guide Book? Use the [Guide Book Template](guide-book-template)
+* Making changes to the Guide Book? Use the [Guide Book Template][guide-book-template]
 
 [sql-server-download]: https://www.microsoft.com/en-us/sql-server/sql-server-downloads
 [node-download]: https://nodejs.org/en/
