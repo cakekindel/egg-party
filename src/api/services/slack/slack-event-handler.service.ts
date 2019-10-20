@@ -6,6 +6,7 @@ import { SlackMessageBuilderService } from './slack-message-builder.service';
 
 import { ChickenRepo, SlackUserRepo } from '../../../db/repos';
 import { SlackDmCommand } from '../../../shared/enums';
+import { ErrorUserOutOfEggs, ErrorUserTriedToGiveTooManyEggs } from '../../../shared/errors';
 import { ConversationType } from '../../../shared/models/slack/conversations';
 import { SlackEventType } from '../../../shared/models/slack/events';
 import { ISlackEvent, ISlackEventChallenge, ISlackEventMessagePosted, ISlackEventWrapper } from '../../../shared/models/slack/events';
@@ -16,9 +17,9 @@ export class SlackEventHandlerService
     constructor
     (
         private api: SlackApiService,
-        private messageBuilder: SlackMessageBuilderService,
         private userRepo: SlackUserRepo,
         private chickenRepo: ChickenRepo,
+        private messageBuilder: SlackMessageBuilderService,
         private guideBook: SlackGuideBookService,
     ) { }
 
@@ -66,30 +67,47 @@ export class SlackEventHandlerService
     private async handleChannelMessage(event: ISlackEventMessagePosted, workspaceId: string): Promise<void>
     {
         const botUserId = await this.api.getBotUserId();
-        const botIsInChannel = (await this.api.getChannelInfo(event.channel)).is_member;
-        const mentions = event.text.match(/<(@.*?)>/g) || [];
+        const mentions = event.text.match(/<@\w+>/g) || [];
 
-        if (botIsInChannel && event.user && mentions.length && event.text.includes(':egg:'))
+        if (event.user && mentions.length && event.text.includes(':egg:'))
         {
-            const slackUser = await this.userRepo.getBySlackId(event.user, workspaceId);
-            if (!slackUser)
+            const { wasCreated: userGivingEggsIsNew } = await this.userRepo.getOrCreate(event.user, workspaceId);
+            if (userGivingEggsIsNew)
             {
-                const newUser = await this.userRepo.create(event.user, workspaceId);
-                // await this.api.sendDirectMessage(event.user, this.messageBuilder.newUserWelcomeMessage());
+                await this.api.sendDirectMessage(event.user, this.guideBook.build(event.user, botUserId));
             }
 
-            // await this.api.sendDirectMessage(event.user, this.messageBuilder.newUserWelcomeMessage());
+            const userIds = mentions.map((m) => m.replace(/[<>@]/g, ''));
 
-            const usersToGiveEggs = mentions.map((m) => m.replace(/[\<\>]/g, ''));
             const numberOfEggsToGiveEach = (event.text.match(/:egg:/g) || []).length;
-            const numberOfEggsTotal = numberOfEggsToGiveEach * usersToGiveEggs.length;
+            const numberOfEggsTotal = numberOfEggsToGiveEach * userIds.length;
 
-            // if (userCanGiveEggs(event.user))
-            // {
+            try
+            {
+                await this.userRepo.throwIfUserCannotGiveEggs(event.user, workspaceId, numberOfEggsTotal);
+            }
+            catch (e)
+            {
+                if (e instanceof ErrorUserOutOfEggs)
+                {
+                    return; // message giver "you out of eggs fam"
+                }
+                else if (e instanceof ErrorUserTriedToGiveTooManyEggs)
+                {
+                    return; // message giver "you dont have that many eggs fam"
+                }
+            }
 
-            // }
+            for (const userId of userIds)
+            {
+                const getOrCreateMeta = await this.userRepo.getOrCreate(userId, workspaceId);
+                if (getOrCreateMeta.wasCreated)
+                {
+                    await this.api.sendDirectMessage(userId, this.guideBook.build(event.user, botUserId));
+                }
 
-            await this.api.sendMessage(event.channel, this.messageBuilder.testGiveEggsResponse(mentions, numberOfEggsToGiveEach));
+                // TODO: send DM to user "___ gave you n eggs"
+            }
         }
     }
 

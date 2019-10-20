@@ -6,7 +6,7 @@ import { SlackEventType } from './slack-event-type.enum';
 export interface ISlackEventMessagePosted extends ISlackEvent
 {
     type: SlackEventType.MessagePosted;
-    subtype: string;
+    subtype?: string;
     text: string;
 
     user: string;
