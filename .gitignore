@@ -1,6 +1,6 @@
 node_modules
 **/*.js
-egg-party-api
 ormconfig.json
 local.settings.json
-out-test
+dist
+test-dist
