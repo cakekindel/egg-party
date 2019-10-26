@@ -2,7 +2,7 @@
     "name": "egg-party",
     "version": "1.0.0",
     "scripts": {
-        "build": "rimraf egg-party-api && tsc && copyfiles src/function.json egg-party-api --flat",
+        "build": "rimraf dist && tsc",
         "test": "mocha-typescript-watch -p ./test/tsconfig.json",
         "migrate:gen": "typeorm migration:generate -c Local && npm run build",
         "migrate:run": "typeorm migration:run -c Local"
