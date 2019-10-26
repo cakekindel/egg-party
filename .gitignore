@@ -3,3 +3,4 @@ node_modules
 egg-party-api
 ormconfig.json
 local.settings.json
+out-test

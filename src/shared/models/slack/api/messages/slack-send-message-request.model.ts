@@ -1,7 +1,5 @@
 import { AxiosRequestConfig, Method } from 'axios';
 
-import { ConfigService } from '../../../../utility';
-
 import { SlackBlockMessage } from '../../messages';
 import { SlackApiBaseUrl } from '../slack-api-base-url.const';
 

@@ -7,12 +7,12 @@ import { SlackApiService, SlackEventHandlerService } from '../services/slack';
 @Controller('slack-events')
 export class SlackEventsController
 {
-    constructor(private eventHandler: SlackEventHandlerService, private slackApi: SlackApiService) { }
+    constructor(private api: SlackApiService, private eventHandler: SlackEventHandlerService) { }
 
     @Post()
     public async receiveEvent(@Req() request: HttpRequest, @Res() respond: Response): Promise<void>
     {
-        const requestVerified = await this.slackApi.verifySlackRequest(request);
+        const requestVerified = await this.api.verifySlackRequest(request);
         if (!requestVerified)
         {
             respond.sendStatus(HttpStatus.UNAUTHORIZED);

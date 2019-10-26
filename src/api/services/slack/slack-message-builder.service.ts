@@ -81,8 +81,17 @@ export class SlackMessageBuilderService
         ]);
     }
 
-    private garbleText(text: string): string {
-        const chars = text.split('');
+    private garbleText(text: string): string
+    {
+        const words = text.split(' ');
+        const garbWords = words.map(this.garbleWord);
+
+        return garbWords.join(' ');
+    }
+
+    private garbleWord(word: string): string
+    {
+        const chars = word.split('');
         const garbled: string[] = [];
 
         for (let i = 0; i < chars.length; i++)

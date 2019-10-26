@@ -7,15 +7,12 @@
         "experimentalDecorators": true,
         "target": "es2017",
         "sourceMap": true,
-        "outDir": "./egg-party-api",
+        "outDir": "../out-test",
         "incremental": true,
-        "strictNullChecks": true,
-        "strict": true,
+        "strict": false,
         "noImplicitAny": true
     },
-    "exclude": [
-        "node_modules",
-        "egg-party-api",
-        "test/**/*.ts"
+    "include": [
+        "./**/*.spec.ts"
     ]
 }

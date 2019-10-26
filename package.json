@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "build": "rimraf egg-party-api && tsc && copyfiles src/function.json egg-party-api --flat",
-        "test": "mocha-typescript-watch -o ./mocha.opts",
+        "test": "mocha-typescript-watch -p ./test/tsconfig.json",
         "migrate:gen": "typeorm migration:generate -c Local && npm run build",
         "migrate:run": "typeorm migration:run -c Local"
     },
@@ -30,17 +30,20 @@
         "@nestjs/microservices": "^6.5.3",
         "@nestjs/platform-express": "^6.5.3",
         "@nestjs/websockets": "^6.5.3",
+        "@types/sinon": "^7.0.13",
         "@wufe/mapper": "^0.5.0",
         "automapper-ts": "^1.9.0",
         "axios": "^0.19.0",
         "copyfiles": "^2.1.1",
         "hash.js": "^1.1.7",
+        "moment": "^2.24.0",
         "morphism": "^1.12.0",
         "mssql": "^5.1.0",
         "qs": "^6.8.0",
         "reflect-metadata": "^0.1.13",
         "rimraf": "^2.6.2",
         "rxjs": "^6.3.3",
+        "sinon": "^7.4.1",
         "typeorm": "^0.2.18"
     },
     "devDependencies": {

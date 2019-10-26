@@ -1,3 +1,3 @@
 --ui mocha-typescript
 --require source-map-support/register
-egg-party-api/test/**/*.spec.js
+out-test/**/*.spec.js

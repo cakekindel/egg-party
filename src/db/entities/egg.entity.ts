@@ -23,4 +23,7 @@ export class Egg extends EntityBase
     @ManyToOne(() => SlackUser, (user) => user.eggsGiven)
     @JoinColumn({ name: 'givenByUserId', referencedColumnName: 'id' })
     public givenByUser?: SlackUser;
+
+    @Column()
+    public givenOnDate?: Date;
 }
