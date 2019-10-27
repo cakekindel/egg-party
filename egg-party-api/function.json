@@ -13,5 +13,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/azure-functions-nest-wrapper.js"
+  "scriptFile": "../dist/src/azure-functions-nest-wrapper.js"
 }
