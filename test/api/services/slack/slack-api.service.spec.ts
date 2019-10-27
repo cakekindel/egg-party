@@ -1,6 +1,7 @@
 import { Substitute } from '@fluffy-spoon/substitute';
 import axios, { AxiosRequestConfig } from 'axios';
 import { expect } from 'chai';
+import { suite, test } from 'mocha-typescript';
 import * as Sinon from 'sinon';
 
 import { HttpRequest } from '@azure/functions';

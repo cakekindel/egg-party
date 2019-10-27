@@ -1,5 +1,6 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
+import { suite, test } from 'mocha-typescript';
 import { SlackApiService, SlackEventHandlerService, SlackGuideBookService } from '../../../../src/api/services/slack';
 import { SlackUser } from '../../../../src/db/entities';
 import { SlackUserRepo } from '../../../../src/db/repos';

@@ -3,8 +3,8 @@ import { suite, test } from 'mocha-typescript';
 
 import { HttpRequest } from '@azure/functions';
 import { Response, Send } from 'express';
-import { SlackEventsController } from '../../../src/api/controllers';
-import { SlackApiService, SlackEventHandlerService } from '../../../src/api/services/slack';
+import { SlackEventsController } from '../../../src/api/controllers/index';
+import { SlackApiService, SlackEventHandlerService } from '../../../src/api/services/slack/index';
 
 @suite
 class SlackEventsControllerSpec

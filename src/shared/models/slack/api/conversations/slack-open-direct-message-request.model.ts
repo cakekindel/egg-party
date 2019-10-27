@@ -1,4 +1,5 @@
 import { AxiosRequestConfig, Method } from 'axios';
+
 import { SlackApiBaseUrl } from '../slack-api-base-url.const';
 
 export class SlackOpenDirectMessageRequest implements AxiosRequestConfig

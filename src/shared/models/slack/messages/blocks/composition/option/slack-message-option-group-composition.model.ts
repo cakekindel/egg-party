@@ -1,4 +1,5 @@
 import { SlackMessageTextComposition } from '../text/slack-message-text-composition.model';
+
 import { SlackMessageOptionComposition } from './slack-message-option-composition.model';
 
 export class SlackMessageOptionGroupComposition {

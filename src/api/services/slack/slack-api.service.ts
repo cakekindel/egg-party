@@ -3,28 +3,26 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { createHmac, timingSafeEqual as hashesEqual } from 'crypto';
 
-import { ConfigService } from '../../../shared/utility';
-
+import { RequestWithRawBody } from '../../../shared/models/express/request-with-raw-body.model';
+import { ISlackResponse } from '../../../shared/models/slack/api';
+import { ISlackAuthTestResponse, SlackAuthTestRequest } from '../../../shared/models/slack/api/auth';
 import {
     ISlackGetConversationInfoResponse,
     ISlackGetConversationsListResponse,
     SlackGetConversationInfoRequest,
     SlackGetConversationsListRequest
 } from '../../../shared/models/slack/api/conversations';
-import { SlackSendMessageRequest } from '../../../shared/models/slack/api/messages';
-
-import { RequestWithRawBody } from '../../../shared/models/express/request-with-raw-body.model';
-import { ISlackResponse } from '../../../shared/models/slack/api';
-import { ISlackAuthTestResponse, SlackAuthTestRequest } from '../../../shared/models/slack/api/auth';
 import { SlackOpenDirectMessageRequest } from '../../../shared/models/slack/api/conversations/slack-open-direct-message-request.model';
 import { ISlackOpenDirectMessageResponse } from '../../../shared/models/slack/api/conversations/slack-open-direct-message-response.model';
+import { SlackSendMessageRequest } from '../../../shared/models/slack/api/messages';
 import { ISlackConversation } from '../../../shared/models/slack/conversations';
 import { SlackBlockMessage } from '../../../shared/models/slack/messages';
+import { ConfigService } from '../../../shared/utility';
 
 @Injectable()
 export class SlackApiService
 {
-    constructor(private config: ConfigService) { }
+    constructor(private readonly config: ConfigService) { }
 
     public async verifySlackRequest(request: HttpRequest): Promise<boolean>
     {
