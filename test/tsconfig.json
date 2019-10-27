@@ -1,18 +1,13 @@
 {
+    "extends": "../tsconfig.base.json",
     "compilerOptions": {
-        "module": "commonjs",
-        "declaration": true,
-        "removeComments": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "target": "es2017",
-        "sourceMap": true,
-        "outDir": "../test-dist",
-        "incremental": true,
-        "strict": false,
-        "noImplicitAny": true
+        "rootDir": "./",
+        "outDir": "../dist/test",
+        "declarationDir": "../dist/test",
+        "declarationMap": true,
+        "strict": false
     },
-    "include": [
-        "./**/*.spec.ts"
+    "references": [
+        { "path": "../src"  }
     ]
 }
