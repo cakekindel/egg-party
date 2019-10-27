@@ -1,10 +1,9 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 
-import { EntityName } from './entity-name.enum';
-import { EntityBase } from './entity.base';
-
 import { Chicken } from './chicken.entity';
 import { Egg } from './egg.entity';
+import { EntityName } from './entity-name.enum';
+import { EntityBase } from './entity.base';
 
 @Entity(EntityName.SlackUser)
 export class SlackUser extends EntityBase

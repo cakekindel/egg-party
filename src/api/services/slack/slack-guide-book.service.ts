@@ -28,7 +28,7 @@ import { SlackMessageStaticSelectElement as StaticSelect } from '../../../shared
 @Injectable()
 export class SlackGuideBookService
 {
-    private pages: IGuideBookPage[] = [
+    private readonly pages: IGuideBookPage[] = [
         {
             id: GuideBookPageId.Welcome,
             group: GuideBookPageGroup.None,

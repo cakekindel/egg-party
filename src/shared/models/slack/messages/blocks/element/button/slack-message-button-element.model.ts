@@ -2,6 +2,7 @@ import { SlackMessageConfirmComposition } from '../../composition/confirm/slack-
 import { SlackMessageTextComposition } from '../../composition/text/slack-message-text-composition.model';
 import { SlackMessageBlockElementType } from '../slack-message-block-element-type.enum';
 import { ISlackMessageInteractiveBlockElement } from '../slack-message-interactive-block-element.interface';
+
 import { SlackMessageButtonElementStyle } from './slack-message-button-element-style.enum';
 
 // tslint:disable:variable-name

@@ -2,6 +2,7 @@ import { HttpRequest } from '@azure/functions';
 import { Arg, Substitute } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { Response } from 'express';
+import { suite, test } from 'mocha-typescript';
 import { fake } from 'sinon';
 
 import { SlackApiService, SlackInteractionHandlerService } from '../../../src/api/services/slack';
