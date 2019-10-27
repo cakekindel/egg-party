@@ -1,6 +1,4 @@
 node_modules
-**/*.js
 ormconfig.json
 local.settings.json
 dist
-test-dist
