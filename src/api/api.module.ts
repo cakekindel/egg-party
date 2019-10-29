@@ -1,6 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { SlackEventsController, SlackInteractionsController } from './controllers';
+import { ConfigService } from '../shared/utility';
+import {
+    HealthCheckController,
+    SlackEventsController,
+    SlackInteractionsController
+} from './controllers';
 
 import {
     SlackApiService,
@@ -17,10 +22,12 @@ import { DbModule } from '../db/db.module';
         DbModule,
     ],
     controllers: [
+        HealthCheckController,
         SlackEventsController,
         SlackInteractionsController,
     ],
     providers: [
+        ConfigService,
         SlackApiService,
         SlackMessageBuilderService,
         SlackGuideBookService,
