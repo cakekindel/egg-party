@@ -7,7 +7,7 @@
 #### Table of Contents
 - [**Want to contribute?**](#want-to-contribute)
 - [**Local Setup**](#local-setup)
-- [**Local Configuration**](#local-configuration)
+    - [**Local Configuration**](#local-configuration)
 - [**Scripts**](#scripts)
 - [**Slack Setup**](#slack-setup)
     - [**Slack App Settings**](#slack-app-settings)
