@@ -4,10 +4,11 @@
         "rootDir": "./",
         "outDir": "../dist/test",
         "declarationDir": "../dist/test",
-        "declarationMap": true,
         "strict": false
     },
     "references": [
-        { "path": "../src"  }
+        {
+            "path": "../src"
+        }
     ]
 }
