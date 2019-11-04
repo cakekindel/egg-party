@@ -7,7 +7,6 @@
 #### Table of Contents
 - [**Want to contribute?**](#want-to-contribute)
 - [**Local Setup**](#local-setup)
-    - [DB Setup](#db-setup-with-ms-sql)
 - [**Local Configuration**](#local-configuration)
 - [**Scripts**](#scripts)
 - [**Slack Setup**](#slack-setup)
