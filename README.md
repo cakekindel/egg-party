@@ -127,22 +127,6 @@ In [your Slack Apps][slack-manage-apps], create a new app *e.g. "Egg Party Local
 Run the command `Debug: Start Debugging` by pressing `F5`, by searching in the command palette (`F1`),
 or from the Debug panel (`Ctrl/Cmd + Shift + D`)
 
-### **Running Locally Against Slack**
-* In a new shell window, use `npm run tunnel` to tunnel your local traffic to a URL that Slack can interact with
-* In your Slack App management page:
-    * Go to Event Subscriptions and turn Events on
-        * Add 2 Bot Event subscriptions (**_Not_ workspace events!**):
-            * `message.channels`
-            * `message.im`
-        * For the Request URL, put `https://xxxxxxx.ngrok.io/api/slack-events`, where the ngrok subdomain is the one from the output of the command above
-            * *Slack will send a Challenge request to this URL to verify that it's
-                ready to handle events, so make sure the app is running or you won't
-                be able to save the slack app*
-    * Go to Interactive Components and turn Interactivity on
-        * For the Request URL, put `https://xxxxxxx.ngrok.io/api/slack-interactions`
-
-##### Note: You'll need to change the Events Request URL and Interactions Request URL every time you start a new ngrok session.
-
 ---
 
 ### **Common Errors**
