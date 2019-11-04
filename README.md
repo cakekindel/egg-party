@@ -4,14 +4,20 @@
 
 ---
 #### Table of Contents
-* [Want to contribute?](#want-to-contribute)
-    * [Requirements](#requirements)
-    * [First-Time Setup](#first-time-setup)
-        * [DB Setup](#db-setup-with-ms-sql)
-        * [Slack Setup](#slack-setup)
-    * [Local Configuration Files](#local-configuration-files)
-* [Running & Debugging (VS Code)](#running--debugging-vs-code)
-* [Helpful Links](#helpful-links)
+- [Egg Party 🥚🎉](#egg-party-%f0%9f%a5%9a%f0%9f%8e%89)
+    - [Egg party is a Slack App for thanking teammates, raising chickens, and having a rowdy ol' time](#egg-party-is-a-slack-app-for-thanking-teammates-raising-chickens-and-having-a-rowdy-ol-time)
+      - [Table of Contents](#table-of-contents)
+  - [* Helpful Links](#helpful-links)
+    - [**Want to contribute?**](#want-to-contribute)
+      - [**Requirements:**](#requirements)
+      - [**First-Time Setup:**](#first-time-setup)
+        - [DB Setup with MS SQL](#db-setup-with-ms-sql)
+          - [DB Setup Troubleshooting Notes](#db-setup-troubleshooting-notes)
+        - [Slack Setup](#slack-setup)
+      - [**Local Configuration Files**](#local-configuration-files)
+    - [**Running & Debugging (VS Code)**](#running--debugging-vs-code)
+        - [Note: You'll need to change the Events Request URL and Interactions Request URL every time you start a new ngrok session.](#note-youll-need-to-change-the-events-request-url-and-interactions-request-url-every-time-you-start-a-new-ngrok-session)
+    - [**Helpful Links:**](#helpful-links)
 ---
 
 ### **Want to contribute?**
@@ -37,6 +43,15 @@
 * [Create a local SQL administrator][create-sql-admin] with user/pass matching those in `ormconfig.json`
     * *It doesn't have to be admin/password, just make sure `ormconfig.json` has the correct credentials.*
 * In a shell in `egg-party/`, run `npm run build`, then `typeorm migration:run -c Local` to initialize your schema
+
+###### DB Setup Troubleshooting Notes
+*  The application may run into an issue connecting to your newly installed SQL Server database. You may encounter the following error:<br />
+   ```javascript
+   Failed to connect to localhost:1433 - Could not connect (sequence)
+   ```
+   This error is documented under issue [#2333](https://github.com/typeorm/typeorm/issues/2133) in the [typeorm](https://github.com/typeorm) project. In order to address it...
+   1. You will need to [enable TCP connections to SQL Server](https://stackoverflow.com/questions/25577248/node-js-mssql-tedius-connectionerror-failed-to-connect-to-localhost1433-conn)
+   1. You may also need to [enable the SQL Server browser service](https://www.godaddy.com/help/enable-the-sql-server-browser-service-19117)
 
 ##### Slack Setup
 * Have a Slack Workspace for developing in ([*or create one here*][slack-create-workspace])
