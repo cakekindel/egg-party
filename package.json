@@ -6,7 +6,6 @@
         "clean": "rimraf dist",
         "test": "npm run build && mocha",
         "test:watch": "mocha-typescript-watch -p ./test/tsconfig.json -o ./test/mocha.ts-watch.opts",
-        "migrate:gen": "typeorm migration:generate -c Local && npm run build",
         "migrate:run": "typeorm migration:run -c Local"
     },
     "description": "Egg Party",
@@ -63,6 +62,7 @@
         "jest": "24.7.1",
         "mocha": "^6.2.2",
         "mocha-typescript": "^1.1.17",
+        "ngrok": "^3.2.5",
         "prettier": "1.17.0",
         "supertest": "4.0.2",
         "ts-node": "8.1.0",

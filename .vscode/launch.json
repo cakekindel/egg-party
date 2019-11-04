@@ -10,6 +10,8 @@
             "showAsyncStacks": true,
             "preLaunchTask": "func: host start",
             "protocol": "inspector",
+            // timeout has to be longer to wait for webpack
+            "timeout": 30000,
             "skipFiles": [
                 "<node_internals>/**",
                 "node_modules/**",
