@@ -2,3 +2,4 @@ node_modules
 ormconfig.json
 local.settings.json
 dist
+.env
