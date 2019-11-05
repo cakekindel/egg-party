@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import { config as loadDotEnv } from 'dotenv';
 import { INestApplication } from '@nestjs/common';
 
-declare const module: any;
+declare const module: { hot: { accept: () => void, dispose: (onDispose: () => void) => void } };
 
 export class Main
 {
@@ -25,7 +25,7 @@ export class Main
     {
         const app = await NestFactory.create(AppModule, { bodyParser: false });
         app.setGlobalPrefix('api');
-        await app.listenAsync(7000);
+        await app.listenAsync(process.env.PORT || 7000);
 
         return app;
     }

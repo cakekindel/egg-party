@@ -2,7 +2,7 @@
     "name": "egg-party",
     "version": "1.0.0",
     "scripts": {
-        "start": "npm run serve",
+        "start": "node ./dist/src/main",
         "test": "npm run test:single-run",
         "postinstall": "npm run build",
         "\n -- Build --": "",
