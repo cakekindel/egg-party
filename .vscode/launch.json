@@ -2,19 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Functions",
             "type": "node",
-            "request": "attach",
-            "port": 9229,
+            "request": "launch",
+            "name": "Serve",
+            "args": [
+                "./dist/main.js"
+            ],
             "smartStep": true,
             "showAsyncStacks": true,
-            "preLaunchTask": "func: host start",
-            "protocol": "inspector",
-            // timeout has to be longer to wait for webpack
-            "timeout": 30000,
+            "preLaunchTask": "serve:watch",
+            "autoAttachChildProcesses": true,
             "skipFiles": [
-                "<node_internals>/**",
-                "node_modules/**",
+                "<node_internals>/**/fs.js",
+                "<node_internals>/**/loader.js",
+                "<node_internals>/**/loaders.js",
+                "<node_internals>/**/async_hooks.js",
+                "node_modules/**/xpath.js",
             ]
         }
     ]

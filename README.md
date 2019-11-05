@@ -74,11 +74,12 @@ SlackSigningSecret="SLACK_SIGNING_SECRET_HERE"
 
 ### **Scripts**
 
-|               Script | Description                                                                                             |
-| -------------------: | ------------------------------------------------------------------------------------------------------- |
-| `npm run serve`      | Run the API locally, and hot reload the app<br/> when you make typescript changes                       |
-| `npm run test:watch` | Run all unit tests & re-run when you make typescript changes                                            |
-| `npm run tunnel`     | Tunnel your local traffic to a public URL using `ngrok`.<br/>This is used to run locally against Slack. |
+|                                   Script | Description                                                                                             |
+| ---------------------------------------: | ------------------------------------------------------------------------------------------------------- |
+| `npm start`<br/>`npm run serve`          | Run the API locally, and hot reload the app<br/> when you make typescript changes                       |
+| `npm test`<br/>`npm run test:single-run` | Run all unit tests                                                                                      |
+| `npm run test:watch`                     | Run all unit tests &<br/>re-run when you make typescript changes                                        |
+| `npm run tunnel`                         | Tunnel your local traffic to a public URL using `ngrok`.<br/>This is used to run locally against Slack. |
 
 ---
 
@@ -104,7 +105,7 @@ In [your Slack Apps][slack-manage-apps], create a new app *e.g. "Egg Party Local
 `Event Subscriptions:`
   1. Turn `Events` on
   1. `Request URL:` use `https://{{requestUrlBase}}/api/events` (see [Using your Local API](#using-your-local-api-with-your-slack-app))
-  1. In "Subscribe to bot events", add the following event subscriptions:
+  1. `Subscribe to bot events:` add the following event subscriptions:
       * `message.channels`
       * `message.im`
 

@@ -6,7 +6,6 @@
             "type": "npm",
             "script": "build",
             "problemMatcher": "$tsc",
-            "dependsOn": "npm install",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -21,9 +20,10 @@
             }
         },
         {
-            "type": "func",
-            "command": "host start",
-            "problemMatcher": "$func-watch",
+            "label": "serve:watch",
+            "type": "npm",
+            "script": "serve:watch",
+            "problemMatcher": "$tsc",
             "isBackground": true,
             "presentation": {
                 "echo": true,
@@ -32,13 +32,7 @@
                 "panel": "shared",
                 "showReuseMessage": true,
                 "clear": false
-            },
-            "dependsOn": "build"
-        },
-        {
-            "type": "shell",
-            "label": "npm install",
-            "command": "npm install"
+            }
         }
     ]
 }

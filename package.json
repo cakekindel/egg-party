@@ -2,14 +2,25 @@
     "name": "egg-party",
     "version": "1.0.0",
     "scripts": {
-        "build": "npm run clean && tsc --build",
+        "start": "npm run serve",
+        "test": "npm run test:single-run",
+        "postinstall": "npm run build",
+        "\n -- Build --": "",
         "clean": "rimraf dist",
-        "test": "npm run build && mocha",
+        "build": "npm run clean && tsc --build",
+        "\n -- Serve --": "",
+        "serve:watch": "npm run clean && webpack --config webpack.watch.config.js",
+        "serve:start": "wait-on ./dist/main.js && node ./dist/main.js",
+        "serve": "concurrently -n \" build ,  api  \" npm:serve:watch npm:serve:start -k -c \"cyan.dim,green.dim\"",
+        "\n -- Test --": "",
+        "test:single-run": "npm run build && mocha",
         "test:watch": "mocha-typescript-watch -p ./test/tsconfig.json -o ./test/mocha.ts-watch.opts",
-        "migrate:run": "typeorm migration:run -c Local"
+        "\n -- Utilities --": "",
+        "migrate:run": "typeorm migration:run -c Local",
+        "tunnel": "ngrok http 7000 --host-header=\"localhost:7000\""
     },
     "description": "Egg Party",
-    "main": "main.ts",
+    "main": "dist/main.js",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/cakekindel/egg-party.git"
@@ -59,16 +70,23 @@
         "@types/qs": "^6.5.3",
         "@types/supertest": "2.0.7",
         "chai": "^4.2.0",
+        "concurrently": "^5.0.0",
+        "dotenv": "^8.2.0",
         "jest": "24.7.1",
         "mocha": "^6.2.2",
         "mocha-typescript": "^1.1.17",
         "ngrok": "^3.2.5",
         "prettier": "1.17.0",
         "supertest": "4.0.2",
+        "ts-loader": "^6.2.1",
         "ts-node": "8.1.0",
         "tsc-watch": "2.2.1",
         "tsconfig-paths": "3.8.0",
         "tslint": "5.16.0",
-        "typescript": "3.4.3"
+        "typescript": "3.4.3",
+        "wait-on": "^3.3.0",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.9",
+        "webpack-node-externals": "^1.7.2"
     }
 }
