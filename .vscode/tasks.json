@@ -2,36 +2,20 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
             "type": "npm",
-            "script": "build",
-            "problemMatcher": "$tsc",
-            "group": {
-                "kind": "build",
-                "isDefault": true
+            "script": "serve",
+            "label": "serve",
+            "isBackground": true,
+            "problemMatcher": {
+                "base": "$ts-webpack-watch",
+                "background": {
+                    "beginsPattern": "[a-z\\[\\] ]+ webpack is watching the files...\\s*",
+                    "endsPattern": "[a-z\\[\\] ]+ Compilation\\s+finished\\s*"
+                }
             },
             "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            }
-        },
-        {
-            "label": "serve:watch",
-            "type": "npm",
-            "script": "serve:watch",
-            "problemMatcher": "$tsc",
-            "isBackground": true,
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
+                "echo": false,
+                "panel": "shared"
             }
         }
     ]

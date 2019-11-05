@@ -133,7 +133,7 @@ or from the Debug panel (`Ctrl/Cmd + Shift + D`)
 * `Failed to connect to localhost:1433 - Could not connect (sequence)`
     * **Cause**: [TCP is not enabled][sql-enable-tcp] or
         the [SQL Server Browser Service][sql-enable-server-browser] is not running
-        *(Related: [typeorm issue#2333][typeorm#2333])*
+        *(Related: [typeorm#2333][typeorm#2333])*
 
 ---
 
