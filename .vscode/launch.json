@@ -2,19 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Functions",
             "type": "node",
             "request": "attach",
-            "port": 9229,
+            "name": "Attach to \"npm:serve\"",
             "smartStep": true,
             "showAsyncStacks": true,
-            "preLaunchTask": "func: host start",
             "protocol": "inspector",
-            // timeout has to be longer to wait for webpack
-            "timeout": 30000,
+            "port": 9229,
+            "preLaunchTask": "serve",
             "skipFiles": [
                 "<node_internals>/**",
-                "node_modules/**",
+                "${workspaceFolder}/node_modules/**"
             ]
         }
     ]
