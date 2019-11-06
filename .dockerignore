@@ -1,10 +1,8 @@
 .git
 node_modules
 
-dockerfile
 build
 .vscode
-tslint.json
 nest-cli.json
 test
 
