@@ -17,7 +17,7 @@ RUN     npm ci --ignore-scripts
 COPY    --chown=node:node . .
 RUN     npm run build:prod
 
-RUN     npm run prune --production
+RUN     npm prune --production
 
 EXPOSE  8080
 CMD     [ "node", "dist/src/main.js" ]
