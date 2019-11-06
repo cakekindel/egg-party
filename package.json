@@ -4,12 +4,12 @@
     "scripts": {
         "start": "node ./dist/src/main",
         "test": "npm run test:single-run",
-        "postinstall": "npm run build",
         "\n -- Build --": "",
-        "clean": "rimraf dist",
+        "clean": "npx rimraf dist",
         "build": "npm run clean && tsc --build",
+        "build:prod": "npm run npx-tsc -- --build ./src/tsconfig.prod.json",
         "\n -- Serve --": "",
-        "serve:watch": "webpack --config webpack.watch.config.js --info-verbosity verbose",
+        "serve:watch": "webpack --config ./build/webpack.watch.config.js --info-verbosity verbose",
         "serve:start": "wait-on ./dist/main.js && node --inspect ./dist/main.js",
         "serve": "concurrently -n \" build ,  api  \" npm:serve:watch npm:serve:start -k -c \"cyan.dim,green.dim\"",
         "\n -- Test --": "",
@@ -17,6 +17,7 @@
         "test:watch": "mocha-typescript-watch -p ./test/tsconfig.json -o ./test/mocha.ts-watch.opts",
         "\n -- Utilities --": "",
         "migrate:run": "typeorm migration:run -c Local",
+        "npx-tsc": "npx --ignore-existing -p typescript@~3.6.0 tsc",
         "tunnel": "ngrok http 7000 --host-header=\"localhost:7000\""
     },
     "description": "Egg Party",
