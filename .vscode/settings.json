@@ -1,5 +1,5 @@
 {
-    "tslint.configFile": "build/tslint.json",
+    "tslint.configFile": "tslint.json",
     "debug.internalConsoleOptions": "openOnFirstSessionStart",
     "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
     "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,

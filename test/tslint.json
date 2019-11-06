@@ -1,5 +1,5 @@
 {
-    "extends": "../tslint.json",
+    "extends": "../tslint.base.json",
     "rules": {
         "no-unused-expression": false
     }

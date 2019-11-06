@@ -2,8 +2,8 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 
-import { config as loadDotEnv } from 'dotenv';
 import { INestApplication } from '@nestjs/common';
+import { config as loadDotEnv } from 'dotenv';
 
 declare const module: { hot: { accept: () => void, dispose: (onDispose: () => void) => void } };
 
@@ -11,13 +11,16 @@ export class Main
 {
     public static async run(): Promise<void>
     {
-        Main.tryLoadDotEnv();
-
-        const app = await Main.createNestApp();
-
         if (process.env.ENVIRONMENT === 'Local')
         {
+            Main.loadDotEnv();
+
+            const app = await Main.createNestApp();
             Main.enableWebpackHotReloads(app);
+        }
+        else
+        {
+            await Main.createNestApp();
         }
     }
 
@@ -30,13 +33,14 @@ export class Main
         return app;
     }
 
-    private static tryLoadDotEnv(): void
+    private static loadDotEnv(): void
     {
         try
         {
             const result = loadDotEnv({ path: './.env' });
-            console.log('Loaded env file');
-            console.log(result);
+            const string = 'testing';
+
+            if (result.error) throw result.error;
         }
         catch (e)
         {

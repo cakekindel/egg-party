@@ -8,7 +8,10 @@
             true,
             "check-space"
         ],
-        "curly": true,
+        "curly": [
+            true,
+            "as-needed"
+        ],
         "deprecation": {
             "severity": "warn"
         },
@@ -70,7 +73,12 @@
         "no-var-keyword": true,
         "object-literal-sort-keys": false,
         "one-line": false,
-        "space-before-function-paren": [false, { "constructor": "always" }],
+        "space-before-function-paren": [
+            false,
+            {
+                "constructor": "always"
+            }
+        ],
         "prefer-const": true,
         "quotemark": [
             true,
@@ -106,6 +114,9 @@
             "check-type"
         ],
         "trailing-comma": true,
-        "typedef": [true, "call-signature"]
+        "typedef": [
+            true,
+            "call-signature"
+        ]
     }
 }
