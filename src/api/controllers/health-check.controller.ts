@@ -12,6 +12,6 @@ export class HealthCheckController
     @Get()
     public getHealth(): { status: string }
     {
-        return { status: 'test' };
+        return { status: 'pass' };
     }
 }
