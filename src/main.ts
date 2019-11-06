@@ -15,7 +15,7 @@ export class Main
 
         const app = await Main.createNestApp();
 
-        if (process.env.Environment === 'Local')
+        if (process.env.ENVIRONMENT === 'Local')
         {
             Main.enableWebpackHotReloads(app);
         }
@@ -34,9 +34,15 @@ export class Main
     {
         try
         {
-            loadDotEnv({ path: './.env' });
+            const result = loadDotEnv({ path: './.env' });
+            console.log('Loaded env file');
+            console.log(result);
         }
-        catch (e) { }
+        catch (e)
+        {
+            console.error('Failed to load env file.');
+            console.error(e.message);
+        }
     }
 
     private static enableWebpackHotReloads(app: INestApplication): void

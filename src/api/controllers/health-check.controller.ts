@@ -9,11 +9,9 @@ import { Controller, Get } from '@nestjs/common';
 @Controller('health')
 export class HealthCheckController
 {
-    constructor() {}
-
     @Get()
-    getHealth()
+    public getHealth(): { status: string }
     {
-        return { status: 'pass' };
+        return { status: 'test' };
     }
 }

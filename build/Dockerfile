@@ -11,11 +11,13 @@ USER    node
 
 # install deps
 COPY    package*.json ./
-RUN     npm ci --production --ignore-scripts
+RUN     npm ci --ignore-scripts
 
 # copy source code, build
 COPY    --chown=node:node . .
 RUN     npm run build:prod
+
+RUN     npm run prune --production
 
 EXPOSE  8080
 CMD     [ "node", "dist/src/main.js" ]
