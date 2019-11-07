@@ -15,7 +15,7 @@
         "\n -- Utilities --": "",
         "tunnel": "ngrok http 7000 --host-header=\"localhost:7000\"",
         "\n -- Docker --": "",
-        "docker:build": "docker build -t cakekindel/egg-party -f build/Dockerfile .",
+        "docker:build": "docker build -t cakekindel/egg-party .",
         "docker:run": "docker run -p 8282:8080 cakekindel/egg-party",
         "\n -- Build --": "",
         "build": "tsc --build",
@@ -26,7 +26,7 @@
         "prebuild": "npm run clean",
         "premigration:generate": "npm run build",
         "premigration:run": "npm run build",
-        "serve:watch": "webpack --config ./build/webpack.watch.config.js --info-verbosity verbose",
+        "serve:watch": "webpack --config ./webpack.watch.config.js --info-verbosity verbose",
         "serve:start": "node --inspect ./dist/main.js",
         "preserve:start": "wait-on ./dist/main.js",
         "pretest:single-run": "npm run build"
