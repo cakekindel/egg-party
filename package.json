@@ -30,7 +30,8 @@
         "serve:watch": "webpack --config ./webpack.watch.config.js --info-verbosity verbose",
         "serve:start": "node --inspect ./dist/main.js",
         "preserve:start": "wait-on ./dist/main.js",
-        "pretest:single-run": "npm run build"
+        "pretest:single-run": "npm run build",
+        "pretest:junit": "npm run build"
     },
     "description": "Egg Party",
     "main": "dist/main.js",
