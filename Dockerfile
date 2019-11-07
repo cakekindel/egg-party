@@ -13,8 +13,13 @@ USER    node
 COPY    package*.json ./
 RUN     npm ci --ignore-scripts
 
-# copy source code, build
+# copy source code
 COPY    --chown=node:node . .
+
+# run unit tests
+RUN     npm test
+
+# build
 RUN     npm run build:prod
 
 RUN     npm prune --production
