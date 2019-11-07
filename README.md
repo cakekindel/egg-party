@@ -36,50 +36,95 @@
     * Create a local database named `EggParty`
     * Ensure your local database has [SQL Server Auth][sql-server-auth-mode] and [TCP/IP][sql-enable-tcp] enabled.
     * [Create a local SQL admin][create-sql-admin] with the credentials in `ormconfig.json`
-    * Run `npm run migrate` to initialize your schema
+    * Run `npm run migration:run` to initialize your schema
 
 #### **Local Configuration**
 `egg-party/.env`
 ```ahk
-Environment="Local"
-SlackApiToken="SLACK_BOT_OAUTH_TOKEN_HERE"
-SlackSigningSecret="SLACK_SIGNING_SECRET_HERE"
-```
+ENVIRONMENT="Local"
 
-`egg-party/ormconfig.json`
-```json
-[
-    {
-        "name": "Local",
-        "type": "mssql",
-        "database": "EggParty",
-        "entities": [
-            "dist/db/entities/*.entity.js"
-        ],
-        "migrations": [
-            "dist/db/migrations/*.js"
-        ],
-        "cli": {
-            "migrationsDir": "src/db/migrations"
-        },
-        "logging": true,
-        "host": "localhost",
-        "username": "admin",
-        "password": "password"
-    }
-]
+SLACK_APITOKEN="Api_Token_Here"
+SLACK_SIGNINGSECRET="Signing_Secret_Here"
+
+TYPEORM_CONNECTION="mssql"
+TYPEORM_DATABASE="EggParty"
+TYPEORM_ENTITIES="./dist/src/db/entities/*.entity.js"
+TYPEORM_MIGRATIONS="./dist/src/db/migrations/*.js"
+TYPEORM_HOST="localhost"
+TYPEORM_USERNAME="admin"
+TYPEORM_PASSWORD="password"
 ```
 
 ---
 
 ### **Scripts**
 
-|                                   Script | Description                                                                                             |
-| ---------------------------------------: | ------------------------------------------------------------------------------------------------------- |
-| `npm start`<br/>`npm run serve`          | Run the API locally, and hot reload the app<br/> when you make typescript changes                       |
-| `npm test`<br/>`npm run test:single-run` | Run all unit tests                                                                                      |
-| `npm run test:watch`                     | Run all unit tests &<br/>re-run when you make typescript changes                                        |
-| `npm run tunnel`                         | Tunnel your local traffic to a public URL using `ngrok`.<br/>This is used to run locally against Slack. |
+<table>
+    <tr></tr>
+    <tr><th colspan="2">Running</th></tr>
+    <tr>
+        <td>
+            <nobr>
+                <code>npm start</code><br/>
+                <code>npm run serve</code>
+            </nobr>
+        </td>
+        <td>
+            Run the API locally, hot reload when you make typescript changes
+        </td>
+    </tr>
+    <tr><th colspan="2">Testing</th></tr>
+    <tr>
+        <td>
+            <nobr>
+                <code>npm test</code><br/>
+                <code>npm run test:single&#x2011;run</code>
+            </nobr>
+        </td>
+        <td>
+            Build & run all unit tests
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <nobr><code>npm run test:watch</code></nobr>
+        </td>
+        <td>
+            Run all unit tests & re-run when you make changes
+        </td>
+    </tr>
+    <tr><th colspan="2">Utilities</th></tr>
+    <tr>
+        <td>
+            <nobr><code>npm run tunnel</code></nobr>
+        </td>
+        <td>
+            Tunnel your local traffic to a public URL using `ngrok`.<br/>
+            Use this to run locally against Slack.
+        </td>
+    </tr>
+    <tr><th colspan="2">Database</th></tr>
+    <tr>
+        <td>
+            <nobr><code>npm run migration:generate</code></nobr>
+        </td>
+        <td>
+            Generate a TypeORM migration file based on changes made to entities since the last migration was made<br/><br/>
+            Usage note: you must pass the migration script a name for the migration<br/>
+            e.g. <code>npm run migration:generate -- -n AddCreatedDateColumn</code>
+        </td>
+    </tr>
+    <tr></tr>
+    <tr>
+        <td>
+            <nobr><code>npm run migration:run</code></nobr>
+        </td>
+        <td>
+            Runs migrations against the database specified in <code>.env</code> 
+        </td>
+    </tr>
+</table>
 
 ---
 

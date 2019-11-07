@@ -2,22 +2,25 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 
-import { config as loadDotEnv } from 'dotenv';
 import { INestApplication } from '@nestjs/common';
+import { config as loadDotEnv } from 'dotenv';
 
-declare const module: any;
+declare const module: { hot: { accept: () => void, dispose: (onDispose: () => void) => void } };
 
 export class Main
 {
     public static async run(): Promise<void>
     {
-        Main.tryLoadDotEnv();
-
-        const app = await Main.createNestApp();
-
-        if (process.env.Environment === 'Local')
+        if (process.env.ENVIRONMENT === 'Local')
         {
+            Main.loadDotEnv();
+
+            const app = await Main.createNestApp();
             Main.enableWebpackHotReloads(app);
+        }
+        else
+        {
+            await Main.createNestApp();
         }
     }
 
@@ -25,18 +28,25 @@ export class Main
     {
         const app = await NestFactory.create(AppModule, { bodyParser: false });
         app.setGlobalPrefix('api');
-        await app.listenAsync(7000);
+        await app.listenAsync(process.env.PORT || 7000);
 
         return app;
     }
 
-    private static tryLoadDotEnv(): void
+    private static loadDotEnv(): void
     {
         try
         {
-            loadDotEnv({ path: './.env' });
+            const result = loadDotEnv({ path: './.env' });
+            const string = 'testing';
+
+            if (result.error) throw result.error;
         }
-        catch (e) { }
+        catch (e)
+        {
+            console.error('Failed to load env file.');
+            console.error(e.message);
+        }
     }
 
     private static enableWebpackHotReloads(app: INestApplication): void

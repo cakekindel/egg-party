@@ -20,7 +20,7 @@ module.exports = {
         ],
     },
     output: {
-        path: join(__dirname, 'dist'),
+        path: join(process.cwd(), 'dist'),
         filename: 'main.js',
     },
     watch: true,

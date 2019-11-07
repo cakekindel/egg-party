@@ -1,0 +1,13 @@
+.git
+node_modules
+
+.vscode
+nest-cli.json
+
+.env
+ormconfig.json
+
+.dockerignore
+.gitignore
+
+*.md

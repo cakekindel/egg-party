@@ -5,11 +5,11 @@ import { Environment } from '../enums/environment.enum';
 @Injectable()
 export class ConfigService
 {
-    public get slackApiToken(): string { return this.GetRequiredVariable('SlackApiToken'); }
-    public get slackSigningSecret(): string { return this.GetRequiredVariable('SlackSigningSecret'); }
-    public get environment(): Environment { return this.GetRequiredVariable('Environment') as Environment; }
+    public get slackApiToken(): string { return this.getRequiredVariable('SLACK_APITOKEN'); }
+    public get slackSigningSecret(): string { return this.getRequiredVariable('SLACK_SIGNINGSECRET'); }
+    public get environment(): Environment { return this.getRequiredVariable('ENVIRONMENT') as Environment; }
 
-    private GetRequiredVariable(variableName: string): string
+    private getRequiredVariable(variableName: string): string
     {
         const val = this.GetVariable(variableName);
 

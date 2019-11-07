@@ -1,3 +1,2 @@
-import * as Entities from './entities';
-
-export default Entities;
+export * from './db-connection.provider';
+export * from './db.module';

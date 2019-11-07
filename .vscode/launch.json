@@ -8,6 +8,7 @@
             "smartStep": true,
             "showAsyncStacks": true,
             "protocol": "inspector",
+            "timeout": 60000,
             "port": 9229,
             "preLaunchTask": "serve",
             "skipFiles": [
