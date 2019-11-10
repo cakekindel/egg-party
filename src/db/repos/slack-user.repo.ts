@@ -6,14 +6,14 @@ import * as moment from 'moment';
 import { RepoBase } from './repo.base';
 
 import { ErrorUserOutOfEggs, ErrorUserTriedToGiveTooManyEggs } from '../../shared/errors';
-import { Egg, EntityName, SlackUser } from '../entities';
+import { Egg, SlackUser } from '../entities';
 import { ChickenRepo } from './chicken.repo';
 import { EggRepo } from './egg.repo';
 
 @Injectable()
 export class SlackUserRepo extends RepoBase<SlackUser>
 {
-    public entityName = EntityName.SlackUser;
+    protected entityType = SlackUser;
 
     constructor(protected db: Connection, private chickenRepo: ChickenRepo, private eggRepo: EggRepo)
     {
