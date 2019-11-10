@@ -121,7 +121,7 @@ TYPEORM_PASSWORD="password"
             <nobr><code>npm run migration:run</code></nobr>
         </td>
         <td>
-            Runs migrations against the database specified in <code>.env</code> 
+            Runs migrations against the database specified in <code>.env</code>
         </td>
     </tr>
 </table>
@@ -149,14 +149,14 @@ In [your Slack Apps][slack-manage-apps], create a new app *e.g. "Egg Party Local
 
 `Event Subscriptions:`
   1. Turn `Events` on
-  1. `Request URL:` use `https://{{requestUrlBase}}/api/events` (see [Using your Local API](#using-your-local-api-with-your-slack-app))
+  1. `Request URL:` use `https://{{requestUrlBase}}/api/v1/slack/events` (see [Using your Local API](#using-your-local-api-with-your-slack-app))
   1. `Subscribe to bot events:` add the following event subscriptions:
       * `message.channels`
       * `message.im`
 
 `Interactive Components`
   1. Turn `Interactivity` on
-  1. For `Request URL` use `https://{{requestUrlBase}}/api/interactions` (see [Using your Local API](#using-your-local-api-with-your-slack-app))
+  1. For `Request URL` use `https://{{requestUrlBase}}/api/v1/slack/interactions` (see [Using your Local API](#using-your-local-api-with-your-slack-app))
 
 #### Using your Local API with your Slack App
 
