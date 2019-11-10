@@ -20,12 +20,10 @@ export class ConfigService
 
     private getRequiredEnv(variableName: string): string
     {
-        const val = this.getEnv(variableName);
+        const val = this.getEnv(variableName) ?? this.getEnv('APPSETTING_' + variableName);
 
         if (!val)
-        {
             throw new Error(`Required Environment Variable not set: ${variableName}`);
-        }
 
         return val;
     }
