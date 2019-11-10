@@ -10,16 +10,16 @@ export class SlackEventsController
 
     @Post()
     @HttpCode(HttpStatus.OK)
-    public async receiveEvent(@Req() request: Request, @Res() respond: Response): Promise<void>
+    public async receiveEvent(@Req() request: Request, @Res() respond: Response): Promise<Response>
     {
         const requestVerified = this.api.verifySlackRequest(request);
 
         if (requestVerified)
         {
             const response = await this.eventHandler.handleEvent(request.body);
-            respond.send(response);
+            return respond.send(response);
         }
 
-        respond.sendStatus(HttpStatus.UNAUTHORIZED);
+        return respond.sendStatus(HttpStatus.UNAUTHORIZED);
     }
 }
