@@ -18,11 +18,8 @@ export class SlackInteractionsController
         if (!requestVerified)
             return respond.sendStatus(HttpStatus.UNAUTHORIZED);
 
-        const payloadWrapper = qs.parse(request.body) as { payload: string; };
-        if (!payloadWrapper || !payloadWrapper.payload)
-            throw new Error('Invalid interaction body');
-
-        const payloadJson = payloadWrapper.payload;
+        const body: { payload: string; } = qs.parse(request.body);
+        const payloadJson = body.payload;
         const interaction: ISlackInteractionPayload = JSON.parse(payloadJson);
 
         await this.interactionHandler.handleInteraction(interaction);
