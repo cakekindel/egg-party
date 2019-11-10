@@ -3,5 +3,5 @@
     "debug.internalConsoleOptions": "openOnFirstSessionStart",
     "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
     "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
-    "editor.formatOnSave": true
+    "files.eol": "\n"
 }

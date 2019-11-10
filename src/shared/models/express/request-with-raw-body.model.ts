@@ -1,3 +1,6 @@
 import { Request } from 'express';
 
-export type RequestWithRawBody = Request & { rawBody: string };
+export interface IRequestWithRawBody extends Request
+{
+    rawBody: string;
+}

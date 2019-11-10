@@ -1,9 +1,9 @@
-import { HttpRequest } from '@azure/functions';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { createHmac, timingSafeEqual as hashesEqual } from 'crypto';
+import { Request } from 'express';
 
-import { RequestWithRawBody } from '../../../shared/models/express/request-with-raw-body.model';
+import { IRequestWithRawBody } from '../../../shared/models/express/request-with-raw-body.model';
 import { ISlackResponse } from '../../../shared/models/slack/api';
 import { ISlackAuthTestResponse, SlackAuthTestRequest } from '../../../shared/models/slack/api/auth';
 import {
@@ -24,15 +24,15 @@ export class SlackApiService
 {
     constructor(private readonly config: ConfigService) { }
 
-    public async verifySlackRequest(request: HttpRequest): Promise<boolean>
+    public verifySlackRequest(request: Request): boolean
     {
         const requestSignature = this.getHeader(request, 'x-slack-signature');
         const timestamp = this.getHeader(request, 'x-slack-request-timestamp');
 
-        if (requestSignature && timestamp)
+        if (typeof requestSignature === 'string' && typeof timestamp === 'string')
         {
             const signingSecret = this.config.slackSigningSecret;
-            const body = (request as RequestWithRawBody).rawBody;
+            const body = (request as IRequestWithRawBody).rawBody;
             const signature = createHmac('sha256', signingSecret).update(`v0:${timestamp}:${body}`).digest('hex');
 
             return hashesEqual(Buffer.from(`v0=${signature}`), Buffer.from(requestSignature));
@@ -113,7 +113,7 @@ export class SlackApiService
         }
     }
 
-    private getHeader(request: HttpRequest, header: string): string | undefined
+    private getHeader(request: Request, header: string): string | string[] | undefined
     {
         const headerClean = header.trim().toLowerCase();
         const headerKey = Object.keys(request.headers).find((h) => h.toLowerCase().trim() === headerClean);

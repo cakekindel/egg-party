@@ -1,13 +1,12 @@
-import { HttpRequest } from '@azure/functions';
 import { Arg, Substitute } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { suite, test } from 'mocha-typescript';
 import { fake } from 'sinon';
 
 import { SlackApiService, SlackInteractionHandlerService } from '../../../src/api/services/slack';
 
-import { SlackInteractionsController } from '../../../src/api/controllers';
+import { SlackInteractionsController } from '../../../src/api/controllers/slack';
 
 @suite
 class SlackInteractionsControllerSpec
@@ -19,18 +18,12 @@ class SlackInteractionsControllerSpec
         // - dependencies
         const slackApi = Substitute.for<SlackApiService>();
         const handler = Substitute.for<SlackInteractionHandlerService>();
-        const response = Substitute.for<Response>();
 
         // - test data
-        slackApi.verifySlackRequest(Arg.any()).returns(Promise.resolve(false));
+        slackApi.verifySlackRequest(Arg.any()).returns(false);
 
-        const request: HttpRequest = {
-            method: 'POST',
-            url: 'test',
-            headers: { },
-            query: { },
-            params: { }
-        };
+        const request = Substitute.for<Request>();
+        const response = Substitute.for<Response>();
 
         // - unit under test
         const uut = new SlackInteractionsController(slackApi, handler);
@@ -49,19 +42,12 @@ class SlackInteractionsControllerSpec
         // - dependencies
         const handler = Substitute.for<SlackInteractionHandlerService>();
         const slackApi = Substitute.for<SlackApiService>();
-        const respond = Substitute.for<Response>();
 
         // - test data
-        slackApi.verifySlackRequest(Arg.any()).returns(Promise.resolve(true));
+        slackApi.verifySlackRequest(Arg.any()).returns(true);
 
-        const request: HttpRequest = {
-            method: 'POST',
-            url: 'test',
-            body: 'payload={}',
-            headers: { },
-            query: { },
-            params: { }
-        };
+        const request = { body: 'payload={}' } as Request;
+        const respond = Substitute.for<Response>();
 
         // - unit under test
         const uut = new SlackInteractionsController(slackApi, handler);
@@ -80,23 +66,17 @@ class SlackInteractionsControllerSpec
         // - dependencies
         const handler = Substitute.for<SlackInteractionHandlerService>();
         const slackApi = Substitute.for<SlackApiService>();
-        const respond = Substitute.for<Response>();
 
         // - test data
-        const handleInteractionFake = fake((a: any) => { });
+        const handleInteractionFake = fake(() => { });
         handler.handleInteraction(Arg.any()).mimicks(handleInteractionFake);
 
-        slackApi.verifySlackRequest(Arg.any()).returns(Promise.resolve(true));
+        slackApi.verifySlackRequest(Arg.any()).returns(true);
 
         const testPayload = { foo: 'bar' };
-        const request: HttpRequest = {
-            method: 'POST',
-            url: 'test',
-            body: 'payload=' + JSON.stringify(testPayload),
-            headers: { },
-            query: { },
-            params: { }
-        };
+
+        const request = { body: 'payload=' + JSON.stringify(testPayload) } as Request;
+        const respond = Substitute.for<Response>();
 
         // - unit under test
         const uut = new SlackInteractionsController(slackApi, handler);
