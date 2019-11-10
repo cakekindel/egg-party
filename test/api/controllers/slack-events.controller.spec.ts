@@ -1,10 +1,10 @@
 import { Arg, Substitute } from '@fluffy-spoon/substitute';
 import { suite, test } from 'mocha-typescript';
 
-import { Request, Response, Send } from 'express';
+import { Request, Response } from 'express';
 import { fake } from 'sinon';
-import { SlackEventsController } from '../../../src/api/controllers/index';
-import { SlackApiService, SlackEventHandlerService } from '../../../src/api/services/slack/index';
+import { SlackEventsController } from '../../../src/api/controllers/slack';
+import { SlackApiService, SlackEventHandlerService } from '../../../src/api/services/slack';
 
 @suite
 class SlackEventsControllerSpec

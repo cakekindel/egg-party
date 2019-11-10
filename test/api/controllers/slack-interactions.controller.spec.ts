@@ -6,7 +6,7 @@ import { fake } from 'sinon';
 
 import { SlackApiService, SlackInteractionHandlerService } from '../../../src/api/services/slack';
 
-import { SlackInteractionsController } from '../../../src/api/controllers';
+import { SlackInteractionsController } from '../../../src/api/controllers/slack';
 
 @suite
 class SlackInteractionsControllerSpec
