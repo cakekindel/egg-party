@@ -17,7 +17,7 @@ export const DbConnectionProvider: Provider = {
             username: config.typeOrmConfig.adminUsername,
             password: config.typeOrmConfig.adminPassword,
             options: { encrypt: true },
-            entities: [...Entities]
+            entities: Entities
         };
 
         const connectionExists = getConnectionManager().has(config.environment);
