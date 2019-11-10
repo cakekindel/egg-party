@@ -4,9 +4,9 @@ import { expect } from 'chai';
 import { suite, test } from 'mocha-typescript';
 import * as Sinon from 'sinon';
 
-import { HttpRequest } from '@azure/functions';
 import { createHmac } from 'crypto';
 import { SlackApiService } from '../../../../src/api/services/slack';
+import { IRequestWithRawBody } from '../../../../src/shared/models/express/request-with-raw-body.model';
 import { ConfigService } from '../../../../src/shared/utility';
 
 @suite()
@@ -46,21 +46,15 @@ class SlackApiServiceSpec
             'x-slack-request-timestamp': timestamp,
         };
 
-        const request: HttpRequest = {
-            headers,
-            rawBody,
-            body: {},
-            method: 'POST',
-            params: {},
-            query: {},
-            url: ''
-        };
+        const request = Substitute.for<IRequestWithRawBody>();
+        request.headers.returns(headers);
+        request.rawBody.returns(rawBody);
 
         // - unit under test
         const uut = new SlackApiService(config);
 
         // act
-        const verified = await uut.verifySlackRequest(request);
+        const verified = uut.verifySlackRequest(request);
 
         // assert
         expect(verified, 'request authentic').to.be.true;
@@ -89,21 +83,13 @@ class SlackApiServiceSpec
             'x-slack-request-timestamp': timestamp,
         };
 
-        const request: HttpRequest = {
-            headers,
-            rawBody,
-            body: {},
-            method: 'POST',
-            params: {},
-            query: {},
-            url: ''
-        };
+        const request = Substitute.for<IRequestWithRawBody>();
 
         // - unit under test
         const uut = new SlackApiService(config);
 
         // act
-        const verified = await uut.verifySlackRequest(request);
+        const verified = uut.verifySlackRequest(request);
 
         // assert
         expect(verified, 'request authentic').to.be.false;

@@ -1,23 +1,26 @@
 import { Provider, Scope } from '@nestjs/common';
-import { Connection, createConnection, getConnection, getConnectionManager, ConnectionOptions } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection, getConnection, getConnectionManager } from 'typeorm';
+import { ConfigService } from '../shared/utility';
 import { Entities } from './entities';
 
 export const DbConnectionProvider: Provider = {
     provide: Connection,
     scope: Scope.REQUEST,
-    useFactory: async (): Promise<Connection> =>
+    inject: [ConfigService],
+    useFactory: async (config: ConfigService): Promise<Connection> =>
     {
         const options: ConnectionOptions = {
-            name: 'egg-party',
+            name: config.environment,
             type: 'mssql',
-            database: 'EggParty',
-            host: process.env.TYPEORM_HOST,
-            username: process.env.TYPEORM_USERNAME,
-            password: process.env.TYPEORM_PASSWORD,
+            database: config.typeOrmConfig.databaseName,
+            host: config.typeOrmConfig.hostUrl,
+            username: config.typeOrmConfig.adminUsername,
+            password: config.typeOrmConfig.adminPassword,
+            options: { encrypt: true },
             entities: [...Entities]
         };
 
-        const connectionExists = getConnectionManager().has(options.name || '');
-        return connectionExists ? getConnection(options.name) : await createConnection(options);
+        const connectionExists = getConnectionManager().has(config.environment);
+        return connectionExists ? getConnection(config.environment) : await createConnection(options);
     }
 };

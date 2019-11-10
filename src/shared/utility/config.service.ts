@@ -1,17 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
 import { Environment } from '../enums/environment.enum';
+import { ITypeormConfig } from './typeorm-options.interface';
 
 @Injectable()
 export class ConfigService
 {
-    public get slackApiToken(): string { return this.getRequiredVariable('SLACK_APITOKEN'); }
-    public get slackSigningSecret(): string { return this.getRequiredVariable('SLACK_SIGNINGSECRET'); }
-    public get environment(): Environment { return this.getRequiredVariable('ENVIRONMENT') as Environment; }
-
-    private getRequiredVariable(variableName: string): string
+    public get slackApiToken(): string { return this.getRequiredEnv('SLACK_APITOKEN'); }
+    public get slackSigningSecret(): string { return this.getRequiredEnv('SLACK_SIGNINGSECRET'); }
+    public get environment(): Environment { return this.getRequiredEnv('ENVIRONMENT') as Environment; }
+    public get typeOrmConfig(): ITypeormConfig
     {
-        const val = this.GetVariable(variableName);
+        const hostUrl = this.getRequiredEnv('TYPEORM_HOST');
+        const adminUsername = this.getRequiredEnv('TYPEORM_USERNAME');
+        const adminPassword = this.getRequiredEnv('TYPEORM_PASSWORD');
+        const databaseName = this.getRequiredEnv('TYPEORM_DATABASE');
+        return { hostUrl, adminUsername, adminPassword, databaseName };
+    }
+
+    private getRequiredEnv(variableName: string): string
+    {
+        const val = this.getEnv(variableName);
 
         if (!val)
         {
@@ -21,7 +30,7 @@ export class ConfigService
         return val;
     }
 
-    private GetVariable(variableName: string): string | undefined
+    private getEnv(variableName: string): string | undefined
     {
         return process.env[variableName];
     }

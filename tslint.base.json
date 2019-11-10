@@ -8,10 +8,7 @@
             true,
             "check-space"
         ],
-        "curly": [
-            true,
-            "as-needed"
-        ],
+        "curly": false,
         "deprecation": {
             "severity": "warn"
         },
