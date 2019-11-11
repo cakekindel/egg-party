@@ -10,58 +10,44 @@ import { ErrorUserOutOfEggs, ErrorUserTriedToGiveTooManyEggs } from '../../../sh
 import { ConversationType } from '../../../shared/models/slack/conversations';
 import { SlackEventType } from '../../../shared/models/slack/events';
 import { ISlackEvent, ISlackEventChallenge, ISlackEventMessagePosted, ISlackEventWrapper } from '../../../shared/models/slack/events';
+import { SlackMessageHandler } from './slack-message.handler';
 
 @Injectable()
-export class SlackEventHandlerService
+export class SlackEventHandler
 {
-    constructor
-    (
+    constructor(
         private api: SlackApiService,
+        private messageHandler: SlackMessageHandler,
         private userRepo: SlackUserRepo,
         private chickenRepo: ChickenRepo,
         private messageBuilder: SlackMessageBuilderService,
         private guideBook: SlackGuideBookService,
     ) { }
 
-    public async handleEvent(event: ISlackEvent): Promise<void | string>
+    public async handleEvent(event: ISlackEvent): Promise<void>
     {
-        switch (event.type)
-        {
-            case SlackEventType.Challenge:
-                return (event as ISlackEventChallenge).challenge;
-            case SlackEventType.EventWrapper:
-                return await this.handleWrapper(event as ISlackEventWrapper);
-        }
+        const messageEvent = this.getMessageEvent(event);
+
+        if (messageEvent)
+            return await this.messageHandler.handleMessage(messageEvent);
     }
 
-    private async handleWrapper(wrapper: ISlackEventWrapper): Promise<void>
+    private getMessageEvent(event: ISlackEvent): ISlackEventMessagePosted | undefined
     {
-        const innerEvent = wrapper.event;
-
-        switch (innerEvent.type)
+        const eventIsWrapper = event.type === SlackEventType.EventWrapper;
+        if (eventIsWrapper)
         {
-            case SlackEventType.MessagePosted:
+            const wrapper = event as ISlackEventWrapper;
+            const innerEventIsMessage = wrapper.event.type === SlackEventType.MessagePosted;
+
+            if (innerEventIsMessage)
             {
-                return await this.handleMessage(innerEvent as ISlackEventMessagePosted, wrapper.team_id);
+                const messageEvent = wrapper.event as ISlackEventMessagePosted;
+                return messageEvent;
             }
         }
-    }
 
-    private async handleMessage(event: ISlackEventMessagePosted, workspaceId: string): Promise<void>
-    {
-        // TODO: handle message.edited
-        if (event.subtype)
-        {
-            return;
-        }
-
-        switch (event.channel_type)
-        {
-            case ConversationType.DirectMessage:
-                return await this.handleDirectMessage(event, workspaceId);
-            case ConversationType.Public:
-                return await this.handleChannelMessage(event, workspaceId);
-        }
+        return undefined;
     }
 
     private async handleChannelMessage(event: ISlackEventMessagePosted, workspaceId: string): Promise<void>
@@ -71,11 +57,10 @@ export class SlackEventHandlerService
 
         if (event.user && mentions.length && event.text.includes(':egg:'))
         {
-            const { wasCreated: userGivingEggsIsNew } = await this.userRepo.getOrCreate(event.user, workspaceId);
-            if (userGivingEggsIsNew)
-            {
+            const { wasCreated } = await this.userRepo.getOrCreate(event.user, workspaceId);
+
+            if (wasCreated)
                 await this.api.sendDirectMessage(event.user, this.guideBook.build(event.user, botUserId));
-            }
 
             const userIds = mentions.map((m) => m.replace(/[<>@]/g, ''));
 
@@ -90,11 +75,13 @@ export class SlackEventHandlerService
             {
                 if (e instanceof ErrorUserOutOfEggs)
                 {
-                    return; // message giver "you out of eggs fam"
+                    // TODO: message giver "you out of eggs fam"
+                    return;
                 }
                 else if (e instanceof ErrorUserTriedToGiveTooManyEggs)
                 {
-                    return; // message giver "you dont have that many eggs fam"
+                    // TODO: message giver "you dont have that many eggs fam"
+                    return;
                 }
             }
 
@@ -102,9 +89,7 @@ export class SlackEventHandlerService
             {
                 const getOrCreateMeta = await this.userRepo.getOrCreate(userId, workspaceId);
                 if (getOrCreateMeta.wasCreated)
-                {
                     await this.api.sendDirectMessage(userId, this.guideBook.build(event.user, botUserId));
-                }
 
                 // TODO: send DM to user "___ gave you n eggs"
             }
@@ -139,15 +124,16 @@ export class SlackEventHandlerService
         const chickens = (user && user.chickens) || [];
         const botUserId = await this.api.getBotUserId();
 
-        switch (event.text.toLowerCase().trim() as SlackDmCommand)
+        switch (event.text.toLowerCase().trim())
         {
-            case SlackDmCommand.Help:
-                return await this.api.sendDirectMessage(event.user, this.guideBook.build(event.user, botUserId));
             case SlackDmCommand.ManageChickens:
                 return await this.api.sendDirectMessage(event.user, this.messageBuilder.manageChickens(chickens));
             case SlackDmCommand.Leaderboard:
             case SlackDmCommand.Profile:
                 return await this.api.sendDirectMessage(event.user, { text: 'TODO', blocks: [] });
+            case SlackDmCommand.Help:
+            default:
+                return await this.api.sendDirectMessage(event.user, this.guideBook.build(event.user, botUserId));
         }
     }
 }

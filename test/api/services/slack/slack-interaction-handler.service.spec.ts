@@ -5,7 +5,7 @@ import { suite, test } from 'mocha-typescript';
 import {
     SlackApiService,
     SlackGuideBookService,
-    SlackInteractionHandlerService,
+    SlackInteractionHandler,
     SlackMessageBuilderService
 } from '../../../../src/api/services/slack';
 import { Chicken, SlackUser } from '../../../../src/db/entities';
@@ -54,7 +54,7 @@ class SlackInteractionHandlerServiceSpec
         });
 
         // - unit under test
-        const uut = new SlackInteractionHandlerService(api, null, null, null, guideBook);
+        const uut = new SlackInteractionHandler(api, null, null, null, guideBook);
 
         // act
         await uut.handleInteraction(interaction);
@@ -100,7 +100,7 @@ class SlackInteractionHandlerServiceSpec
         });
 
         // - unit under test
-        const uut = new SlackInteractionHandlerService(api, messageBuilder, userRepo, null, null);
+        const uut = new SlackInteractionHandler(api, messageBuilder, userRepo, null, null);
 
         // act
         await uut.handleInteraction(interaction);
@@ -136,7 +136,7 @@ class SlackInteractionHandlerServiceSpec
         });
 
         // - unit under test
-        const uut = new SlackInteractionHandlerService(api, messageBuilder, null, chickenRepo, null);
+        const uut = new SlackInteractionHandler(api, messageBuilder, null, chickenRepo, null);
 
         // act
         await uut.handleInteraction(interaction);

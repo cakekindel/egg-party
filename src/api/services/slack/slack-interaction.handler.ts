@@ -11,7 +11,7 @@ import { ISlackInteractionPayload } from '../../../shared/models/slack/interacti
 import { SlackGuideBookService } from './slack-guide-book.service';
 
 @Injectable()
-export class SlackInteractionHandlerService
+export class SlackInteractionHandler
 {
     constructor(
         private api: SlackApiService,

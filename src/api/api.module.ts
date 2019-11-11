@@ -7,9 +7,9 @@ import { SlackEventsController, SlackInteractionsController } from './controller
 
 import {
     SlackApiService,
-    SlackEventHandlerService,
+    SlackEventHandler,
     SlackGuideBookService,
-    SlackInteractionHandlerService,
+    SlackInteractionHandler,
     SlackMessageBuilderService
 } from './services/slack';
 
@@ -29,8 +29,8 @@ import { DbModule } from '../db/db.module';
         SlackApiService,
         SlackMessageBuilderService,
         SlackGuideBookService,
-        SlackEventHandlerService,
-        SlackInteractionHandlerService,
+        SlackEventHandler,
+        SlackInteractionHandler,
     ],
     exports: [],
 })

@@ -4,7 +4,7 @@ import { suite, test } from 'mocha-typescript';
 import { Request, Response } from 'express';
 import { fake } from 'sinon';
 import { SlackEventsController } from '../../../src/api/controllers/slack';
-import { SlackApiService, SlackEventHandlerService } from '../../../src/api/services/slack';
+import { SlackApiService, SlackEventHandler } from '../../../src/api/services/slack';
 
 @suite
 class SlackEventsControllerSpec
@@ -13,7 +13,7 @@ class SlackEventsControllerSpec
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
     {
         // arrange
-        const handler = Substitute.for<SlackEventHandlerService>();
+        const handler = Substitute.for<SlackEventHandler>();
         const slackApi = Substitute.for<SlackApiService>();
         const controller = new SlackEventsController(slackApi, handler);
 
@@ -34,7 +34,7 @@ class SlackEventsControllerSpec
     public async should_callEventHandler_when_requestVerified(): Promise<void>
     {
         // arrange
-        const handler = Substitute.for<SlackEventHandlerService>();
+        const handler = Substitute.for<SlackEventHandler>();
         const slackApi = Substitute.for<SlackApiService>();
         const controller = new SlackEventsController(slackApi, handler);
 

@@ -1,7 +1,7 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { suite, test } from 'mocha-typescript';
-import { SlackApiService, SlackEventHandlerService, SlackGuideBookService } from '../../../../src/api/services/slack';
+import { SlackApiService, SlackEventHandler, SlackGuideBookService } from '../../../../src/api/services/slack';
 import { SlackUser } from '../../../../src/db/entities';
 import { SlackUserRepo } from '../../../../src/db/repos';
 import { ErrorUserTriedToGiveTooManyEggs } from '../../../../src/shared/errors';
@@ -29,7 +29,7 @@ class SlackEventHandlerServiceSpec
         };
 
         // - unit under test
-        const uut = new SlackEventHandlerService(null, null, null, null, null);
+        const uut = new SlackEventHandler(null, null, null, null, null);
 
         // act
         const actual = await uut.handleEvent(event);
@@ -70,7 +70,7 @@ class SlackEventHandlerServiceSpec
         guideBook.build(userId, botUserId).returns(message);
 
         // - unit under test
-        const uut = new SlackEventHandlerService(api, userRepo, null, null, guideBook);
+        const uut = new SlackEventHandler(api, userRepo, null, null, guideBook);
 
         // act
         await uut.handleEvent(event as ISlackEventWrapper);
@@ -113,7 +113,7 @@ class SlackEventHandlerServiceSpec
         guideBook.build(Arg.all()).returns(null);
 
         // - unit under test
-        const uut = new SlackEventHandlerService(api, userRepo, null, null, guideBook);
+        const uut = new SlackEventHandler(api, userRepo, null, null, guideBook);
 
         // act
         await uut.handleEvent(event as ISlackEventWrapper);
@@ -165,7 +165,7 @@ class SlackEventHandlerServiceSpec
         guideBook.build(Arg.all()).returns(null);
 
         // - unit under test
-        const uut = new SlackEventHandlerService(api, userRepo, null, null, guideBook);
+        const uut = new SlackEventHandler(api, userRepo, null, null, guideBook);
 
         // act
         await uut.handleEvent(event as ISlackEventWrapper);
