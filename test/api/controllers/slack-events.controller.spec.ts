@@ -1,15 +1,17 @@
 import { Arg, Substitute } from '@fluffy-spoon/substitute';
 import { suite, test } from 'mocha-typescript';
 
+import { HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { fake } from 'sinon';
 import { SlackEventsController } from '../../../src/api/controllers/slack';
-import { SlackApiService, SlackEventHandler } from '../../../src/api/services/slack';
+import { SlackApiService } from '../../../src/api/services/slack';
+import { SlackEventHandler } from '../../../src/api/services/slack/handlers';
 
-@suite
+@suite()
 class SlackEventsControllerSpec
 {
-    @test
+    @test()
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
     {
         // arrange
@@ -30,8 +32,8 @@ class SlackEventsControllerSpec
         respond.received().sendStatus(401);
     }
 
-    @test
-    public async should_callEventHandler_when_requestVerified(): Promise<void>
+    @test()
+    public async should_respondWithChallenge_when_challengeEventReceived(): Promise<void>
     {
         // arrange
         const handler = Substitute.for<SlackEventHandler>();
@@ -41,20 +43,22 @@ class SlackEventsControllerSpec
         slackApi.verifySlackRequest(Arg.any())
                 .returns(true);
 
-        const testResponse = 'challenge';
-        handler.handleEvent(Arg.any())
-               .returns(Promise.resolve(testResponse));
+        const challenge = 'challenge';
 
         const request = Substitute.for<Request>();
+        const response = Substitute.for<Response>();
 
-        const respond = Substitute.for<Response>();
-        const sendResponseFake = fake(() => {});
-        respond.send().mimicks(sendResponseFake);
+        const sendFake = fake(() => response);
+        response.send().mimicks(sendFake);
+
+        const statusFake = fake(() => response);
+        response.status(Arg.any()).mimicks(statusFake);
 
         // act
-        const response = await controller.receiveEvent(request, respond);
+        await controller.receiveEvent(request, response);
 
         // assert
-        sendResponseFake.calledWith(testResponse);
+        statusFake.calledWith(HttpStatus.OK);
+        sendFake.calledWith(challenge);
     }
 }

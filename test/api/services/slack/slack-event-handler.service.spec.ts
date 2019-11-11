@@ -1,7 +1,8 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { suite, test } from 'mocha-typescript';
-import { SlackApiService, SlackEventHandler, SlackGuideBookService } from '../../../../src/api/services/slack';
+import { SlackApiService, SlackGuideBookService } from '../../../../src/api/services/slack';
+import { SlackEventHandler } from '../../../../src/api/services/slack/handlers';
 import { SlackUser } from '../../../../src/db/entities';
 import { SlackUserRepo } from '../../../../src/db/repos';
 import { ErrorUserTriedToGiveTooManyEggs } from '../../../../src/shared/errors';
@@ -14,31 +15,10 @@ import {
 } from '../../../../src/shared/models/slack/events';
 import { SlackBlockMessage } from '../../../../src/shared/models/slack/messages';
 
-@suite
-class SlackEventHandlerServiceSpec
+@suite()
+export class SlackEventHandlerServiceSpec
 {
-    @test
-    public async should_returnChallenge_when_challengeEventFired(): Promise<void>
-    {
-        // arrange
-        // - test data
-        const event: ISlackEventChallenge = {
-            challenge: 'challenging',
-            type: SlackEventType.Challenge,
-            token: 'foo'
-        };
-
-        // - unit under test
-        const uut = new SlackEventHandler(null, null, null, null, null);
-
-        // act
-        const actual = await uut.handleEvent(event);
-
-        // assert
-        expect(actual).to.equal(event.challenge);
-    }
-
-    @test
+    @test()
     public async should_createUserAndSendGuide_when_newUserGivesEggs(): Promise<void>
     {
         // arrange
@@ -70,7 +50,7 @@ class SlackEventHandlerServiceSpec
         guideBook.build(userId, botUserId).returns(message);
 
         // - unit under test
-        const uut = new SlackEventHandler(api, userRepo, null, null, guideBook);
+        const uut = new SlackEventHandler(api, null, userRepo, null, null, guideBook);
 
         // act
         await uut.handleEvent(event as ISlackEventWrapper);
@@ -80,7 +60,7 @@ class SlackEventHandlerServiceSpec
         api.received().sendDirectMessage(userId, message);
     }
 
-    @test
+    @test()
     public async should_createUserAndSendGuide_when_newUserReceivesEggs(): Promise<void>
     {
         // arrange
@@ -113,7 +93,7 @@ class SlackEventHandlerServiceSpec
         guideBook.build(Arg.all()).returns(null);
 
         // - unit under test
-        const uut = new SlackEventHandler(api, userRepo, null, null, guideBook);
+        const uut = new SlackEventHandler(api, null, userRepo, null, null, guideBook);
 
         // act
         await uut.handleEvent(event as ISlackEventWrapper);
@@ -123,7 +103,7 @@ class SlackEventHandlerServiceSpec
         api.received().sendDirectMessage(giveToUserId, null);
     }
 
-    @test
+    @test()
     public async should_NotCreateOrMessageReceiver_when_tooManyEggsGivenToNewUser(): Promise<void>
     {
         // arrange
@@ -165,7 +145,7 @@ class SlackEventHandlerServiceSpec
         guideBook.build(Arg.all()).returns(null);
 
         // - unit under test
-        const uut = new SlackEventHandler(api, userRepo, null, null, guideBook);
+        const uut = new SlackEventHandler(api, null, userRepo, null, null, guideBook);
 
         // act
         await uut.handleEvent(event as ISlackEventWrapper);

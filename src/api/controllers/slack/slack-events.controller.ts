@@ -2,7 +2,8 @@ import { Controller, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { ISlackEvent, ISlackEventChallenge, SlackEventType } from '../../../shared/models/slack/events';
-import { SlackApiService, SlackEventHandler } from '../../services/slack';
+import { SlackApiService } from '../../services/slack';
+import { SlackEventHandler } from '../../services/slack/handlers';
 
 @Controller('v1/slack/events')
 export class SlackEventsController

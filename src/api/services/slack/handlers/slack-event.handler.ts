@@ -7,9 +7,8 @@ import { SlackMessageBuilderService } from '../slack-message-builder.service';
 import { ChickenRepo, SlackUserRepo } from '../../../../db/repos';
 import { SlackDmCommand } from '../../../../shared/enums';
 import { ErrorUserOutOfEggs, ErrorUserTriedToGiveTooManyEggs } from '../../../../shared/errors';
-import { ConversationType } from '../../../../shared/models/slack/conversations';
 import { SlackEventType } from '../../../../shared/models/slack/events';
-import { ISlackEvent, ISlackEventChallenge, ISlackEventMessagePosted, ISlackEventWrapper } from '../../../../shared/models/slack/events';
+import { ISlackEvent, ISlackEventMessagePosted, ISlackEventWrapper } from '../../../../shared/models/slack/events';
 import { SlackMessageHandler } from './slack-message.handler';
 
 @Injectable()

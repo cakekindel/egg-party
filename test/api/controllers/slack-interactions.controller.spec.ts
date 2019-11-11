@@ -4,14 +4,15 @@ import { Request, Response } from 'express';
 import { suite, test } from 'mocha-typescript';
 import { fake } from 'sinon';
 
-import { SlackApiService, SlackInteractionHandler } from '../../../src/api/services/slack';
+import { SlackApiService } from '../../../src/api/services/slack';
+import { SlackInteractionHandler } from '../../../src/api/services/slack/handlers';
 
 import { SlackInteractionsController } from '../../../src/api/controllers/slack';
 
-@suite
-class SlackInteractionsControllerSpec
+@suite()
+export class SlackInteractionsControllerSpec
 {
-    @test
+    @test()
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
     {
         // arrange

@@ -5,13 +5,8 @@ import { ConfigService } from '../shared/utility';
 import { HealthCheckController } from './controllers';
 import { SlackEventsController, SlackInteractionsController } from './controllers/slack';
 
-import {
-    SlackApiService,
-    SlackEventHandler,
-    SlackGuideBookService,
-    SlackInteractionHandler,
-    SlackMessageBuilderService
-} from './services/slack';
+import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from './services/slack';
+import { SlackEventHandler, SlackInteractionHandler, SlackMessageHandler } from './services/slack/handlers';
 
 import { DbModule } from '../db/db.module';
 
@@ -29,6 +24,7 @@ import { DbModule } from '../db/db.module';
         SlackApiService,
         SlackMessageBuilderService,
         SlackGuideBookService,
+        SlackMessageHandler,
         SlackEventHandler,
         SlackInteractionHandler,
     ],

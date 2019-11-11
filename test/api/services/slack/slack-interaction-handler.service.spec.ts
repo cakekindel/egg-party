@@ -5,9 +5,9 @@ import { suite, test } from 'mocha-typescript';
 import {
     SlackApiService,
     SlackGuideBookService,
-    SlackInteractionHandler,
     SlackMessageBuilderService
 } from '../../../../src/api/services/slack';
+import { SlackInteractionHandler } from '../../../../src/api/services/slack/handlers';
 import { Chicken, SlackUser } from '../../../../src/db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../../../src/db/repos';
 import { SlackInteractionId } from '../../../../src/shared/enums';
@@ -15,10 +15,10 @@ import { GuideBookPageId } from '../../../../src/shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../src/shared/models/slack/interactions/slack-interaction-payload.model';
 import { SlackBlockMessage } from '../../../../src/shared/models/slack/messages';
 
-@suite
-class SlackInteractionHandlerServiceSpec
+@suite()
+export class SlackInteractionHandlerServiceSpec
 {
-    @test
+    @test()
     public async should_sendGuideBookPage_when_jumpedTo(): Promise<void>
     {
         // arrange
@@ -64,7 +64,7 @@ class SlackInteractionHandlerServiceSpec
         api.received().sendHookMessage(responseHookUrl, testPage);
     }
 
-    @test
+    @test()
     public async should_sendManageChickens_when_manageChickensClicked(): Promise<void>
     {
         // arrange
@@ -110,7 +110,7 @@ class SlackInteractionHandlerServiceSpec
         api.received().sendDirectMessage(userId, message);
     }
 
-    @test
+    @test()
     public async should_flagChickenAsAwaitingRename_when_renameChickenClicked(): Promise<void>
     {
         // arrange
