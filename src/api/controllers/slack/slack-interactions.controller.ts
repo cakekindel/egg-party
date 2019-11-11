@@ -3,13 +3,14 @@ import { Request, Response } from 'express';
 import * as qs from 'qs';
 
 import { ISlackInteractionPayload } from '../../../shared/models/slack/interactions/slack-interaction-payload.model';
+
 import { SlackApiService } from '../../services/slack';
-import { SlackInteractionHandlerService } from '../../services/slack/slack-interaction-handler.service';
+import { SlackInteractionHandler } from '../../services/slack/handlers';
 
 @Controller('v1/slack/interactions')
 export class SlackInteractionsController
 {
-    constructor(private api: SlackApiService, private interactionHandler: SlackInteractionHandlerService) { }
+    constructor(private api: SlackApiService, private interactionHandler: SlackInteractionHandler) { }
 
     @Post()
     public async handleInteraction(@Req() request: Request, @Res() respond: Response): Promise<Response>

@@ -1,7 +1,7 @@
-import { ConversationType } from '../../../shared/models/slack/conversations';
-import { ISlackEventMessagePosted } from '../../../shared/models/slack/events';
+import { ConversationType } from '../../../../shared/models/slack/conversations';
+import { ISlackEventMessagePosted } from '../../../../shared/models/slack/events';
 
-import { EggGivingService } from '../egg-giving.service';
+import { EggGivingService } from '../../egg-giving.service';
 
 export class SlackMessageHandler
 {

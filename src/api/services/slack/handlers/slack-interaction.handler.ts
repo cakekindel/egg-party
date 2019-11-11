@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { ChickenRepo, SlackUserRepo } from '../../../db/repos';
+import { ChickenRepo, SlackUserRepo } from '../../../../db/repos';
 
-import { SlackApiService } from './slack-api.service';
-import { SlackMessageBuilderService } from './slack-message-builder.service';
+import { SlackApiService } from '../slack-api.service';
+import { SlackMessageBuilderService } from '../slack-message-builder.service';
 
-import { SlackInteractionId } from '../../../shared/enums';
-import { GuideBookPageId } from '../../../shared/models/guide-book';
-import { ISlackInteractionPayload } from '../../../shared/models/slack/interactions/slack-interaction-payload.model';
-import { SlackGuideBookService } from './slack-guide-book.service';
+import { SlackInteractionId } from '../../../../shared/enums';
+import { GuideBookPageId } from '../../../../shared/models/guide-book';
+import { ISlackInteractionPayload } from '../../../../shared/models/slack/interactions/slack-interaction-payload.model';
+import { SlackGuideBookService } from '../slack-guide-book.service';
 
 @Injectable()
 export class SlackInteractionHandler
