@@ -1,22 +1,18 @@
-import { Arg, Substitute } from '@fluffy-spoon/substitute';
+import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { suite, test } from 'mocha-typescript';
 
-import {
-    SlackApiService,
-    SlackGuideBookService,
-    SlackMessageBuilderService
-} from '../../../../src/api/services/slack';
-import { SlackInteractionHandler } from '../../../../src/api/services/slack/handlers';
-import { Chicken, SlackUser } from '../../../../src/db/entities';
-import { ChickenRepo, SlackUserRepo } from '../../../../src/db/repos';
-import { SlackInteractionId } from '../../../../src/shared/enums';
-import { GuideBookPageId } from '../../../../src/shared/models/guide-book';
-import { ISlackInteractionPayload } from '../../../../src/shared/models/slack/interactions/slack-interaction-payload.model';
-import { SlackBlockMessage } from '../../../../src/shared/models/slack/messages';
+import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from '../../../../../src/api/services/slack';
+import { SlackInteractionHandler } from '../../../../../src/api/services/slack/handlers';
+import { Chicken, SlackUser } from '../../../../../src/db/entities';
+import { ChickenRepo, SlackUserRepo } from '../../../../../src/db/repos';
+import { SlackInteractionId } from '../../../../../src/shared/enums';
+import { GuideBookPageId } from '../../../../../src/shared/models/guide-book';
+import { ISlackInteractionPayload } from '../../../../../src/shared/models/slack/interactions/slack-interaction-payload.model';
+import { SlackBlockMessage } from '../../../../../src/shared/models/slack/messages';
 
 @suite()
-export class SlackInteractionHandlerServiceSpec
+export class SlackInteractionHandlerSpec
 {
     @test()
     public async should_sendGuideBookPage_when_jumpedTo(): Promise<void>

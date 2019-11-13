@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
 
-import * as moment from 'moment';
-
 import { RepoBase } from './repo.base';
 
-import { ErrorUserOutOfEggs, ErrorUserTriedToGiveTooManyEggs } from '../../shared/errors';
 import { Egg, EntityName, SlackUser } from '../entities';
 import { ChickenRepo } from './chicken.repo';
 import { EggRepo } from './egg.repo';
@@ -47,30 +44,6 @@ export class SlackUserRepo extends RepoBase<SlackUser>
         await this.eggRepo.save(eggs);
 
         return await this.getBySlackId(slackUserId, slackWorkspaceId) as SlackUser;
-    }
-
-    // TODO: move to a business layer user service
-    /**
-     * @throws {ErrorUserOutOfEggs}
-     * @throws {ErrorUserTriedToGiveTooManyEggs}
-     */
-    public async throwIfUserCannotGiveEggs(slackUserId: string, slackWorkspaceId: string, noOfEggs: number): Promise<void>
-    {
-        const midnightLastNight = moment().hour(0).minute(0).second(0); // TODO: implement with moment
-        const user = await this.getBySlackId(slackUserId, slackWorkspaceId);
-
-        if (user)
-        {
-            const eggsGivenToday = (user.eggs || []).filter((e) => e.givenOnDate && moment(e.givenOnDate).isAfter(midnightLastNight));
-            if (eggsGivenToday.length > 4) {
-                throw new ErrorUserOutOfEggs();
-            }
-
-            const eggsCanGiveCount = 5 - eggsGivenToday.length;
-            if (noOfEggs > 5 - eggsCanGiveCount) {
-                throw new ErrorUserTriedToGiveTooManyEggs(eggsCanGiveCount, eggsGivenToday.length);
-            }
-        }
     }
 
     public async getOrCreate(slackUserId: string, slackWorkspaceId: string): Promise<{ wasCreated: boolean, user: SlackUser }>

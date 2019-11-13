@@ -9,7 +9,7 @@ import { SlackApiService } from '../../../src/api/services/slack';
 import { SlackEventHandler } from '../../../src/api/services/slack/handlers';
 
 @suite()
-class SlackEventsControllerSpec
+export class SlackEventsControllerSpec
 {
     @test()
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
@@ -29,7 +29,7 @@ class SlackEventsControllerSpec
         await controller.receiveEvent(request, respond);
 
         // assert
-        respond.received().sendStatus(401);
+        respond.received().sendStatus(HttpStatus.UNAUTHORIZED);
     }
 
     @test()
@@ -51,14 +51,10 @@ class SlackEventsControllerSpec
         const sendFake = fake(() => response);
         response.send().mimicks(sendFake);
 
-        const statusFake = fake(() => response);
-        response.status(Arg.any()).mimicks(statusFake);
-
         // act
         await controller.receiveEvent(request, response);
 
         // assert
-        statusFake.calledWith(HttpStatus.OK);
         sendFake.calledWith(challenge);
     }
 }

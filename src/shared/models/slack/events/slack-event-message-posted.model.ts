@@ -13,4 +13,6 @@ export interface ISlackEventMessagePosted extends ISlackEvent
     channel: string;
     channel_type: ConversationType;
     ts: string;
+
+    workspaceId: string;
 }

@@ -22,11 +22,29 @@ import { SlackMessageActionsBlock as Actions } from '../../../shared/models/slac
 import { SlackMessageContextBlock as Context } from '../../../shared/models/slack/messages/blocks/layout/context';
 import { SlackMessageDividerBlock as Divider } from '../../../shared/models/slack/messages/blocks/layout/divider';
 import { SlackMessageSectionBlock as Section } from '../../../shared/models/slack/messages/blocks/layout/section';
+import { SlackGuideBookService } from './slack-guide-book.service';
 
 // tslint:disable:max-line-length
 @Injectable()
 export class SlackMessageBuilderService
 {
+    constructor(private guideBookBuilder: SlackGuideBookService) { }
+
+    public guideBook(userId: string, botUserId: string): BlockMessage
+    {
+        return this.guideBookBuilder.build(userId, botUserId);
+    }
+
+    public triedToGiveTooManyEggs(): BlockMessage
+    {
+        return new BlockMessage([], 'You can\'t give that many eggs!');
+    }
+
+    public outOfEggs(): BlockMessage
+    {
+        return new BlockMessage([], 'You\'re out of eggs!');
+    }
+
     public testGiveEggsResponse(mentions: string[], eggCount: number): BlockMessage
     {
         return new BlockMessage([], `You gave ${mentions.join(', ')} each ${eggCount} egg(s)!`);
