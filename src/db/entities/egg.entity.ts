@@ -20,10 +20,10 @@ export class Egg extends EntityBase
     @JoinColumn({ name: 'ownedByUserId', referencedColumnName: 'id' })
     public ownedByUser?: SlackUser;
 
-    @ManyToOne(() => SlackUser, (user) => user.eggsGiven)
+    @ManyToOne(() => SlackUser, (user) => user.eggsGiven, { nullable: true })
     @JoinColumn({ name: 'givenByUserId', referencedColumnName: 'id' })
     public givenByUser?: SlackUser;
 
-    @Column()
+    @Column({ nullable: true })
     public givenOnDate?: Date;
 }
