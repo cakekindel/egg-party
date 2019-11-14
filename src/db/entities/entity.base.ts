@@ -1,4 +1,4 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class EntityBase
 {
@@ -7,4 +7,7 @@ export abstract class EntityBase
 
     @Column()
     public isActive: boolean = true;
+
+    @CreateDateColumn()
+    public createdDate: Date = new Date();
 }
