@@ -114,6 +114,10 @@
         "typedef": [
             true,
             "call-signature"
+        ],
+        "arrow-parens": [
+            true,
+            "ban-single-arg-parens"
         ]
     }
 }

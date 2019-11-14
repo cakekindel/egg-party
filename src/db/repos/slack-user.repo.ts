@@ -3,6 +3,7 @@ import { Connection } from 'typeorm';
 
 import { RepoBase } from './repo.base';
 
+import { SlackApiService, SlackMessageBuilderService } from '../../api/services/slack';
 import { Egg, EntityName, SlackUser } from '../entities';
 import { ChickenRepo } from './chicken.repo';
 import { EggRepo } from './egg.repo';
@@ -12,7 +13,14 @@ export class SlackUserRepo extends RepoBase<SlackUser>
 {
     protected entityType = SlackUser;
 
-    constructor(protected db: Connection, private chickenRepo: ChickenRepo, private eggRepo: EggRepo)
+    constructor
+    (
+        protected db: Connection,
+        private chickenRepo: ChickenRepo,
+        // TODO: remove when there's a provider layer SlackUser service
+        private slackApi: SlackApiService,
+        private messageBuilder: SlackMessageBuilderService,
+    )
     {
         super(db);
     }
@@ -34,18 +42,19 @@ export class SlackUserRepo extends RepoBase<SlackUser>
 
         const chickens = await this.chickenRepo.createNewUserChickens(savedUser);
 
-        const eggs = Array.from(Array(5)).map(() => new Egg());
-        eggs.forEach((egg, i) =>
-        {
-            egg.ownedByUser = savedUser;
-            egg.laidByChicken = chickens[i];
-        });
+        // const eggs = Array.from(Array(5)).map(() => new Egg());
+        // eggs.forEach((egg, i) =>
+        // {
+        //     egg.ownedByUser = savedUser;
+        //     egg.laidByChicken = chickens[i];
+        // });
 
-        await this.eggRepo.save(eggs);
+        // await this.eggRepo.save(eggs);
 
         return await this.getBySlackId(slackUserId, slackWorkspaceId) as SlackUser;
     }
 
+    // TODO: move to a provider layer SlackUser service
     public async getOrCreate(slackUserId: string, slackWorkspaceId: string): Promise<{ wasCreated: boolean, user: SlackUser }>
     {
         let wasCreated = false;
@@ -58,5 +67,18 @@ export class SlackUserRepo extends RepoBase<SlackUser>
         }
 
         return { wasCreated, user };
+    }
+
+    // TODO: move to a provider layer SlackUser service
+    public async getOrCreateAndSendGuideBook(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser>
+    {
+        const userMeta = await this.getOrCreate(slackUserId, slackWorkspaceId);
+        if (userMeta.wasCreated)
+        {
+            const botId = await this.slackApi.getBotUserId();
+            this.slackApi.sendDirectMessage(slackUserId, this.messageBuilder.guideBook(slackUserId, botId));
+        }
+
+        return userMeta.user;
     }
 }

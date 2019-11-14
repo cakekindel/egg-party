@@ -10,6 +10,7 @@ import { SlackEventHandler, SlackInteractionHandler, SlackMessageHandler } from 
 
 import { DbModule } from '../db/db.module';
 import { EggGivingService } from './services';
+import { DailyEggsService } from './services/daily-eggs.service';
 import { SlackCommandHandler } from './services/slack/handlers/slack-command.handler';
 
 @Module({
@@ -31,6 +32,7 @@ import { SlackCommandHandler } from './services/slack/handlers/slack-command.han
         SlackInteractionHandler,
         EggGivingService,
         SlackCommandHandler,
+        DailyEggsService,
     ],
     exports: [],
 })
