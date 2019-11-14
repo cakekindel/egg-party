@@ -1,23 +1,23 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Type } from '@nestjs/common';
 import { Connection, Repository as TypeOrmRepository } from 'typeorm';
 
-import { EntityBase, EntityName } from '../entities';
+import { EntityBase } from '../entities';
 
 export abstract class RepoBase<TEntity extends EntityBase>
 {
-    protected abstract entityName: EntityName;
+    protected abstract entityType: Type<TEntity>;
 
     constructor(@Inject(Connection) protected db: Connection) { }
 
     public async getAll(): Promise<TEntity[]>
     {
-        const repo = await this.getRepo();
-        return await repo.find();
+        const repo = this.getRepo();
+        return await repo.find({ where: { isActive: true, } });
     }
 
     public async getById(id: string | number): Promise<TEntity | undefined>
     {
-        const repo = await this.getRepo();
+        const repo = this.getRepo();
         return await repo.findOne(id);
     }
 
@@ -25,7 +25,7 @@ export abstract class RepoBase<TEntity extends EntityBase>
     public async save(entity: TEntity): Promise<TEntity>;
     public async save(entity: TEntity | TEntity[]): Promise<TEntity | TEntity[]>
     {
-        const repo = await this.getRepo();
+        const repo = this.getRepo();
 
         // TODO: remove `as any` when TypeOrm.DeepPartial supports generics better
         return await repo.save(entity as any);
@@ -33,13 +33,12 @@ export abstract class RepoBase<TEntity extends EntityBase>
 
     public async delete(entity: TEntity): Promise<void>
     {
-        const repo = await this.getRepo();
         entity.isActive = false;
         await this.save(entity);
     }
 
-    protected async getRepo(): Promise<TypeOrmRepository<TEntity>>
+    protected getRepo(): TypeOrmRepository<TEntity>
     {
-        return await this.db.getRepository<TEntity>(this.entityName);
+        return this.db.getRepository<TEntity>(this.entityType);
     }
 }

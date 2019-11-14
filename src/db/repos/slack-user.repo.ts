@@ -10,7 +10,7 @@ import { EggRepo } from './egg.repo';
 @Injectable()
 export class SlackUserRepo extends RepoBase<SlackUser>
 {
-    public entityName = EntityName.SlackUser;
+    protected entityType = SlackUser;
 
     constructor(protected db: Connection, private chickenRepo: ChickenRepo, private eggRepo: EggRepo)
     {
