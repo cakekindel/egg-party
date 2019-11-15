@@ -12,11 +12,14 @@ export class DailyEggsService
     {
         const midnightLastNight = moment().hour(0).minute(0).second(0);
         const refreshedToday = moment(user.dailyEggsLastRefreshedDate).isAfter(midnightLastNight);
-        const noGiveableEggsLeft = !user.eggs?.some(egg => !egg.givenByUser);
 
-        if (!refreshedToday && noGiveableEggsLeft)
+        const eggsLeftOver = user.eggs?.filter(egg => !egg.givenByUser) ?? [];
+        const maxDailyEggs = user.chickens?.length ?? 5;
+        const numberOfDailyEggsToMake = maxDailyEggs - eggsLeftOver.length;
+
+        if (!refreshedToday && numberOfDailyEggsToMake > 0)
         {
-            await this.createDailyEggs(user);
+            await this.createDailyEggs(user, numberOfDailyEggsToMake);
             user.dailyEggsLastRefreshedDate = new Date();
 
             return await this.userRepo.save(user);
@@ -25,10 +28,11 @@ export class DailyEggsService
         return user;
     }
 
-    private async createDailyEggs(user: SlackUser): Promise<void>
+    private async createDailyEggs(user: SlackUser, numberOfDailyEggsToMake: number): Promise<void>
     {
-        for (const chicken of user.chickens || [])
+        for (let i = 0; i < numberOfDailyEggsToMake; i++)
         {
+            const chicken = user.chickens?.[i]; // this is safe because of the check in ensureDailyEggsFresh
             const egg = new Egg();
             egg.ownedByUser = user;
             egg.laidByChicken = chicken;

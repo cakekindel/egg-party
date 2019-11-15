@@ -46,7 +46,7 @@ export class SlackMessageHandler
     private getUserIdsMentionedInMessage(messageText: string): string[]
     {
         const mentions = messageText.match(/<@\w+>/g) || [];
-        const userIds = mentions.map((m) => m.replace(/[<>@]/g, ''));
+        const userIds = mentions.map(m => m.replace(/[<>@]/g, ''));
         const uniqUserIds = new Set(userIds);
 
         return Array.from(uniqUserIds);

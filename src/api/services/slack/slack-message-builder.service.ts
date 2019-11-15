@@ -25,6 +25,7 @@ import { SlackMessageSectionBlock as Section } from '../../../shared/models/slac
 import { SlackGuideBookService } from './slack-guide-book.service';
 
 // tslint:disable:max-line-length
+// TODO: Remove this in favor of custom message objects.
 @Injectable()
 export class SlackMessageBuilderService
 {
