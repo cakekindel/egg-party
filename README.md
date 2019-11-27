@@ -1,8 +1,10 @@
 # Egg Party 🥚🎉
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/cakekindel/egg-party.svg)](https://greenkeeper.io/)
-
 ### Egg party is a Slack App for thanking teammates, raising chickens, and having a rowdy ol' time
+
+---
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/cakekindel/egg-party.svg)](https://greenkeeper.io/)
 
 ---
 
