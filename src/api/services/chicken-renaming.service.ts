@@ -13,12 +13,7 @@ export class ChickenRenamingService
         if (chicken.ownedByUser === undefined)
             throw new ErrorMissingRelatedData(Chicken, 'ownedByUser');
 
-        const waitingChicken = await this.getChickenAwaitingRenameForUser(
-                                   chicken.ownedByUser.slackUserId,
-                                   chicken.ownedByUser.slackWorkspaceId
-                               );
-        if (waitingChicken)
-            await this.setAwaitingRenameAndSave(waitingChicken, false);
+        await this.handleChickensAlreadyWaiting(chicken.ownedByUser);
 
         await this.setAwaitingRenameAndSave(chicken, true);
     }
@@ -55,5 +50,12 @@ export class ChickenRenamingService
             chicken.awaitingRename = awaitingRename;
             await this.chickenRepo.save(chicken);
         }
+    }
+
+    private async handleChickensAlreadyWaiting(user: SlackUser): Promise<void>
+    {
+        const waitingChicken = await this.getChickenAwaitingRenameForUser(user.slackUserId, user.slackWorkspaceId);
+        if (waitingChicken)
+            await this.setAwaitingRenameAndSave(waitingChicken, false);
     }
 }
