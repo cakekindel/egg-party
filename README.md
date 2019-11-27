@@ -5,8 +5,8 @@
 ---
 
 ![GitHub top language](https://img.shields.io/github/languages/top/cakekindel/egg-party)
-![Azure DevOps builds](https://img.shields.io/azure-devops/build/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)
-![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)
+[![Azure DevOps builds](https://img.shields.io/azure-devops/build/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)](https://dev.azure.com/egg-party/egg-party-api/_build?definitionId=4)
+[![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)](https://dev.azure.com/egg-party/egg-party-api/_dashboards/dashboard/663d6429-94b5-48ec-b08c-829ef80489aa)
 [![Greenkeeper badge](https://badges.greenkeeper.io/cakekindel/egg-party.svg)](https://greenkeeper.io/)
 
 
