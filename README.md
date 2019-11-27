@@ -96,7 +96,7 @@ TYPEORM_PASSWORD="password"
         <td>
             <nobr>
                 <code>npm test</code><br/>
-                <code>npm run test:single&#x2011;run</code>
+                <code>npm run test:single-run</code>
             </nobr>
         </td>
         <td>
@@ -125,7 +125,7 @@ TYPEORM_PASSWORD="password"
     <tr><th colspan="2">Database</th></tr>
     <tr>
         <td>
-            <nobr><code>npm run migration:generate</code></nobr>
+            <nobr><code>npm&nbsp;run&nbsp;migration:generate</code></nobr>
         </td>
         <td>
             Generate a TypeORM migration file based on changes made to entities since the last migration was made<br/><br/>
