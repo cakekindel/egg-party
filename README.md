@@ -12,11 +12,11 @@
 
 [![GitHub issues](https://img.shields.io/github/issues/cakekindel/egg-party?color=%2360bec4)](https://github.com/cakekindel/egg-party/issues)
 [![Good First Issues](https://img.shields.io/github/labels/cakekindel/egg-party/tag%3Agood%20first%20issue)](https://github.com/cakekindel/egg-party/labels/tag%3Agood%20first%20issue)
-[![Bugs](https://img.shields.io/github/labels/cakekindel/egg-party/type%3Abug)](https://github.com/cakekindel/egg-party/labels/type%3Abug)
 [![Features](https://img.shields.io/github/labels/cakekindel/egg-party/type%3Afeature)](https://github.com/cakekindel/egg-party/labels/type%3Afeature)
+[![Bugs](https://img.shields.io/github/labels/cakekindel/egg-party/type%3Abug)](https://github.com/cakekindel/egg-party/labels/type%3Abug)
 
 
-![CII Best Practices Tiered Percentage](https://img.shields.io/cii/percentage/3447)
+[![CII Best Practices Tiered Percentage](https://img.shields.io/cii/percentage/3447)](https://bestpractices.coreinfrastructure.org/en/projects/3447)
 ![GitHub](https://img.shields.io/github/license/cakekindel/egg-party)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party?ref=badge_shield)
 
