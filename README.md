@@ -3,7 +3,7 @@
 ### Egg party is a Slack App for thanking teammates, raising chickens, and having a rowdy ol' time
 
 ---
-
+[![Build Status](https://dev.azure.com/egg-party/egg-party-api/_apis/build/status/Egg%20Party%20CI%20Checks?branchName=master)](https://dev.azure.com/egg-party/egg-party-api/_build/latest?definitionId=4&branchName=master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/cakekindel/egg-party.svg)](https://greenkeeper.io/)
 
 ---
