@@ -4,6 +4,24 @@
 
 ---
 
+![GitHub top language](https://img.shields.io/github/languages/top/cakekindel/egg-party)
+[![Azure DevOps builds](https://img.shields.io/azure-devops/build/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)](https://dev.azure.com/egg-party/egg-party-api/_build?definitionId=4)
+[![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)](https://dev.azure.com/egg-party/egg-party-api/_dashboards/dashboard/663d6429-94b5-48ec-b08c-829ef80489aa)
+[![Greenkeeper badge](https://badges.greenkeeper.io/cakekindel/egg-party.svg)](https://greenkeeper.io/)
+
+
+[![GitHub issues](https://img.shields.io/github/issues/cakekindel/egg-party?color=%2360bec4)](https://github.com/cakekindel/egg-party/issues)
+[![Good First Issues](https://img.shields.io/github/labels/cakekindel/egg-party/tag%3Agood%20first%20issue)](https://github.com/cakekindel/egg-party/labels/tag%3Agood%20first%20issue)
+[![Features](https://img.shields.io/github/labels/cakekindel/egg-party/type%3Afeature)](https://github.com/cakekindel/egg-party/labels/type%3Afeature)
+[![Bugs](https://img.shields.io/github/labels/cakekindel/egg-party/type%3Abug)](https://github.com/cakekindel/egg-party/labels/type%3Abug)
+
+
+[![CII Best Practices Tiered Percentage](https://img.shields.io/cii/percentage/3447)](https://bestpractices.coreinfrastructure.org/en/projects/3447)
+![GitHub](https://img.shields.io/github/license/cakekindel/egg-party)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party?ref=badge_shield)
+
+---
+
 #### Table of Contents
 - [**Want to contribute?**](#want-to-contribute)
 - [**Local Setup**](#local-setup)
@@ -78,7 +96,7 @@ TYPEORM_PASSWORD="password"
         <td>
             <nobr>
                 <code>npm test</code><br/>
-                <code>npm run test:single&#x2011;run</code>
+                <code>npm run test:single-run</code>
             </nobr>
         </td>
         <td>
@@ -107,7 +125,7 @@ TYPEORM_PASSWORD="password"
     <tr><th colspan="2">Database</th></tr>
     <tr>
         <td>
-            <nobr><code>npm run migration:generate</code></nobr>
+            <nobr><code>npm&nbsp;run&nbsp;migration:generate</code></nobr>
         </td>
         <td>
             Generate a TypeORM migration file based on changes made to entities since the last migration was made<br/><br/>
