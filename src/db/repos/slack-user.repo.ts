@@ -4,9 +4,8 @@ import { Connection } from 'typeorm';
 import { RepoBase } from './repo.base';
 
 import { SlackApiService, SlackMessageBuilderService } from '../../api/services/slack';
-import { Egg, EntityName, SlackUser } from '../entities';
+import { SlackUser } from '../entities';
 import { ChickenRepo } from './chicken.repo';
-import { EggRepo } from './egg.repo';
 
 @Injectable()
 export class SlackUserRepo extends RepoBase<SlackUser>
@@ -41,15 +40,6 @@ export class SlackUserRepo extends RepoBase<SlackUser>
         const savedUser = await this.save(user);
 
         const chickens = await this.chickenRepo.createNewUserChickens(savedUser);
-
-        // const eggs = Array.from(Array(5)).map(() => new Egg());
-        // eggs.forEach((egg, i) =>
-        // {
-        //     egg.ownedByUser = savedUser;
-        //     egg.laidByChicken = chickens[i];
-        // });
-
-        // await this.eggRepo.save(eggs);
 
         return await this.getBySlackId(slackUserId, slackWorkspaceId) as SlackUser;
     }
