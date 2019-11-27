@@ -4,7 +4,21 @@
 
 ---
 
+![GitHub top language](https://img.shields.io/github/languages/top/cakekindel/egg-party)
+![Azure DevOps builds](https://img.shields.io/azure-devops/build/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/egg-party/466bd0c0-cb88-4264-9c33-42defabff549/4)
 [![Greenkeeper badge](https://badges.greenkeeper.io/cakekindel/egg-party.svg)](https://greenkeeper.io/)
+
+
+[![GitHub issues](https://img.shields.io/github/issues/cakekindel/egg-party?color=%2360bec4)](https://github.com/cakekindel/egg-party/issues)
+[![Good First Issues](https://img.shields.io/github/labels/cakekindel/egg-party/tag%3Agood%20first%20issue)](https://github.com/cakekindel/egg-party/labels/tag%3Agood%20first%20issue)
+[![Bugs](https://img.shields.io/github/labels/cakekindel/egg-party/type%3Abug)](https://github.com/cakekindel/egg-party/labels/type%3Abug)
+[![Features](https://img.shields.io/github/labels/cakekindel/egg-party/type%3Afeature)](https://github.com/cakekindel/egg-party/labels/type%3Afeature)
+
+
+![CII Best Practices Tiered Percentage](https://img.shields.io/cii/percentage/3447)
+![GitHub](https://img.shields.io/github/license/cakekindel/egg-party)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party?ref=badge_shield)
 
 ---
 
