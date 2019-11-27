@@ -5,7 +5,7 @@ import { DbConnectionProvider } from './db-connection.provider';
 import { ChickenRepo, EggRepo, SlackUserRepo } from './repos';
 
 // TODO: NOT THIS!!!
-import { SlackApiService, SlackMessageBuilderService } from '../api/services/slack';
+import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from '../api/services/slack';
 
 @Module({
     providers: [
@@ -15,7 +15,7 @@ import { SlackApiService, SlackMessageBuilderService } from '../api/services/sla
         ChickenRepo,
         EggRepo,
         // TODO: NOT THIS!!!
-        SlackApiService, SlackMessageBuilderService,
+        SlackApiService, SlackMessageBuilderService, SlackGuideBookService
     ],
     exports: [
         SlackUserRepo,

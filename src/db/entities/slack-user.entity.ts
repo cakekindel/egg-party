@@ -14,7 +14,7 @@ export class SlackUser extends EntityBase
     @Column()
     public slackWorkspaceId: string = '';
 
-    @Column()
+    @Column({ default: () => 'GETDATE()' })
     public dailyEggsLastRefreshedDate: Date = new Date();
 
     @OneToMany(() => Egg, egg => egg.ownedByUser)

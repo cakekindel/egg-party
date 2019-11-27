@@ -22,7 +22,7 @@ export class DailyEggsService
             await this.createDailyEggs(user, numberOfDailyEggsToMake);
             user.dailyEggsLastRefreshedDate = new Date();
 
-            return await this.userRepo.save(user);
+            await this.userRepo.save(user);
         }
 
         return user;

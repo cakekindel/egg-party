@@ -15,6 +15,20 @@
                 "<node_internals>/**",
                 "${workspaceFolder}/node_modules/**"
             ]
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to \"npm:test-debug\"",
+            "smartStep": true,
+            "showAsyncStacks": true,
+            "protocol": "inspector",
+            "timeout": 60000,
+            "port": 9231,
+            "skipFiles": [
+                "<node_internals>/**",
+                "${workspaceFolder}/node_modules/**"
+            ]
         }
     ]
 }

@@ -9,6 +9,7 @@ import { Egg, SlackUser } from '../entities';
 export class EggRepo extends RepoBase<Egg>
 {
     protected entityType = Egg;
+    protected defaultRelations: Array<keyof Egg> = ['laidByChicken', 'givenByUser', 'ownedByUser'];
 
     public async giveToUser(egg: Egg, toUser: SlackUser): Promise<void>
     {

@@ -6,19 +6,20 @@ import { EntityBase } from '../entities';
 export abstract class RepoBase<TEntity extends EntityBase>
 {
     protected abstract entityType: Type<TEntity>;
+    protected abstract defaultRelations: Array<keyof TEntity> = [];
 
     constructor(@Inject(Connection) protected db: Connection) { }
 
     public async getAll(): Promise<TEntity[]>
     {
         const repo = this.getRepo();
-        return await repo.find({ where: { isActive: true, } });
+        return await repo.find({ where: { isActive: true, }, relations: this.defaultRelations as string[] });
     }
 
     public async getById(id: string | number): Promise<TEntity | undefined>
     {
         const repo = this.getRepo();
-        return await repo.findOne(id);
+        return await repo.findOne(id, { relations: this.defaultRelations as string[] });
     }
 
     public async save(entities: TEntity[]): Promise<TEntity[]>;

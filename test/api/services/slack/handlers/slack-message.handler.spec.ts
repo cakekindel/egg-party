@@ -3,34 +3,71 @@ import { suite, test } from 'mocha-typescript';
 
 import { expect } from 'chai';
 import { fake } from 'sinon';
+import { ChickenRenamingService } from '../../../../../src/api/services/chicken-renaming.service';
 import { EggGivingService } from '../../../../../src/api/services/egg-giving.service';
 import { SlackMessageHandler } from '../../../../../src/api/services/slack/handlers';
 import { SlackCommandHandler } from '../../../../../src/api/services/slack/handlers/slack-command.handler';
+import { Chicken } from '../../../../../src/db/entities';
 import { SlackDmCommand } from '../../../../../src/shared/enums';
 import { ConversationType } from '../../../../../src/shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../../src/shared/models/slack/events';
+import { UnitTestSetup } from '../../../../test-utilities';
 
 @suite()
 export class SlackMessageHandlerSpec
 {
     @test()
-    public async should_callCommandHandler_when_directMessageReceived(): Promise<void>
+    public async should_callCommandHandler_when_dmReceivedAndNoChickensToRename(): Promise<void>
     {
         // arrange
-        // - dependencies
-        const eggGivingService = Substitute.for<EggGivingService>();
-        const commandHandler = Substitute.for<SlackCommandHandler>();
         // - test data
         const command = 'test_command_ooOOoo';
         const message = this.createMessage({ text: command, channel_type: ConversationType.DirectMessage });
-        // - unit under test
-        const uut = new SlackMessageHandler(eggGivingService, commandHandler);
+
+        // - dependencies
+        const unitTestSetup = this.getUnitTestSetup();
+
+        // - dependency setup
+        unitTestSetup.dependencies.get(ChickenRenamingService)
+                                  .getChickenAwaitingRenameForUser(message.user, message.workspaceId)
+                                  .returns(Promise.resolve(undefined));
 
         // act
-        await uut.handleMessage(message);
+        await unitTestSetup.unitUnderTest.handleMessage(message);
 
         // assert
-        commandHandler.received().handleCommand(message.text as SlackDmCommand);
+        unitTestSetup.dependencies.get(SlackCommandHandler)
+                                  .received()
+                                  .handleCommand(message.text as SlackDmCommand);
+    }
+
+    @test()
+    public async should_notCallCommandHandler_when_dmReceivedAndChickensToRename(): Promise<void>
+    {
+        // arrange
+        // - test data
+        const command = 'test_command_ooOOoo';
+        const message = this.createMessage({ text: command, channel_type: ConversationType.DirectMessage });
+
+        // - dependencies
+        const unitTestSetup = this.getUnitTestSetup();
+
+        // - dependency setup
+        unitTestSetup.dependencies.get(ChickenRenamingService)
+                                  .getChickenAwaitingRenameForUser(message.user, message.workspaceId)
+                                  .returns(Promise.resolve(new Chicken()));
+
+        // act
+        await unitTestSetup.unitUnderTest.handleMessage(message);
+
+        // assert
+        unitTestSetup.dependencies.get(SlackCommandHandler)
+                                  .didNotReceive()
+                                  .handleCommand(message.text as SlackDmCommand);
+
+        unitTestSetup.dependencies.get(ChickenRenamingService)
+                                  .received()
+                                  .renameChicken(Arg.any(), message.text);
     }
 
     @test()
@@ -56,15 +93,13 @@ export class SlackMessageHandlerSpec
             },
         ];
 
-        const giverId = 'U2222';
-        const workspaceId = 'W111';
-
         for (const testCase of testCases)
         {
             // arrange
             // - dependencies
             const commandHandler = Substitute.for<SlackCommandHandler>();
             const eggGivingService = Substitute.for<EggGivingService>();
+            const chickenRenamingSvc = Substitute.for<ChickenRenamingService>();
 
             // - dependency setup
             const giveEggsFake = fake();
@@ -72,22 +107,20 @@ export class SlackMessageHandlerSpec
 
             // - test data
             const message = this.createMessage({
-                user: giverId,
                 text: testCase.message,
-                channel_type: ConversationType.Public,
-                workspaceId
+                channel_type: ConversationType.Public
             });
 
             // - unit under test
-            const uut = new SlackMessageHandler(eggGivingService, commandHandler);
+            const uut = new SlackMessageHandler(eggGivingService, commandHandler, chickenRenamingSvc);
 
             // act
             await uut.handleMessage(message);
 
             // assert
             expect(giveEggsFake.calledOnce).to.be.true;
-            expect(giveEggsFake.lastCall.args[0]).to.equal(workspaceId);
-            expect(giveEggsFake.lastCall.args[1]).to.equal(giverId);
+            expect(giveEggsFake.lastCall.args[0]).to.equal(message.workspaceId);
+            expect(giveEggsFake.lastCall.args[1]).to.equal(message.user);
             expect(giveEggsFake.lastCall.args[2]).to.equal(testCase.expectedEggCount);
             expect(giveEggsFake.lastCall.args[3]).to.deep.equal(testCase.expectedUserIds);
         }
@@ -100,11 +133,12 @@ export class SlackMessageHandlerSpec
         // - dependencies
         const eggGivingService = Substitute.for<EggGivingService>();
         const commandHandler = Substitute.for<SlackCommandHandler>();
+        const chickenRenamingSvc = Substitute.for<ChickenRenamingService>();
         // - test data
         const messageText = '<@U1234> have you been to spatula city?';
         const message = this.createMessage({ text: messageText, channel_type: ConversationType.Public });
         // - unit under test
-        const uut = new SlackMessageHandler(eggGivingService, commandHandler);
+        const uut = new SlackMessageHandler(eggGivingService, commandHandler, chickenRenamingSvc);
 
         // act
         await uut.handleMessage(message);
@@ -113,8 +147,15 @@ export class SlackMessageHandlerSpec
         eggGivingService.didNotReceive().giveEggs(Arg.any(), Arg.any(), Arg.any(), Arg.any());
     }
 
+    private getUnitTestSetup(): UnitTestSetup<SlackMessageHandler>
+    {
+        return new UnitTestSetup(SlackMessageHandler, [EggGivingService, SlackCommandHandler, ChickenRenamingService]);
+    }
+
     private createMessage(msgParts: Partial<ISlackEventMessagePosted>): ISlackEventMessagePosted
     {
+        Object.assign(msgParts, { user: 'U123', workspaceId: 'W123' });
+
         return msgParts as ISlackEventMessagePosted;
     }
 }

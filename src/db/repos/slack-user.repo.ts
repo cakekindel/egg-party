@@ -12,6 +12,7 @@ import { EggRepo } from './egg.repo';
 export class SlackUserRepo extends RepoBase<SlackUser>
 {
     protected entityType = SlackUser;
+    protected defaultRelations: Array<keyof SlackUser> = ['chickens', 'eggs', 'eggsGiven'];
 
     constructor
     (
@@ -27,9 +28,8 @@ export class SlackUserRepo extends RepoBase<SlackUser>
 
     public async getBySlackId(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser | undefined>
     {
-        const repo = await this.getRepo();
-        const relations: Array<keyof SlackUser> = ['chickens', 'eggs', 'eggsGiven'];
-        return await repo.findOne({ where: { slackUserId, slackWorkspaceId }, relations });
+        const repo = this.getRepo();
+        return await repo.findOne({ where: { slackUserId, slackWorkspaceId }, relations: this.defaultRelations });
     }
 
     public async create(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser>

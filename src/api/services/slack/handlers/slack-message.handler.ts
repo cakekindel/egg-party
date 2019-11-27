@@ -3,13 +3,19 @@ import { Injectable } from '@nestjs/common';
 import { SlackDmCommand } from '../../../../shared/enums';
 import { ConversationType } from '../../../../shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../shared/models/slack/events';
+import { ChickenRenamingService } from '../../chicken-renaming.service';
 import { EggGivingService } from '../../egg-giving.service';
 import { SlackCommandHandler } from './slack-command.handler';
 
 @Injectable()
 export class SlackMessageHandler
 {
-    constructor(private eggGivingService: EggGivingService, private commandHandler: SlackCommandHandler) { }
+    constructor
+    (
+        private eggGivingService: EggGivingService,
+        private commandHandler: SlackCommandHandler,
+        private chickenRenamingService: ChickenRenamingService,
+    ) { }
 
     public async handleMessage(messageEvent: ISlackEventMessagePosted): Promise<void>
     {
@@ -25,8 +31,20 @@ export class SlackMessageHandler
 
     private async handleDirectMessage(messageEvent: ISlackEventMessagePosted): Promise<void>
     {
-        const command = messageEvent.text as SlackDmCommand;
-        return await this.commandHandler.handleCommand(command);
+        const text = messageEvent.text as SlackDmCommand;
+        const chickenAwaitingRename = await this.chickenRenamingService.getChickenAwaitingRenameForUser(
+                                                                           messageEvent.user,
+                                                                           messageEvent.workspaceId
+                                                                       );
+
+        if (chickenAwaitingRename !== undefined)
+        {
+            return await this.chickenRenamingService.renameChicken(chickenAwaitingRename, text);
+        }
+        else
+        {
+            return await this.commandHandler.handleCommand(text);
+        }
     }
 
     private async handleChannelMessage(messageEvent: ISlackEventMessagePosted): Promise<void>
