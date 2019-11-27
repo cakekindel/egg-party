@@ -4,6 +4,10 @@
 
 ---
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/cakekindel/egg-party.svg)](https://greenkeeper.io/)
+
+---
+
 #### Table of Contents
 - [**Want to contribute?**](#want-to-contribute)
 - [**Local Setup**](#local-setup)
