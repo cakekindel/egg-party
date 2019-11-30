@@ -38,7 +38,7 @@ export class SlackMessageHandlerSpec
         // assert
         unitTestSetup.dependencies.get(SlackCommandHandler)
                                   .received()
-                                  .handleCommand(message.text as SlackDmCommand);
+                                  .handleCommand(message.user, message.workspaceId, message.text as SlackDmCommand);
     }
 
     @test()
@@ -63,7 +63,7 @@ export class SlackMessageHandlerSpec
         // assert
         unitTestSetup.dependencies.get(SlackCommandHandler)
                                   .didNotReceive()
-                                  .handleCommand(message.text as SlackDmCommand);
+                                  .handleCommand(message.user, message.workspaceId, message.text as SlackDmCommand);
 
         unitTestSetup.dependencies.get(ChickenRenamingService)
                                   .received()
@@ -149,7 +149,7 @@ export class SlackMessageHandlerSpec
 
     private getUnitTestSetup(): UnitTestSetup<SlackMessageHandler>
     {
-        return new UnitTestSetup(SlackMessageHandler, [EggGivingService, SlackCommandHandler, ChickenRenamingService]);
+        return new UnitTestSetup(SlackMessageHandler);
     }
 
     private createMessage(msgParts: Partial<ISlackEventMessagePosted>): ISlackEventMessagePosted

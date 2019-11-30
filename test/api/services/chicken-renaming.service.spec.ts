@@ -196,10 +196,7 @@ export class ChickenRenamingServiceSpec
 
     private getUnitTestSetup(): UnitTestSetup<ChickenRenamingService>
     {
-        return new UnitTestSetup(
-            ChickenRenamingService,
-            [ChickenRepo, SlackUserRepo]
-        );
+        return new UnitTestSetup(ChickenRenamingService);
     }
 
     private createTestUser(chickens?: Chicken[]): SlackUser

@@ -5,7 +5,7 @@ export class DependencySubstituteMap
 {
     private _unsafeMap = new Map<Type<unknown>, SubstituteOf<any>>();
 
-    constructor(dependencyTypes?: Array<Type<unknown>>)
+    constructor(dependencyTypes: Array<Type<unknown>>)
     {
         dependencyTypes.forEach(type => this.add(type));
     }
@@ -15,9 +15,13 @@ export class DependencySubstituteMap
         return Array.from(this._unsafeMap.values());
     }
 
-    public get<TDep>(dependencyType: Type<TDep>): SubstituteOf<TDep> | undefined
+    public get<TDep>(dependencyType: Type<TDep>): SubstituteOf<TDep>
     {
-        return this._unsafeMap.get(dependencyType);
+        const substitute = this._unsafeMap.get(dependencyType);
+        if (substitute === undefined)
+            throw new Error(`DependencySubstituteMap: Substitute for ${dependencyType.name} is not registered.`);
+
+        return substitute;
     }
 
     private add(dependencyType: Type<unknown>): void

@@ -9,9 +9,16 @@ export class UnitTestSetup<TUnitUnderTest>
     public unitUnderTest: TUnitUnderTest;
     public dependencies: DependencySubstituteMap;
 
-    constructor(uutType: Type<TUnitUnderTest>, dependencyTypes: Array<Type<unknown>>)
+    constructor(uutType: Type<TUnitUnderTest>)
     {
+        const dependencyTypes = UnitTestSetup.getDependencyTypesFromMetadata(uutType);
+
         this.dependencies = new DependencySubstituteMap(dependencyTypes);
         this.unitUnderTest = new uutType(...this.dependencies.getAll());
+    }
+
+    private static getDependencyTypesFromMetadata(type: Type<unknown>): Array<Type<unknown>>
+    {
+        return Reflect.getMetadata('design:paramtypes', type) || [];
     }
 }
