@@ -29,12 +29,12 @@ export class SlackMessageHandler
          }
     }
 
-    private async handleDirectMessage(messageEvent: ISlackEventMessagePosted): Promise<void>
+    private async handleDirectMessage(message: ISlackEventMessagePosted): Promise<void>
     {
-        const text = messageEvent.text as SlackDmCommand;
+        const text = message.text as SlackDmCommand;
         const chickenAwaitingRename = await this.chickenRenamingService.getChickenAwaitingRenameForUser(
-                                                                           messageEvent.user,
-                                                                           messageEvent.workspaceId
+                                                                           message.user,
+                                                                           message.workspaceId
                                                                        );
 
         if (chickenAwaitingRename !== undefined)
@@ -43,7 +43,7 @@ export class SlackMessageHandler
         }
         else
         {
-            return await this.commandHandler.handleCommand(text);
+            return await this.commandHandler.handleCommand(message.user, message.workspaceId, text);
         }
     }
 
