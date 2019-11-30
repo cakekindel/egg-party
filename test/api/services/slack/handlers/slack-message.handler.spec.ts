@@ -5,12 +5,12 @@ import { expect } from 'chai';
 import { fake } from 'sinon';
 import { ChickenRenamingService } from '../../../../../src/api/services/chicken-renaming.service';
 import { EggGivingService } from '../../../../../src/api/services/egg-giving.service';
-import { SlackMessageHandler } from '../../../../../src/api/services/slack/handlers';
-import { SlackCommandHandler } from '../../../../../src/api/services/slack/handlers/slack-command.handler';
+import { SlackCommandHandler, SlackMessageHandler } from '../../../../../src/api/services/slack/handlers';
 import { Chicken } from '../../../../../src/db/entities';
 import { SlackDmCommand } from '../../../../../src/shared/enums';
 import { ConversationType } from '../../../../../src/shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../../src/shared/models/slack/events';
+import { MessageSubtype } from '../../../../../src/shared/models/slack/events/message-subtype.enum';
 import { UnitTestSetup } from '../../../../test-utilities';
 
 @suite()
@@ -68,6 +68,32 @@ export class SlackMessageHandlerSpec
         unitTestSetup.dependencies.get(ChickenRenamingService)
                                   .received()
                                   .renameChicken(Arg.any(), message.text);
+    }
+
+    @test()
+    public async should_notCallServices_when_botDmReceived(): Promise<void>
+    {
+        // arrange
+        const message = this.createMessage({
+            text: '🤖 BRRP VOOP MMMM EEEE',
+            channel_type: ConversationType.DirectMessage,
+            subtype: MessageSubtype.Bot,
+        });
+        message.user = undefined;
+
+        const unitTestSetup = this.getUnitTestSetup();
+
+        // act
+        await unitTestSetup.unitUnderTest.handleMessage(message);
+
+        // assert
+        unitTestSetup.dependencies.get(SlackCommandHandler)
+                                  .didNotReceive()
+                                  .handleCommand(Arg.any(), Arg.any(), Arg.any());
+
+        unitTestSetup.dependencies.get(ChickenRenamingService)
+                                  .didNotReceive()
+                                  .renameChicken(Arg.any(), Arg.any());
     }
 
     @test()

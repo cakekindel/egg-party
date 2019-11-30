@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { SlackDmCommand } from '../../../../shared/enums';
 import { ConversationType } from '../../../../shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../shared/models/slack/events';
+import { MessageSubtype } from '../../../../shared/models/slack/events/message-subtype.enum';
 import { ChickenRenamingService } from '../../chicken-renaming.service';
 import { EggGivingService } from '../../egg-giving.service';
 import { SlackCommandHandler } from './slack-command.handler';
@@ -19,14 +20,18 @@ export class SlackMessageHandler
 
     public async handleMessage(messageEvent: ISlackEventMessagePosted): Promise<void>
     {
-         if (messageEvent.channel_type === ConversationType.DirectMessage)
-         {
-             await this.handleDirectMessage(messageEvent);
-         }
-         else if (messageEvent.channel_type === ConversationType.Public)
-         {
-             await this.handleChannelMessage(messageEvent);
-         }
+        if (!this.isMessageFromAUser(messageEvent))
+        {
+            return;
+        }
+        else if (messageEvent.channel_type === ConversationType.DirectMessage)
+        {
+            await this.handleDirectMessage(messageEvent);
+        }
+        else if (messageEvent.channel_type === ConversationType.Public)
+        {
+            await this.handleChannelMessage(messageEvent);
+        }
     }
 
     private async handleDirectMessage(message: ISlackEventMessagePosted): Promise<void>
@@ -74,5 +79,10 @@ export class SlackMessageHandler
     {
         const eggCount = (messageText.match(/:egg:/g) || []).length;
         return eggCount;
+    }
+
+    private isMessageFromAUser(message: ISlackEventMessagePosted): boolean
+    {
+        return message.subtype === MessageSubtype.Bot;
     }
 }
