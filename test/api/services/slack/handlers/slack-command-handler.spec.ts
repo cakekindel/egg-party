@@ -2,7 +2,7 @@ import { suite, test } from 'mocha-typescript';
 
 import { Arg } from '@fluffy-spoon/substitute';
 import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from '../../../../../src/api/services/slack';
-import { SlackCommandHandler } from '../../../../../src/api/services/slack/handlers/slack-command.handler';
+import { SlackCommandHandler } from '../../../../../src/api/services/slack/handlers';
 import { SlackUser } from '../../../../../src/db/entities';
 import { SlackUserRepo } from '../../../../../src/db/repos';
 import { SlackDmCommand } from '../../../../../src/shared/enums';
