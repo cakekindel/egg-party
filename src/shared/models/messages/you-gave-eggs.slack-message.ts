@@ -1,6 +1,7 @@
 import { SlackBlockMessage } from '../slack/messages';
+import { SlackMessageSectionBlock } from '../slack/messages/blocks/layout/section';
 
-export class SlackMessageUserGaveEggs extends SlackBlockMessage
+export class SlackMessageYouGaveEggs extends SlackBlockMessage
 {
     constructor(userIds: string[], numberOfEggsGivenEach: number, numberOfEggsLeft: number)
     {
@@ -21,6 +22,11 @@ export class SlackMessageUserGaveEggs extends SlackBlockMessage
             mentionsReadable = mentions.join(', ');
         }
 
-        super([], `You gave ${numberOfEggsGivenEach} to ${mentionsReadable}. Great job! I bet they're honored. I know I would be.`);
+        // tslint:disable:max-line-length
+        super([
+            SlackMessageSectionBlock.fromText(`You gave ${numberOfEggsGivenEach} to ${mentionsReadable} (${numberOfEggsLeft} eggs left today)`),
+            SlackMessageSectionBlock.fromText(`Great job! I bet they're honored. I know I would be.`),
+        ]);
+        // tslint:enable:max-line-length
     }
 }

@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Egg, SlackUser } from '../../db/entities';
 import { EggRepo, SlackUserRepo } from '../../db/repos';
 import {
-    SlackMessageUserGaveEggs,
     SlackMessageYouCantGiveEggsToEggParty,
-    SlackMessageYouCantGiveEggsToYourself
+    SlackMessageYouCantGiveEggsToYourself,
+    SlackMessageYouGaveEggs
 } from '../../shared/models/messages';
 import { DailyEggsService } from './daily-eggs.service';
 import { SlackApiService, SlackMessageBuilderService } from './slack';
@@ -38,7 +38,7 @@ export class EggGivingService
                 await this.giveEggsToUser(giver, giveNumberOfEggs, toUser);
 
             const giveableEggsLeft = (await this.getGiveableEggs(giver)).length;
-            const message = new SlackMessageUserGaveEggs(toUsers, giveNumberOfEggs, giveableEggsLeft);
+            const message = new SlackMessageYouGaveEggs(toUsers, giveNumberOfEggs, giveableEggsLeft);
             await this.slackApi.sendDirectMessage(giver.slackUserId, message);
         }
     }

@@ -8,9 +8,9 @@ import { SlackApiService, SlackMessageBuilderService } from '../../../src/api/se
 import { Egg, SlackUser } from '../../../src/db/entities';
 import { EggRepo, SlackUserRepo } from '../../../src/db/repos';
 import {
-    SlackMessageUserGaveEggs,
     SlackMessageYouCantGiveEggsToEggParty,
-    SlackMessageYouCantGiveEggsToYourself
+    SlackMessageYouCantGiveEggsToYourself,
+    SlackMessageYouGaveEggs
 } from '../../../src/shared/models/messages';
 
 @suite()
@@ -173,7 +173,7 @@ export class EggGivingServiceSpec
         await uut.giveEggs(workspaceId, userId, eggCount, giveToIds);
 
         // assert
-        slackApi.received().sendDirectMessage(userId, Arg.is(m => m instanceof SlackMessageUserGaveEggs));
+        slackApi.received().sendDirectMessage(userId, Arg.is(m => m instanceof SlackMessageYouGaveEggs));
         eggRepo.received().giveToUser(egg, Arg.any());
     }
 
