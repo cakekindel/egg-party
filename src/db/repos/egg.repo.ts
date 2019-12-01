@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { RepoBase } from './repo.base';
 
-import moment = require('moment');
 import { Egg, SlackUser } from '../entities';
 
 @Injectable()
