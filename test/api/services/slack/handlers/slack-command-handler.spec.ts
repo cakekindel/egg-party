@@ -38,11 +38,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler>
         // assert
         unitTestSetup.dependencies.get(SlackGuideBookService)
                                   .received()
-                                  .build(user.slackUserId, this.testConstants.botId, GuideBookPageId.Welcome);
-
-        unitTestSetup.dependencies.get(SlackApiService)
-                                  .received()
-                                  .sendDirectMessage(user.slackUserId, this.testConstants.guideBook);
+                                  .send(user);
     }
 
     @test()
@@ -85,11 +81,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler>
 
         unitTestSetup.dependencies.get(SlackGuideBookService)
                                   .received(1)
-                                  .build(user.slackUserId, this.testConstants.botId, GuideBookPageId.LearnAboutCommands);
-
-        unitTestSetup.dependencies.get(SlackApiService)
-                                  .received(1)
-                                  .sendDirectMessage(user.slackUserId, this.testConstants.guideBook);
+                                  .send(user, GuideBookPageId.LearnAboutCommands);
     }
 
     // TODO: implement, tracked in issue #64

@@ -50,12 +50,12 @@ export class SlackCommandHandler
     {
         const unknownCommandMessage = new SlackMessageUnknownCommand();
         await this.slackApi.sendDirectMessage(user.slackUserId, unknownCommandMessage);
-        await this.sendGuideBook(user, GuideBookPageId.LearnAboutCommands);
+        await this.guideBook.send(user, GuideBookPageId.LearnAboutCommands);
     }
 
     private async handleHelp(user: SlackUser): Promise<void>
     {
-        await this.sendGuideBook(user);
+        await this.guideBook.send(user);
     }
 
     private async handleChickens(user: SlackUser): Promise<void>
@@ -64,14 +64,5 @@ export class SlackCommandHandler
         const message = this.messageBuilder.manageChickens(user.chickens ?? []);
 
         return await this.slackApi.sendDirectMessage(userId, message);
-    }
-
-    // TODO: move this to guidebookservice
-    private async sendGuideBook(user: SlackUser, page: GuideBookPageId = GuideBookPageId.Welcome): Promise<void>
-    {
-        const botId = await this.slackApi.getBotUserId();
-        const guideBook = this.guideBook.build(user.slackUserId, botId, page);
-
-        return await this.slackApi.sendDirectMessage(user.slackUserId, guideBook);
     }
 }
