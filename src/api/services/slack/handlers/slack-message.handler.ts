@@ -18,19 +18,18 @@ export class SlackMessageHandler
         private chickenRenamingService: ChickenRenamingService,
     ) { }
 
-    public async handleMessage(messageEvent: ISlackEventMessagePosted): Promise<void>
+    public async handleMessage(message: ISlackEventMessagePosted): Promise<void>
     {
-        if (!this.isMessageFromAUser(messageEvent))
-        {
+        if (!this.isMessageFromAUser(message))
             return;
-        }
-        else if (messageEvent.channel_type === ConversationType.DirectMessage)
+
+        if (message.channel_type === ConversationType.DirectMessage)
         {
-            await this.handleDirectMessage(messageEvent);
+            await this.handleDirectMessage(message);
         }
-        else if (messageEvent.channel_type === ConversationType.Public)
+        else if (message.channel_type === ConversationType.Public)
         {
-            await this.handleChannelMessage(messageEvent);
+            await this.handleChannelMessage(message);
         }
     }
 
