@@ -19,30 +19,4 @@ export class EggRepo extends RepoBase<Egg>
 
         await this.save(egg);
     }
-
-    public shouldCreateDailyEggs(user: SlackUser): boolean
-    {
-        const midnightLastNight = moment().hour(0).minute(0).second(0);
-
-        const giveableEggs = user.eggs?.filter(egg => !egg.givenByUser) ?? [];
-        const givenEggs = user.eggsGiven ?? [];
-        const allEggs = giveableEggs.concat(givenEggs);
-
-        const todaysDailyEggs = allEggs.filter(egg => moment(egg.createdDate).isAfter(midnightLastNight));
-
-        return todaysDailyEggs.length > 0;
-    }
-
-    public async createDailyEggs(user: SlackUser): Promise<void>
-    {
-        for (const chicken of user.chickens || [])
-        {
-            const egg = new Egg();
-            egg.ownedByUser = user;
-            egg.laidByChicken = chicken;
-            user.eggs?.push(egg);
-        }
-
-        this.save(user.eggs ?? []);
-    }
 }
