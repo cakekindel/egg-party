@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Chicken, SlackUser } from '../../db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../db/repos';
-import { ErrorMissingRelatedData } from '../../shared/errors/missing-related-data.error';
+import { ErrorMissingRelatedData } from '../../shared/errors';
 
 @Injectable()
 export class ChickenRenamingService
