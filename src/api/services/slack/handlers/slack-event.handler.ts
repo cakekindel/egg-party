@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { SlackEventType } from '../../../../shared/models/slack/events';
-import { ISlackEvent, ISlackEventMessagePosted, ISlackEventWrapper } from '../../../../shared/models/slack/events';
+import { ISlackEvent, SlackEventType } from '../../../../shared/models/slack/events';
+import { ISlackEventMessagePosted, ISlackEventWrapper } from '../../../../shared/models/slack/events';
+import { TryGetOutput } from '../../../../shared/utility/try-get.pattern';
 import { SlackMessageHandler } from './slack-message.handler';
 
 @Injectable()
@@ -11,15 +12,13 @@ export class SlackEventHandler
 
     public async handleEvent(event: ISlackEvent): Promise<void>
     {
-        const messageEvent = this.getMessageEventIfEventIsMessage(event);
+        const tryGetMessage = this.tryGetInnerMessageEvent(event);
 
-        if (messageEvent)
-        {
-            return await this.messageHandler.handleMessage(messageEvent);
-        }
+        if (tryGetMessage.success)
+            return await this.messageHandler.handleMessage(tryGetMessage.output);
     }
 
-    private getMessageEventIfEventIsMessage(event: ISlackEvent): ISlackEventMessagePosted | undefined
+    private tryGetInnerMessageEvent(event: ISlackEvent): TryGetOutput<ISlackEventMessagePosted>
     {
         const eventIsWrapper = event.type === SlackEventType.EventWrapper;
         if (eventIsWrapper)
@@ -32,10 +31,10 @@ export class SlackEventHandler
                 const messageEvent = wrapper.event as ISlackEventMessagePosted;
                 messageEvent.workspaceId = wrapper.team_id;
 
-                return messageEvent;
+                return { success: true, output: messageEvent };
             }
         }
 
-        return undefined;
+        return { success: false };
     }
 }
