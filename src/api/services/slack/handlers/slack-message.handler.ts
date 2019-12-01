@@ -83,6 +83,6 @@ export class SlackMessageHandler
 
     private isMessageFromAUser(message: ISlackEventMessagePosted): boolean
     {
-        return message.subtype === MessageSubtype.Bot;
+        return message.subtype === undefined;
     }
 }

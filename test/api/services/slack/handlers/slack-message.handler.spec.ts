@@ -2,6 +2,7 @@ import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { suite, test } from 'mocha-typescript';
 
 import { expect } from 'chai';
+import { isEqual } from 'lodash';
 import { fake } from 'sinon';
 import { ChickenRenamingService } from '../../../../../src/api/services/chicken-renaming.service';
 import { EggGivingService } from '../../../../../src/api/services/egg-giving.service';
@@ -127,10 +128,6 @@ export class SlackMessageHandlerSpec
             const eggGivingService = Substitute.for<EggGivingService>();
             const chickenRenamingSvc = Substitute.for<ChickenRenamingService>();
 
-            // - dependency setup
-            const giveEggsFake = fake();
-            eggGivingService.giveEggs(Arg.all()).mimicks(giveEggsFake);
-
             // - test data
             const message = this.createMessage({
                 text: testCase.message,
@@ -144,11 +141,13 @@ export class SlackMessageHandlerSpec
             await uut.handleMessage(message);
 
             // assert
-            expect(giveEggsFake.calledOnce).to.be.true;
-            expect(giveEggsFake.lastCall.args[0]).to.equal(message.workspaceId);
-            expect(giveEggsFake.lastCall.args[1]).to.equal(message.user);
-            expect(giveEggsFake.lastCall.args[2]).to.equal(testCase.expectedEggCount);
-            expect(giveEggsFake.lastCall.args[3]).to.deep.equal(testCase.expectedUserIds);
+            eggGivingService.received(1)
+                            .giveEggs(
+                                message.workspaceId,
+                                message.user,
+                                testCase.expectedEggCount,
+                                Arg.is(ids => isEqual(ids, testCase.expectedUserIds)),
+                            );
         }
     }
 
