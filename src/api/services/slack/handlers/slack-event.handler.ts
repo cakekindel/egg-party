@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { ISlackEvent, SlackEventType } from '../../../../shared/models/slack/events';
 import { ISlackEventMessagePosted, ISlackEventWrapper } from '../../../../shared/models/slack/events';
-import { TryGetOutput } from '../../../../shared/utility/try-get.pattern';
 import { SlackMessageHandler } from './slack-message.handler';
 
 @Injectable()
