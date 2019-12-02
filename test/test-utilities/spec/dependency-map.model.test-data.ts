@@ -25,9 +25,5 @@ export class EmojiDaemon
         baby: BabyEmoji,
         eggPan: EggInPanEmoji,
         climber: RockClimberEmoji,
-    ) {
-        baby.asString();
-        eggPan.asString();
-        climber.asString();
-    }
+    ) { }
 }
