@@ -1,3 +1,4 @@
+import { SlackMessageTextCompositionType } from '../../composition/text/slack-message-text-composition-type.enum';
 import { SlackMessageTextComposition } from '../../composition/text/slack-message-text-composition.model';
 import { ISlackMessageBlockElement } from '../../element/slack-message-block-element.interface';
 import { SlackMessageLayoutBlockType } from '../slack-message-layout-block-type.enum';
@@ -20,4 +21,9 @@ export class SlackMessageSectionBlock implements ISlackMessageLayoutBlock {
         public accessory?: ISlackMessageBlockElement,
         public block_id?: string,
     ) { }
+
+    public static fromText(text: string): SlackMessageSectionBlock {
+        const textObj = new SlackMessageTextComposition(SlackMessageTextCompositionType.Markdown, text);
+        return new SlackMessageSectionBlock(textObj);
+    }
 }

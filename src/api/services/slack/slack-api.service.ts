@@ -116,7 +116,7 @@ export class SlackApiService
     private getHeader(request: Request, header: string): string | string[] | undefined
     {
         const headerClean = header.trim().toLowerCase();
-        const headerKey = Object.keys(request.headers).find((h) => h.toLowerCase().trim() === headerClean);
+        const headerKey = Object.keys(request.headers).find(h => h.toLowerCase().trim() === headerClean);
 
         return headerKey && request.headers[headerKey];
     }

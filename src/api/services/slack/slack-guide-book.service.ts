@@ -25,9 +25,14 @@ import { SlackMessageTextComposition as Text } from '../../../shared/models/slac
 import { SlackMessageButtonElement as Button } from '../../../shared/models/slack/messages/blocks/element/button';
 import { SlackMessageStaticSelectElement as StaticSelect } from '../../../shared/models/slack/messages/blocks/element/select/static';
 
+import { SlackUser } from '../../../db/entities';
+import { SlackApiService } from './slack-api.service';
+
 @Injectable()
 export class SlackGuideBookService
 {
+    constructor(private slackApi: SlackApiService) { }
+
     private readonly pages: IGuideBookPage[] = [
         {
             id: GuideBookPageId.Welcome,
@@ -76,6 +81,14 @@ export class SlackGuideBookService
         },
     ];
 
+    public async send(user: SlackUser, page: GuideBookPageId = GuideBookPageId.Welcome): Promise<void>
+    {
+        const botId = await this.slackApi.getBotUserId();
+        const guideBook = this.build(user.slackUserId, botId, page);
+
+        return await this.slackApi.sendDirectMessage(user.slackUserId, guideBook);
+    }
+
     public build(userId: string, botUserId: string, pageId: GuideBookPageId = GuideBookPageId.Welcome): BlockMessage
     {
         const jumpToPageSelect = this.getGuideBookSelectNav();
@@ -110,14 +123,14 @@ export class SlackGuideBookService
                 // Learn About...
                 new OptionGroup(
                     new Text(TextType.Plaintext, `:scroll: Learn About...`, true),
-                    this.pages.filter((p) => p.group === GuideBookPageGroup.LearnAbout)
-                              .map((p) => new Option(new Text(TextType.Plaintext, p.title), p.id)),
+                    this.pages.filter(p => p.group === GuideBookPageGroup.LearnAbout)
+                              .map(p => new Option(new Text(TextType.Plaintext, p.title), p.id)),
                 ),
                 // Chicken Breed Field Guide
                 new OptionGroup(
                     new Text(TextType.Plaintext, `:chicken: Chicken Breed Field Guide`, true),
-                    this.pages.filter((p) => p.group === GuideBookPageGroup.ChickenBreedFieldGuide)
-                              .map((p) => new Option(new Text(TextType.Plaintext, p.title), p.id)),
+                    this.pages.filter(p => p.group === GuideBookPageGroup.ChickenBreedFieldGuide)
+                              .map(p => new Option(new Text(TextType.Plaintext, p.title), p.id)),
                 )
             ],
         );
@@ -125,14 +138,14 @@ export class SlackGuideBookService
 
     private getGuideBookButtonNav(pageId: GuideBookPageId): Actions | undefined
     {
-        const pageIdx = this.pages.findIndex((p) => p.id === pageId);
+        const pageIdx = this.pages.findIndex(p => p.id === pageId);
         const prevPage: IGuideBookPage | undefined = this.pages[pageIdx - 1];
         const nextPage: IGuideBookPage | undefined = this.pages[pageIdx + 1];
 
         const navButtons = [
             prevPage && new Button(SlackInteractionId.GuideBookJumpToPage + '_back', new Text(TextType.Plaintext, 'Back: ' + prevPage.shortTitle, true), undefined, prevPage.id),
             nextPage && new Button(SlackInteractionId.GuideBookJumpToPage + '_next', new Text(TextType.Plaintext, 'Next: ' + nextPage.shortTitle, true), undefined, nextPage.id),
-        ].filter((b) => b);
+        ].filter(b => b);
 
         return navButtons.length && new Actions(navButtons) || undefined;
     }

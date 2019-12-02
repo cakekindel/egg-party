@@ -1,25 +1,35 @@
 import { Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { SlackApiService, SlackEventHandlerService } from '../../services/slack';
+import { ISlackEvent, ISlackEventChallenge, SlackEventType } from '../../../shared/models/slack/events';
+import { SlackApiService } from '../../services/slack';
+import { SlackEventHandler } from '../../services/slack/handlers';
 
 @Controller('v1/slack/events')
 export class SlackEventsController
 {
-    constructor(private api: SlackApiService, private eventHandler: SlackEventHandlerService) { }
+    constructor(private api: SlackApiService, private eventHandler: SlackEventHandler) { }
 
     @Post()
     @HttpCode(HttpStatus.OK)
     public async receiveEvent(@Req() request: Request, @Res() respond: Response): Promise<Response>
     {
-        const requestVerified = this.api.verifySlackRequest(request);
+        const requestAuthentic = this.api.verifySlackRequest(request);
 
-        if (requestVerified)
+        if (!requestAuthentic)
+            return respond.sendStatus(HttpStatus.UNAUTHORIZED);
+
+        const event: ISlackEvent = request.body;
+
+        if (event.type === SlackEventType.Challenge)
         {
-            const response = await this.eventHandler.handleEvent(request.body);
-            return respond.send(response);
+            const challenge = event as ISlackEventChallenge;
+            return respond.send(challenge.challenge);
         }
-
-        return respond.sendStatus(HttpStatus.UNAUTHORIZED);
+        else
+        {
+            await this.eventHandler.handleEvent(event);
+            return respond.send('Ok, egger.');
+        }
     }
 }

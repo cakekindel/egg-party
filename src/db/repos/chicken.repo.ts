@@ -8,6 +8,7 @@ import { Chicken, SlackUser } from '../entities';
 export class ChickenRepo extends RepoBase<Chicken>
 {
     protected entityType = Chicken;
+    protected defaultRelations: Array<keyof Chicken> = ['laidEggs', 'ownedByUser'];
 
     public async createNewUserChickens(user: SlackUser): Promise<Chicken[]>
     {
@@ -19,7 +20,7 @@ export class ChickenRepo extends RepoBase<Chicken>
             new Chicken(),
         ];
 
-        chickens.forEach((c) =>
+        chickens.forEach(c =>
         {
             c.ownedByUser = user;
         });

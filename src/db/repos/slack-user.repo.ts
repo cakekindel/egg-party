@@ -1,30 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { Connection } from 'typeorm';
 
-import * as moment from 'moment';
-
 import { RepoBase } from './repo.base';
 
-import { ErrorUserOutOfEggs, ErrorUserTriedToGiveTooManyEggs } from '../../shared/errors';
-import { Egg, SlackUser } from '../entities';
+import { SlackApiService, SlackMessageBuilderService } from '../../api/services/slack';
+import { SlackUser } from '../entities';
 import { ChickenRepo } from './chicken.repo';
-import { EggRepo } from './egg.repo';
 
 @Injectable()
 export class SlackUserRepo extends RepoBase<SlackUser>
 {
     protected entityType = SlackUser;
+    protected defaultRelations: Array<keyof SlackUser> = ['chickens', 'eggs', 'eggsGiven'];
 
-    constructor(protected db: Connection, private chickenRepo: ChickenRepo, private eggRepo: EggRepo)
+    constructor
+    (
+        protected db: Connection,
+        private chickenRepo: ChickenRepo,
+        // TODO: remove when there's a provider layer SlackUser service
+        private slackApi: SlackApiService,
+        private messageBuilder: SlackMessageBuilderService,
+    )
     {
         super(db);
     }
 
     public async getBySlackId(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser | undefined>
     {
-        const repo = await this.getRepo();
-        const relations: Array<keyof SlackUser> = ['chickens', 'eggs', 'eggsGiven'];
-        return await repo.findOne({ where: { slackUserId, slackWorkspaceId }, relations });
+        const repo = this.getRepo();
+        return await repo.findOne({ where: { slackUserId, slackWorkspaceId }, relations: this.defaultRelations });
     }
 
     public async create(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser>
@@ -37,42 +41,10 @@ export class SlackUserRepo extends RepoBase<SlackUser>
 
         const chickens = await this.chickenRepo.createNewUserChickens(savedUser);
 
-        const eggs = Array.from(Array(5)).map(() => new Egg());
-        eggs.forEach((egg, i) =>
-        {
-            egg.ownedByUser = savedUser;
-            egg.laidByChicken = chickens[i];
-        });
-
-        await this.eggRepo.save(eggs);
-
         return await this.getBySlackId(slackUserId, slackWorkspaceId) as SlackUser;
     }
 
-    // TODO: move to a business layer user service
-    /**
-     * @throws {ErrorUserOutOfEggs}
-     * @throws {ErrorUserTriedToGiveTooManyEggs}
-     */
-    public async throwIfUserCannotGiveEggs(slackUserId: string, slackWorkspaceId: string, noOfEggs: number): Promise<void>
-    {
-        const midnightLastNight = moment().hour(0).minute(0).second(0); // TODO: implement with moment
-        const user = await this.getBySlackId(slackUserId, slackWorkspaceId);
-
-        if (user)
-        {
-            const eggsGivenToday = (user.eggs || []).filter((e) => e.givenOnDate && moment(e.givenOnDate).isAfter(midnightLastNight));
-            if (eggsGivenToday.length > 4) {
-                throw new ErrorUserOutOfEggs();
-            }
-
-            const eggsCanGiveCount = 5 - eggsGivenToday.length;
-            if (noOfEggs > 5 - eggsCanGiveCount) {
-                throw new ErrorUserTriedToGiveTooManyEggs(eggsCanGiveCount, eggsGivenToday.length);
-            }
-        }
-    }
-
+    // TODO: move to a provider layer SlackUser service
     public async getOrCreate(slackUserId: string, slackWorkspaceId: string): Promise<{ wasCreated: boolean, user: SlackUser }>
     {
         let wasCreated = false;
@@ -85,5 +57,18 @@ export class SlackUserRepo extends RepoBase<SlackUser>
         }
 
         return { wasCreated, user };
+    }
+
+    // TODO: move to a provider layer SlackUser service
+    public async getOrCreateAndSendGuideBook(slackUserId: string, slackWorkspaceId: string): Promise<SlackUser>
+    {
+        const userMeta = await this.getOrCreate(slackUserId, slackWorkspaceId);
+        if (userMeta.wasCreated)
+        {
+            const botId = await this.slackApi.getBotUserId();
+            this.slackApi.sendDirectMessage(slackUserId, this.messageBuilder.guideBook(slackUserId, botId));
+        }
+
+        return userMeta.user;
     }
 }

@@ -14,12 +14,15 @@ export class SlackUser extends EntityBase
     @Column()
     public slackWorkspaceId: string = '';
 
-    @OneToMany(() => Egg, (egg) => egg.ownedByUser)
+    @Column({ default: () => 'GETDATE()' })
+    public dailyEggsLastRefreshedDate: Date = new Date();
+
+    @OneToMany(() => Egg, egg => egg.ownedByUser)
     public eggs?: Egg[];
 
-    @OneToMany(() => Egg, (egg) => egg.givenByUser)
+    @OneToMany(() => Egg, egg => egg.givenByUser)
     public eggsGiven?: Egg[];
 
-    @OneToMany(() => Chicken, (chicken) => chicken.ownedByUser)
+    @OneToMany(() => Chicken, chicken => chicken.ownedByUser)
     public chickens?: Chicken[];
 }

@@ -1,26 +1,25 @@
 import { Provider, Scope } from '@nestjs/common';
-import { Connection, ConnectionOptions, createConnection, getConnection, getConnectionManager } from 'typeorm';
+import { Connection, getConnectionManager } from 'typeorm';
 import { ConfigService } from '../shared/utility';
-import { Entities } from './entities';
+import { DbConnectionConfig } from './db-connection-config.model';
+
+async function connectionFactory(environment: ConfigService): Promise<Connection>
+{
+    const config = new DbConnectionConfig(environment);
+
+    const connections = getConnectionManager();
+    const alreadyConfigured = connections.has(environment.environment);
+    const connection = alreadyConfigured ? connections.get(environment.environment) : connections.create(config);
+
+    if (!connection.isConnected)
+        return await connection.connect();
+
+    return connection;
+}
 
 export const DbConnectionProvider: Provider = {
     provide: Connection,
     scope: Scope.REQUEST,
     inject: [ConfigService],
-    useFactory: async (config: ConfigService): Promise<Connection> =>
-    {
-        const options: ConnectionOptions = {
-            name: config.environment,
-            type: 'mssql',
-            database: config.typeOrmConfig.databaseName,
-            host: config.typeOrmConfig.hostUrl,
-            username: config.typeOrmConfig.adminUsername,
-            password: config.typeOrmConfig.adminPassword,
-            options: { encrypt: true },
-            entities: Entities
-        };
-
-        const connectionExists = getConnectionManager().has(config.environment);
-        return connectionExists ? getConnection(config.environment) : await createConnection(options);
-    }
+    useFactory: connectionFactory
 };

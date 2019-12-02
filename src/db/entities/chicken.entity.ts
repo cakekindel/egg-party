@@ -22,10 +22,10 @@ export class Chicken extends EntityBase
     @Column()
     public awaitingRename: boolean = false;
 
-    @OneToMany(() => Egg, (egg) => egg.laidByChicken)
+    @OneToMany(() => Egg, egg => egg.laidByChicken)
     public laidEggs?: Egg[];
 
-    @ManyToOne(() => SlackUser, (user) => user.chickens, { nullable: false })
+    @ManyToOne(() => SlackUser, user => user.chickens, { nullable: false })
     @JoinColumn({ name: 'ownedByUserId', referencedColumnName: 'id' })
     public ownedByUser?: SlackUser;
 }

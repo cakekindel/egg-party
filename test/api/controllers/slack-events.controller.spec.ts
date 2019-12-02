@@ -1,60 +1,67 @@
 import { Arg, Substitute } from '@fluffy-spoon/substitute';
 import { suite, test } from 'mocha-typescript';
 
-import { Request, Response } from 'express';
+import { HttpStatus } from '@nestjs/common';
+import { Request, Response, Send } from 'express';
 import { fake } from 'sinon';
 import { SlackEventsController } from '../../../src/api/controllers/slack';
-import { SlackApiService, SlackEventHandlerService } from '../../../src/api/services/slack';
+import { SlackApiService } from '../../../src/api/services/slack';
+import { SlackEventHandler } from '../../../src/api/services/slack/handlers';
+import { ISlackEvent, ISlackEventChallenge, SlackEventType } from '../../../src/shared/models/slack/events';
+import { ISpec, UnitTestSetup } from '../../test-utilities';
 
-@suite
-class SlackEventsControllerSpec
+@suite()
+export class SlackEventsControllerSpec implements ISpec<SlackEventsController>
 {
-    @test
+    @test()
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
     {
         // arrange
-        const handler = Substitute.for<SlackEventHandlerService>();
-        const slackApi = Substitute.for<SlackApiService>();
-        const controller = new SlackEventsController(slackApi, handler);
+        const testSetup = this.getUnitTestSetup();
+        this.setupRequestAuthentic(testSetup, false);
 
-        slackApi.verifySlackRequest(Arg.any())
-                .returns(false);
-
-        const request = Substitute.for<Request>();
         const respond = Substitute.for<Response>();
 
         // act
-        await controller.receiveEvent(request, respond);
+        await testSetup.unitUnderTest.receiveEvent(undefined, respond);
 
         // assert
-        respond.received().sendStatus(401);
+        respond.received().sendStatus(HttpStatus.UNAUTHORIZED);
     }
 
-    @test
-    public async should_callEventHandler_when_requestVerified(): Promise<void>
+    @test()
+    public async should_respondWithChallenge_when_challengeEventReceived(): Promise<void>
     {
         // arrange
-        const handler = Substitute.for<SlackEventHandlerService>();
-        const slackApi = Substitute.for<SlackApiService>();
-        const controller = new SlackEventsController(slackApi, handler);
+        const testSetup = this.getUnitTestSetup();
+        this.setupRequestAuthentic(testSetup, true);
 
-        slackApi.verifySlackRequest(Arg.any())
-                .returns(true);
-
-        const testResponse = 'challenge';
-        handler.handleEvent(Arg.any())
-               .returns(Promise.resolve(testResponse));
-
-        const request = Substitute.for<Request>();
-
-        const respond = Substitute.for<Response>();
-        const sendResponseFake = fake(() => {});
-        respond.send().mimicks(sendResponseFake);
+        const event: ISlackEventChallenge = { type: SlackEventType.Challenge, challenge: 'chall', token: '' };
+        const request = this.createMockRequest(event);
+        const response = Substitute.for<Response>();
 
         // act
-        const response = await controller.receiveEvent(request, respond);
+        await testSetup.unitUnderTest.receiveEvent(request, response);
 
         // assert
-        sendResponseFake.calledWith(testResponse);
+        (response.received().send as Send)(request.body.challenge);
+    }
+
+    private createMockRequest(event: ISlackEvent): Request
+    {
+        return { body: event } as Request;
+    }
+
+    private setupRequestAuthentic(testSetup: UnitTestSetup<SlackEventsController>, authentic: boolean): void
+    {
+        testSetup.dependencies
+                 .get(SlackApiService)
+                 .verifySlackRequest(Arg.any())
+                 .returns(authentic);
+    }
+
+    public getUnitTestSetup(): UnitTestSetup<SlackEventsController>
+    {
+        return new UnitTestSetup(SlackEventsController);
     }
 }

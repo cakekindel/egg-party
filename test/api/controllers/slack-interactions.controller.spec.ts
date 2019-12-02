@@ -4,20 +4,21 @@ import { Request, Response } from 'express';
 import { suite, test } from 'mocha-typescript';
 import { fake } from 'sinon';
 
-import { SlackApiService, SlackInteractionHandlerService } from '../../../src/api/services/slack';
+import { SlackApiService } from '../../../src/api/services/slack';
+import { SlackInteractionHandler } from '../../../src/api/services/slack/handlers';
 
 import { SlackInteractionsController } from '../../../src/api/controllers/slack';
 
-@suite
-class SlackInteractionsControllerSpec
+@suite()
+export class SlackInteractionsControllerSpec
 {
-    @test
+    @test()
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
     {
         // arrange
         // - dependencies
         const slackApi = Substitute.for<SlackApiService>();
-        const handler = Substitute.for<SlackInteractionHandlerService>();
+        const handler = Substitute.for<SlackInteractionHandler>();
 
         // - test data
         slackApi.verifySlackRequest(Arg.any()).returns(false);
@@ -40,7 +41,7 @@ class SlackInteractionsControllerSpec
     {
         // arrange
         // - dependencies
-        const handler = Substitute.for<SlackInteractionHandlerService>();
+        const handler = Substitute.for<SlackInteractionHandler>();
         const slackApi = Substitute.for<SlackApiService>();
 
         // - test data
@@ -64,7 +65,7 @@ class SlackInteractionsControllerSpec
     {
         // arrange
         // - dependencies
-        const handler = Substitute.for<SlackInteractionHandlerService>();
+        const handler = Substitute.for<SlackInteractionHandler>();
         const slackApi = Substitute.for<SlackApiService>();
 
         // - test data

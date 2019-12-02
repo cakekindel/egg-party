@@ -1,0 +1,78 @@
+{
+	// Place your egg-party workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+    // }
+    "EggParty: Detailed Arrange Act Assert": {
+		"prefix": "aaadet",
+		"body": [
+			"// arrange",
+            "// - test data",
+            "$0",
+            "// - dependencies",
+            "",
+            "// - dependency setup",
+            "",
+            "// - unit under test",
+            "",
+			"// act",
+            "",
+			"// assert",
+		]
+    },
+    "EggParty: Simple Arrange Act Assert": {
+		"prefix": "aaa",
+		"body": [
+			"// arrange",
+            "$0",
+			"// act",
+            "",
+			"// assert",
+            "",
+		]
+    },
+    "EggParty: Spec Method": {
+        "description": "Quickly scaffold a Test in the EggParty style of unit testing",
+        "prefix": "specm",
+        "body": [
+            "@test()",
+            "public async should_${1:doStuff}_when_${2:somethingHappens}(): Promise<void>",
+            "{",
+            "    $0",
+            "}"
+        ]
+    },
+    "EggParty: Spec Class": {
+        "description": "Quickly scaffold a Spec in the EggParty style of unit testing",
+        "prefix": "spec",
+        "body": [
+            "import { suite, test } from 'mocha-typescript';",
+            "",
+            "// STEP 1: Type the name of the class you're testing",
+            "// STEP 2: Make sure the array of dependencies in getUnitTestSetup() matches the constructor arguments of UnitUnderTest",
+            "// STEP 3: Select one of the red squigglies and use: Quick Fix (Command Palette OR Ctrl|Cmd + .) > add all missing imports",
+            "@suite()",
+            "export class ${1:UnitUnderTest}Spec implements ISpec<${1:UnitUnderTest}>",
+            "{",
+            "    $0",
+            "    ",
+            "    public getUnitTestSetup(): UnitTestSetup<${1:UnitUnderTest}>",
+            "    {",
+            "        return new UnitTestSetup(${1:UnitUnderTest}, [/* array of dependency types */]);",
+            "    }",
+            "}"
+        ]
+    }
+}

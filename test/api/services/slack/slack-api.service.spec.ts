@@ -10,7 +10,7 @@ import { IRequestWithRawBody } from '../../../../src/shared/models/express/reque
 import { ConfigService } from '../../../../src/shared/utility';
 
 @suite()
-class SlackApiServiceSpec
+export class SlackApiServiceSpec
 {
     public axiosRequestStub: Sinon.SinonStub<[AxiosRequestConfig], Promise<unknown>>;
 
@@ -24,7 +24,7 @@ class SlackApiServiceSpec
         this.axiosRequestStub.restore();
     }
 
-    @test
+    @test()
     public async should_acceptAuthenticRequests_when_verifySlackRequestInvoked(): Promise<void>
     {
         // arrange
@@ -60,7 +60,7 @@ class SlackApiServiceSpec
         expect(verified, 'request authentic').to.be.true;
     }
 
-    @test
+    @test()
     public async should_rejectNonAuthenticRequests_when_verifySlackRequestInvoked(): Promise<void>
     {
         // arrange
@@ -95,7 +95,7 @@ class SlackApiServiceSpec
         expect(verified, 'request authentic').to.be.false;
     }
 
-    @test
+    @test()
     public async should_throwError_when_getAllPublicChannelsReceivesBadResponse(): Promise<void>
     {
         // arrange
@@ -119,7 +119,7 @@ class SlackApiServiceSpec
         }
     }
 
-    @test
+    @test()
     public async should_throwError_when_getChannelInfoReceivesBadResponse(): Promise<void>
     {
         // arrange
@@ -144,7 +144,7 @@ class SlackApiServiceSpec
         }
     }
 
-    @test
+    @test()
     public async should_throwError_when_getBotUserIdReceivesBadResponse(): Promise<void>
     {
         // arrange
@@ -169,7 +169,7 @@ class SlackApiServiceSpec
         }
     }
 
-    @test
+    @test()
     public async should_throwError_when_sendHookMessageReceivesBadResponse(): Promise<void>
     {
         // arrange
@@ -194,7 +194,7 @@ class SlackApiServiceSpec
         }
     }
 
-    @test
+    @test()
     public async should_throwError_when_sendMessageReceivesBadResponse(): Promise<void>
     {
         // arrange
@@ -219,7 +219,7 @@ class SlackApiServiceSpec
         }
     }
 
-    @test
+    @test()
     public async should_throwError_when_sendDirectMessageReceivesBadResponse(): Promise<void>
     {
         // arrange

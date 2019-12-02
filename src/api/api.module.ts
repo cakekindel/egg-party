@@ -5,16 +5,11 @@ import { ConfigService } from '../shared/utility';
 import { HealthCheckController } from './controllers';
 import { SlackEventsController, SlackInteractionsController } from './controllers/slack';
 
-import {
-    SlackApiService,
-    SlackEventHandlerService,
-    SlackGuideBookService,
-    SlackInteractionHandlerService,
-    SlackMessageBuilderService
-} from './services/slack';
+import { ChickenRenamingService, DailyEggsService, EggGivingService } from './services';
+import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from './services/slack';
+import { SlackCommandHandler, SlackEventHandler, SlackInteractionHandler, SlackMessageHandler } from './services/slack/handlers';
 
 import { DbModule } from '../db/db.module';
-
 @Module({
     imports: [
         DbModule,
@@ -29,8 +24,13 @@ import { DbModule } from '../db/db.module';
         SlackApiService,
         SlackMessageBuilderService,
         SlackGuideBookService,
-        SlackEventHandlerService,
-        SlackInteractionHandlerService,
+        SlackMessageHandler,
+        SlackEventHandler,
+        SlackInteractionHandler,
+        EggGivingService,
+        SlackCommandHandler,
+        DailyEggsService,
+        ChickenRenamingService,
     ],
     exports: [],
 })
