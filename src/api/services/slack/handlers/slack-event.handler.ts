@@ -12,29 +12,16 @@ export class SlackEventHandler
 
     public async handleEvent(event: ISlackEvent): Promise<void>
     {
-        const tryGetMessage = this.tryGetInnerMessageEvent(event);
-
-        if (tryGetMessage.success)
-            return await this.messageHandler.handleMessage(tryGetMessage.output);
+        if (this.eventIsMessage(event))
+        {
+            event.event.workspaceId = event.team_id;
+            return await this.messageHandler.handleMessage(event.event);
+        }
     }
 
-    private tryGetInnerMessageEvent(event: ISlackEvent): TryGetOutput<ISlackEventMessagePosted>
+    private eventIsMessage(event: ISlackEvent): event is ISlackEventWrapper<ISlackEventMessagePosted>
     {
-        const eventIsWrapper = event.type === SlackEventType.EventWrapper;
-        if (eventIsWrapper)
-        {
-            const wrapper = event as ISlackEventWrapper;
-            const innerEventIsMessage = wrapper.event.type === SlackEventType.MessagePosted;
-
-            if (innerEventIsMessage)
-            {
-                const messageEvent = wrapper.event as ISlackEventMessagePosted;
-                messageEvent.workspaceId = wrapper.team_id;
-
-                return { success: true, output: messageEvent };
-            }
-        }
-
-        return { success: false };
+        return event.type === SlackEventType.EventWrapper
+               && (event as ISlackEventWrapper).event.type === SlackEventType.MessagePosted;
     }
 }
