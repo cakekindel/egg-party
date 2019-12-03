@@ -53,18 +53,18 @@ export class SlackGuideBookService
             title: 'Chickens & Daily Eggs',
             shortTitle: 'Chickens :chicken:'
         },
-        {
-            id: GuideBookPageId.LearnAboutChicks,
-            group: GuideBookPageGroup.LearnAbout,
-            title: 'Getting & Raising Chicks',
-            shortTitle: 'Chicks :hatching_chick:'
-        },
-        {
-            id: GuideBookPageId.LearnAboutBreeds,
-            group: GuideBookPageGroup.LearnAbout,
-            title: 'Chicken Breeds',
-            shortTitle: 'Breeds :rooster:'
-        },
+        // {
+        //     id: GuideBookPageId.LearnAboutChicks,
+        //     group: GuideBookPageGroup.LearnAbout,
+        //     title: 'Getting & Raising Chicks',
+        //     shortTitle: 'Chicks :hatching_chick:'
+        // },
+        // {
+        //     id: GuideBookPageId.LearnAboutBreeds,
+        //     group: GuideBookPageGroup.LearnAbout,
+        //     title: 'Chicken Breeds',
+        //     shortTitle: 'Breeds :rooster:'
+        // },
         {
             id: GuideBookPageId.LearnAboutCommands,
             group: GuideBookPageGroup.LearnAbout,
@@ -73,12 +73,12 @@ export class SlackGuideBookService
         },
 
         // Chicken Breed Field Guide
-        {
-            id: GuideBookPageId.BreedGuideDelawareHen,
-            group: GuideBookPageGroup.ChickenBreedFieldGuide,
-            title: 'Delaware Hen',
-            shortTitle: ':chicken: Delaware'
-        },
+        // {
+        //     id: GuideBookPageId.BreedGuideDelawareHen,
+        //     group: GuideBookPageGroup.ChickenBreedFieldGuide,
+        //     title: 'Delaware Hen',
+        //     shortTitle: ':chicken: Delaware'
+        // },
     ];
 
     public async send(user: SlackUser, page: GuideBookPageId = GuideBookPageId.Welcome): Promise<void>
@@ -127,11 +127,11 @@ export class SlackGuideBookService
                               .map(p => new Option(new Text(TextType.Plaintext, p.title), p.id)),
                 ),
                 // Chicken Breed Field Guide
-                new OptionGroup(
-                    new Text(TextType.Plaintext, `:chicken: Chicken Breed Field Guide`, true),
-                    this.pages.filter(p => p.group === GuideBookPageGroup.ChickenBreedFieldGuide)
-                              .map(p => new Option(new Text(TextType.Plaintext, p.title), p.id)),
-                )
+                // new OptionGroup(
+                //     new Text(TextType.Plaintext, `:chicken: Chicken Breed Field Guide`, true),
+                //     this.pages.filter(p => p.group === GuideBookPageGroup.ChickenBreedFieldGuide)
+                //               .map(p => new Option(new Text(TextType.Plaintext, p.title), p.id)),
+                // )
             ],
         );
     }
@@ -203,8 +203,8 @@ export class SlackGuideBookService
             new Section(new Text(TextType.Markdown, ` `)),
             new Section(new Text(TextType.Markdown, `When you first start using Egg Party you have *5 Chickens*. Chickens lay 1 egg at midnight every day, so you can give out *5 eggs a day*!`)),
             new Context([new Text(TextType.Markdown, `_Chickens won't lay another Daily Egg unless the previous egg is given away, so don't even think about skimping on egg-giving._`)]),
-            new Section(new Text(TextType.Markdown, `There's a small chance that one of your daily eggs will hatch into a chick that will grow into another chicken, so keep your eyes peeled for a tiny fluff in need of love!`)),
-            new Context([new Text(TextType.Markdown, `_*Pro Tip*: You can increase your chances of a daily egg hatching by giving eggs often. It's a win-win!_`)]),
+            // new Section(new Text(TextType.Markdown, `There's a small chance that one of your daily eggs will hatch into a chick that will grow into another chicken, so keep your eyes peeled for a tiny fluff in need of love!`)),
+            // new Context([new Text(TextType.Markdown, `_*Pro Tip*: You can increase your chances of a daily egg hatching by giving eggs often. It's a win-win!_`)]),
             new Section(new Text(TextType.Markdown, ` `)),
             new Section(
                 new Text(TextType.Markdown, `Would you like to name your chickens?`),
