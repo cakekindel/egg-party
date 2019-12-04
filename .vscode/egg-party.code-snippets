@@ -70,7 +70,7 @@
             "    ",
             "    public getUnitTestSetup(): UnitTestSetup<${1:UnitUnderTest}>",
             "    {",
-            "        return new UnitTestSetup(${1:UnitUnderTest}, [/* array of dependency types */]);",
+            "        return new UnitTestSetup(${1:UnitUnderTest});",
             "    }",
             "}"
         ]

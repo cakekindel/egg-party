@@ -1,11 +1,25 @@
 import { SlackBlockMessage } from '../slack/messages';
+import { SlackMessageContextBlock } from '../slack/messages/blocks/layout/context';
 import { SlackMessageSectionBlock } from '../slack/messages/blocks/layout/section';
 
 export class SlackMessageYouGaveEggs extends SlackBlockMessage
 {
     constructor(userIds: string[], numberOfEggsGivenEach: number, numberOfEggsLeft: number)
     {
+        const mentionsList = SlackMessageYouGaveEggs.getReadableMentionsList(userIds);
+        const numberOfEggsString = numberOfEggsGivenEach === 1 ? 'an egg' : `${numberOfEggsGivenEach} eggs`;
+
+        super([
+            SlackMessageSectionBlock.fromText(`You gave ${numberOfEggsString} ${userIds.length > 1 ? 'each to' : 'to'} ${mentionsList}!`),
+            SlackMessageContextBlock.fromText(`_(You have ${numberOfEggsLeft} eggs left to give today)_`),
+        ]);
+    }
+
+    /** transforms `['U123', 'U222', 'U723']` into `'@user1, @user2, and @user3'` */
+    private static getReadableMentionsList(userIds: string[]): string
+    {
         const mentions = userIds.map(id => `<@${id}>`);
+
         let mentionsReadable: string;
         if (mentions.length <= 1)
         {
@@ -22,11 +36,6 @@ export class SlackMessageYouGaveEggs extends SlackBlockMessage
             mentionsReadable = mentions.join(', ');
         }
 
-        // tslint:disable:max-line-length
-        super([
-            SlackMessageSectionBlock.fromText(`You gave ${numberOfEggsGivenEach} to ${mentionsReadable} (${numberOfEggsLeft} eggs left today)`),
-            SlackMessageSectionBlock.fromText(`Great job! I bet they're honored. I know I would be.`),
-        ]);
-        // tslint:enable:max-line-length
+        return mentionsReadable;
     }
 }

@@ -7,7 +7,13 @@ import { SlackEventsController, SlackInteractionsController } from './controller
 
 import { ChickenRenamingService, DailyEggsService, EggGivingService } from './services';
 import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from './services/slack';
-import { SlackCommandHandler, SlackEventHandler, SlackInteractionHandler, SlackMessageHandler } from './services/slack/handlers';
+import {
+    SlackCommandHandler,
+    SlackEventHandler,
+    SlackInteractionHandler,
+    SlackMessageHandler,
+    SlackReactionHandler,
+} from './services/slack/handlers';
 
 import { DbModule } from '../db/db.module';
 @Module({
@@ -29,6 +35,7 @@ import { DbModule } from '../db/db.module';
         SlackInteractionHandler,
         EggGivingService,
         SlackCommandHandler,
+        SlackReactionHandler,
         DailyEggsService,
         ChickenRenamingService,
     ],
