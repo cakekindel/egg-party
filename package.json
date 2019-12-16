@@ -22,8 +22,10 @@
         "\n -- Build --": "",
         "build": "tsc --build",
         "build:prod": "tsc --build ./src/tsconfig.prod.json",
-        "\n -- Clean --": "",
-        "clean": "rimraf dist",
+        "clean": "npm run style:fix && rimraf dist",
+        "\n -- Style --": "",
+        "style:fix": "npm run style:fix-src & npm run style:fix-test",
+        "style:check": "npm run style:check-src & npm run style:check-test",
         "\n -- Scripts Used by Other Scripts (don't invoke directly) --": "",
         "prebuild": "npm run clean",
         "premigration:generate": "npm run build",
@@ -37,7 +39,11 @@
         "pretest:watch": "npm run clean",
         "pretest:junit": "npm run build",
         "pretest:single-run": "npm run build",
-        "pretest:single-run-debug": "npm run build"
+        "pretest:single-run-debug": "npm run build",
+        "style:fix-src": "cd src && gts fix",
+        "style:fix-test": "cd test && gts fix",
+        "style:check-src": "cd src && gts check",
+        "style:check-test": "cd test && gts check"
     },
     "description": "Egg Party",
     "main": "dist/main.js",
@@ -88,7 +94,7 @@
         "@types/express": "4.17.2",
         "@types/lodash": "^4.14.149",
         "@types/mocha": "^5.2.7",
-        "@types/node": "12.12.14",
+        "@types/node": "^10.0.3",
         "@types/qs": "^6.5.3",
         "@types/supertest": "2.0.8",
         "chai": "^4.2.0",
@@ -105,10 +111,11 @@
         "tsc-watch": "4.0.0",
         "tsconfig-paths": "3.9.0",
         "tslint": "5.20.1",
-        "typescript": "^3.7.2",
+        "typescript": "~3.7.0",
         "wait-on": "^3.3.0",
         "webpack": "^4.41.2",
         "webpack-cli": "^3.3.9",
-        "webpack-node-externals": "^1.7.2"
+        "webpack-node-externals": "^1.7.2",
+        "gts": "^1.1.2"
     }
 }

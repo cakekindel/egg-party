@@ -1,5 +1,6 @@
 {
-    "extends": "tslint:recommended",
+    "$schema": "http://json.schemastore.org/tslint",
+    "extends": "gts/tslint.json",
     "rules": {
         "arrow-return-shorthand": true,
         "callable-types": true,
@@ -118,6 +119,7 @@
         "arrow-parens": [
             true,
             "ban-single-arg-parens"
-        ]
+        ],
+        "interface-name": false
     }
 }
