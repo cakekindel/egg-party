@@ -122,6 +122,15 @@ TYPEORM_PASSWORD="password"
             Use this to run locally against Slack.
         </td>
     </tr>
+    <tr><th colspan="2">Style / Linting</th></tr>
+    <tr>
+        <td>
+            <nobr><code>npm run style:fix</code></nobr>
+        </td>
+        <td>
+            Formats your local codebase to the Google Typescript Style
+        </td>
+    </tr>
     <tr><th colspan="2">Database</th></tr>
     <tr>
         <td>
@@ -218,5 +227,7 @@ or from the Debug panel (`Ctrl/Cmd + Shift + D`)
 
 [slack-create-workspace]: https://slack.com/create
 [slack-manage-apps]: https://api.slack.com/apps
+
+[gts-url]: https://github.com/google/gts
 
 [guide-book-template]: https://bit.ly/2NypQvF
