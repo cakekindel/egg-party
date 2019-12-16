@@ -1,14 +1,17 @@
 import { expect } from 'chai';
 import { suite, test } from 'mocha-typescript';
 import { UnitTestSetup } from '../unit-test-setup.model';
-import { WeatherController, WeatherStation } from './unit-test-setup.model.test-data';
+import {
+    WeatherController,
+    WeatherStation,
+} from './unit-test-setup.model.test-data';
 
 @suite
-export class UnitTestSetupSpec
-{
+export class UnitTestSetupSpec {
     @test()
-    public async should_createDependencyMapFromMetadata_when_created(): Promise<void>
-    {
+    public async should_createDependencyMapFromMetadata_when_created(): Promise<
+        void
+    > {
         // arrange
         const uut = new UnitTestSetup(WeatherStation);
 
@@ -20,8 +23,9 @@ export class UnitTestSetupSpec
     }
 
     @test()
-    public async should_createUutWithDependencies_when_created(): Promise<void>
-    {
+    public async should_createUutWithDependencies_when_created(): Promise<
+        void
+    > {
         // arrange
         const uut = new UnitTestSetup(WeatherController);
 

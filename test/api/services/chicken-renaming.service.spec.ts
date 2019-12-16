@@ -10,29 +10,34 @@ import { ErrorMissingRelatedData } from '../../../src/shared/errors';
 import { UnitTestSetup } from '../../test-utilities';
 
 @suite()
-export class ChickenRenamingServiceSpec
-{
+export class ChickenRenamingServiceSpec {
     @test()
-    public async should_returnUndefined_when_getWaitingForUserInvokedAndNoChickensWaiting(): Promise<void>
-    {
+    public async should_returnUndefined_when_getWaitingForUserInvokedAndNoChickensWaiting(): Promise<
+        void
+    > {
         // arrange
         const unitTestSetup = this.getUnitTestSetup();
         const user = this.createTestUser([new Chicken()]);
 
-        unitTestSetup.dependencies.get(SlackUserRepo)
-                                  .getBySlackId(user.slackUserId, user.slackWorkspaceId)
-                                  .returns(Promise.resolve(user));
+        unitTestSetup.dependencies
+            .get(SlackUserRepo)
+            .getBySlackId(user.slackUserId, user.slackWorkspaceId)
+            .returns(Promise.resolve(user));
 
         // act
-        const actual = await unitTestSetup.unitUnderTest.getChickenAwaitingRenameForUser(user.slackUserId, user.slackWorkspaceId);
+        const actual = await unitTestSetup.unitUnderTest.getChickenAwaitingRenameForUser(
+            user.slackUserId,
+            user.slackWorkspaceId
+        );
 
         // assert
         expect(actual).to.be.undefined;
     }
 
     @test()
-    public async should_returnChicken_when_getWaitingForUserInvokedAndOneChickenWaiting(): Promise<void>
-    {
+    public async should_returnChicken_when_getWaitingForUserInvokedAndOneChickenWaiting(): Promise<
+        void
+    > {
         // arrange
         // - test data
         const chicken = new Chicken();
@@ -42,49 +47,61 @@ export class ChickenRenamingServiceSpec
 
         const unitTestSetup = this.getUnitTestSetup();
 
-        unitTestSetup.dependencies.get(SlackUserRepo)
-                                  .getBySlackId(user.slackUserId, user.slackWorkspaceId)
-                                  .returns(Promise.resolve(user));
+        unitTestSetup.dependencies
+            .get(SlackUserRepo)
+            .getBySlackId(user.slackUserId, user.slackWorkspaceId)
+            .returns(Promise.resolve(user));
 
         // act
-        const actual = await unitTestSetup.unitUnderTest.getChickenAwaitingRenameForUser(user.slackUserId, user.slackWorkspaceId);
+        const actual = await unitTestSetup.unitUnderTest.getChickenAwaitingRenameForUser(
+            user.slackUserId,
+            user.slackWorkspaceId
+        );
 
         // assert
         expect(actual).to.equal(chicken);
     }
 
     @test()
-    public async should_cancelAllRenames_when_multipleChickensWaiting(): Promise<void>
-    {
+    public async should_cancelAllRenames_when_multipleChickensWaiting(): Promise<
+        void
+    > {
         // arrange
         const unitTestSetup = this.getUnitTestSetup();
 
         // - test data
         const chickensWaiting = [new Chicken(), new Chicken()];
-        chickensWaiting.forEach(c => c.awaitingRename = true);
+        chickensWaiting.forEach(c => (c.awaitingRename = true));
 
         const user = this.createTestUser([...chickensWaiting, new Chicken()]);
 
         // - dependency setup
-        unitTestSetup.dependencies.get(SlackUserRepo)
-                                  .getBySlackId(user.slackUserId, user.slackWorkspaceId)
-                                  .returns(Promise.resolve(user));
+        unitTestSetup.dependencies
+            .get(SlackUserRepo)
+            .getBySlackId(user.slackUserId, user.slackWorkspaceId)
+            .returns(Promise.resolve(user));
 
         // act
-        const actual = await unitTestSetup.unitUnderTest.getChickenAwaitingRenameForUser(user.slackUserId, user.slackWorkspaceId);
+        const actual = await unitTestSetup.unitUnderTest.getChickenAwaitingRenameForUser(
+            user.slackUserId,
+            user.slackWorkspaceId
+        );
 
         // assert
         expect(actual).to.be.undefined;
-        expect(chickensWaiting.every(c => c.awaitingRename === false)).to.be.true;
+        expect(chickensWaiting.every(c => c.awaitingRename === false)).to.be
+            .true;
 
-        unitTestSetup.dependencies.get(ChickenRepo)
-                                  .received()
-                                  .save(Arg.is(chickens => _.isEqual(chickens, chickensWaiting)));
+        unitTestSetup.dependencies
+            .get(ChickenRepo)
+            .received()
+            .save(Arg.is(chickens => _.isEqual(chickens, chickensWaiting)));
     }
 
     @test()
-    public async should_markChickenWaitingForRename_when_markChickenForRenameInvoked(): Promise<void>
-    {
+    public async should_markChickenWaitingForRename_when_markChickenForRenameInvoked(): Promise<
+        void
+    > {
         // arrange
         const unitTestSetup = this.getUnitTestSetup();
 
@@ -92,23 +109,26 @@ export class ChickenRenamingServiceSpec
         const chicken = new Chicken();
         chicken.ownedByUser = new SlackUser();
 
-        unitTestSetup.dependencies.get(SlackUserRepo)
-                                  .getBySlackId(Arg.all())
-                                  .returns(Promise.resolve(chicken.ownedByUser));
+        unitTestSetup.dependencies
+            .get(SlackUserRepo)
+            .getBySlackId(Arg.all())
+            .returns(Promise.resolve(chicken.ownedByUser));
 
         // act
         await unitTestSetup.unitUnderTest.markChickenForRename(chicken);
 
         // assert
         expect(chicken.awaitingRename).to.be.true;
-        unitTestSetup.dependencies.get(ChickenRepo)
-                                  .received()
-                                  .save(chicken);
+        unitTestSetup.dependencies
+            .get(ChickenRepo)
+            .received()
+            .save(chicken);
     }
 
     @test()
-    public async should_cancelPreviousRename_when_markChickenForRenameInvoked(): Promise<void>
-    {
+    public async should_cancelPreviousRename_when_markChickenForRenameInvoked(): Promise<
+        void
+    > {
         // arrange
         // - test data
         const firstChicken = new Chicken();
@@ -121,9 +141,10 @@ export class ChickenRenamingServiceSpec
 
         const unitTestSetup = this.getUnitTestSetup();
 
-        unitTestSetup.dependencies.get(SlackUserRepo)
-                                  .getBySlackId(user.slackUserId, user.slackWorkspaceId)
-                                  .returns(Promise.resolve(user));
+        unitTestSetup.dependencies
+            .get(SlackUserRepo)
+            .getBySlackId(user.slackUserId, user.slackWorkspaceId)
+            .returns(Promise.resolve(user));
 
         // act
         await unitTestSetup.unitUnderTest.markChickenForRename(firstChicken);
@@ -133,18 +154,21 @@ export class ChickenRenamingServiceSpec
         expect(firstChicken.awaitingRename).to.be.false;
         expect(secondChicken.awaitingRename).to.be.true;
 
-        unitTestSetup.dependencies.get(ChickenRepo)
-                                  .received(2)
-                                  .save(firstChicken);
+        unitTestSetup.dependencies
+            .get(ChickenRepo)
+            .received(2)
+            .save(firstChicken);
 
-        unitTestSetup.dependencies.get(ChickenRepo)
-                                  .received(1)
-                                  .save(secondChicken);
+        unitTestSetup.dependencies
+            .get(ChickenRepo)
+            .received(1)
+            .save(secondChicken);
     }
 
     @test()
-    public async should_throw_when_markChickenForRenameInvokedWithChickenWithoutUser(): Promise<void>
-    {
+    public async should_throw_when_markChickenForRenameInvokedWithChickenWithoutUser(): Promise<
+        void
+    > {
         // arrange
         // - test data
         const chickenWithoutUser = new Chicken();
@@ -154,12 +178,11 @@ export class ChickenRenamingServiceSpec
 
         // act
         let err: Error;
-        try
-        {
-            await unitTestSetup.unitUnderTest.markChickenForRename(chickenWithoutUser);
-        }
-        catch (e)
-        {
+        try {
+            await unitTestSetup.unitUnderTest.markChickenForRename(
+                chickenWithoutUser
+            );
+        } catch (e) {
             err = e;
         }
 
@@ -169,8 +192,9 @@ export class ChickenRenamingServiceSpec
     }
 
     @test()
-    public async should_updateChickenNameAndMarkNotAwaitingRename_when_handleRenameInvoked(): Promise<void>
-    {
+    public async should_updateChickenNameAndMarkNotAwaitingRename_when_handleRenameInvoked(): Promise<
+        void
+    > {
         // arrange
         // - test data
         const oldName = 'Cluck Kent';
@@ -189,18 +213,17 @@ export class ChickenRenamingServiceSpec
         expect(chicken.awaitingRename).to.be.false;
         expect(chicken.name).to.equal(newName);
 
-        unitTestSetup.dependencies.get(ChickenRepo)
-                                  .received()
-                                  .save(chicken);
+        unitTestSetup.dependencies
+            .get(ChickenRepo)
+            .received()
+            .save(chicken);
     }
 
-    private getUnitTestSetup(): UnitTestSetup<ChickenRenamingService>
-    {
+    private getUnitTestSetup(): UnitTestSetup<ChickenRenamingService> {
         return new UnitTestSetup(ChickenRenamingService);
     }
 
-    private createTestUser(chickens?: Chicken[]): SlackUser
-    {
+    private createTestUser(chickens?: Chicken[]): SlackUser {
         const user = new SlackUser();
         user.slackUserId = 'U1234';
         user.slackWorkspaceId = '123';

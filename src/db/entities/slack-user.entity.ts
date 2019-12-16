@@ -6,8 +6,7 @@ import { EntityName } from './entity-name.enum';
 import { EntityBase } from './entity.base';
 
 @Entity(EntityName.SlackUser)
-export class SlackUser extends EntityBase
-{
+export class SlackUser extends EntityBase {
     @Column()
     public slackUserId: string = '';
 
@@ -17,12 +16,21 @@ export class SlackUser extends EntityBase
     @Column({ default: () => 'GETDATE()' })
     public dailyEggsLastRefreshedDate: Date = new Date();
 
-    @OneToMany(() => Egg, egg => egg.ownedByUser)
+    @OneToMany(
+        () => Egg,
+        egg => egg.ownedByUser
+    )
     public eggs?: Egg[];
 
-    @OneToMany(() => Egg, egg => egg.givenByUser)
+    @OneToMany(
+        () => Egg,
+        egg => egg.givenByUser
+    )
     public eggsGiven?: Egg[];
 
-    @OneToMany(() => Chicken, chicken => chicken.ownedByUser)
+    @OneToMany(
+        () => Chicken,
+        chicken => chicken.ownedByUser
+    )
     public chickens?: Chicken[];
 }

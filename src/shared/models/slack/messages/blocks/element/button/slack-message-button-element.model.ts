@@ -7,7 +7,8 @@ import { SlackMessageButtonElementStyle } from './slack-message-button-element-s
 
 // tslint:disable:variable-name
 /** @see {@link https://api.slack.com/reference/messaging/block-elements#button} */
-export class SlackMessageButtonElement implements ISlackMessageInteractiveBlockElement {
+export class SlackMessageButtonElement
+    implements ISlackMessageInteractiveBlockElement {
     public type = SlackMessageBlockElementType.Button;
 
     /**
@@ -24,6 +25,6 @@ export class SlackMessageButtonElement implements ISlackMessageInteractiveBlockE
         public url?: string,
         public value?: string,
         public style?: SlackMessageButtonElementStyle,
-        public confirm?: SlackMessageConfirmComposition,
-    ) { }
+        public confirm?: SlackMessageConfirmComposition
+    ) {}
 }

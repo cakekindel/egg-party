@@ -18,6 +18,6 @@ export class SlackMessageImageBlock implements ISlackMessageLayoutBlock {
         public image_url: string,
         public alt_text: string,
         public title?: SlackMessageTextComposition,
-        public block_id?: string,
-    ) { }
+        public block_id?: string
+    ) {}
 }

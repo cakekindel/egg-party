@@ -5,7 +5,8 @@ import { ISlackMessageInteractiveBlockElement } from '../slack-message-interacti
 
 // tslint:disable:variable-name
 /** @see {@link https://api.slack.com/reference/messaging/block-elements#datepicker} */
-export class SlackMessageDatepickerElement implements ISlackMessageInteractiveBlockElement {
+export class SlackMessageDatepickerElement
+    implements ISlackMessageInteractiveBlockElement {
     public type = SlackMessageBlockElementType.DatePicker;
 
     /**
@@ -18,6 +19,6 @@ export class SlackMessageDatepickerElement implements ISlackMessageInteractiveBl
         public action_id: string,
         public placeholder?: SlackMessageTextComposition,
         public initial_date?: string,
-        public confirm?: SlackMessageConfirmComposition,
-    ) { }
+        public confirm?: SlackMessageConfirmComposition
+    ) {}
 }

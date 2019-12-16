@@ -9,6 +9,6 @@ export class SlackMessageOptionGroupComposition {
      */
     constructor(
         public label: SlackMessageTextComposition,
-        public options: SlackMessageOptionComposition[],
-    ) { }
+        public options: SlackMessageOptionComposition[]
+    ) {}
 }

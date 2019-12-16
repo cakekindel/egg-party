@@ -19,11 +19,14 @@ export class SlackMessageSectionBlock implements ISlackMessageLayoutBlock {
         public text: SlackMessageTextComposition,
         public fields?: SlackMessageTextComposition[],
         public accessory?: ISlackMessageBlockElement,
-        public block_id?: string,
-    ) { }
+        public block_id?: string
+    ) {}
 
     public static fromText(text: string): SlackMessageSectionBlock {
-        const textObj = new SlackMessageTextComposition(SlackMessageTextCompositionType.Markdown, text);
+        const textObj = new SlackMessageTextComposition(
+            SlackMessageTextCompositionType.Markdown,
+            text
+        );
         return new SlackMessageSectionBlock(textObj);
     }
 }

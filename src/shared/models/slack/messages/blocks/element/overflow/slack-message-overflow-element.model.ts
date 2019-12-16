@@ -5,7 +5,8 @@ import { ISlackMessageInteractiveBlockElement } from '../slack-message-interacti
 
 // tslint:disable:variable-name
 /** @see {@link https://api.slack.com/reference/messaging/block-elements#overflow} */
-export class SlackMessageOverflowElement implements ISlackMessageInteractiveBlockElement {
+export class SlackMessageOverflowElement
+    implements ISlackMessageInteractiveBlockElement {
     public type = SlackMessageBlockElementType.Overflow;
 
     /**
@@ -16,6 +17,6 @@ export class SlackMessageOverflowElement implements ISlackMessageInteractiveBloc
     constructor(
         public action_id: string,
         public options: SlackMessageOptionComposition[],
-        public confirm?: SlackMessageConfirmComposition,
-    ) { }
+        public confirm?: SlackMessageConfirmComposition
+    ) {}
 }

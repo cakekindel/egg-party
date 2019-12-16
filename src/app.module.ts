@@ -4,9 +4,6 @@ import { ApiModule } from './api/api.module';
 import { SharedModule } from './shared/shared.module';
 
 @Module({
-    imports: [
-        ApiModule,
-        SharedModule,
-    ]
+    imports: [ApiModule, SharedModule],
 })
-export class AppModule { }
+export class AppModule {}

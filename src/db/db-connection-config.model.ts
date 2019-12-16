@@ -3,8 +3,7 @@ import { SqlServerConnectionOptions } from 'typeorm/driver/sqlserver/SqlServerCo
 import { ConfigService } from '../shared/utility';
 import { Entities, EntityBase } from './entities';
 
-export class DbConnectionConfig implements SqlServerConnectionOptions
-{
+export class DbConnectionConfig implements SqlServerConnectionOptions {
     public readonly type = 'mssql' as const;
     public readonly name: string;
     public readonly database: string;
@@ -14,8 +13,7 @@ export class DbConnectionConfig implements SqlServerConnectionOptions
     public readonly entities: Array<Type<EntityBase>>;
     public readonly options = { encrypt: true };
 
-    constructor(config: ConfigService)
-    {
+    constructor(config: ConfigService) {
         this.name = config.environment;
         this.database = config.typeOrmConfig.databaseName;
         this.host = config.typeOrmConfig.hostUrl;

@@ -8,8 +8,4 @@ export * from './entity-name.enum';
 export * from './entity.base';
 export * from './slack-user.entity';
 
-export const Entities = [
-    Chicken,
-    Egg,
-    SlackUser,
-];
+export const Entities = [Chicken, Egg, SlackUser];

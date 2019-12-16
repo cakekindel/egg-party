@@ -4,21 +4,23 @@ import { Egg, SlackUser } from '../../db/entities';
 import { EggRepo, SlackUserRepo } from '../../db/repos';
 
 @Injectable()
-export class DailyEggsService
-{
-    constructor(private eggRepo: EggRepo, private userRepo: SlackUserRepo) { }
+export class DailyEggsService {
+    constructor(private eggRepo: EggRepo, private userRepo: SlackUserRepo) {}
 
-    public async ensureDailyEggsFresh(user: SlackUser): Promise<SlackUser>
-    {
-        const midnightLastNight = moment().hour(0).minute(0).second(0);
-        const refreshedToday = moment(user.dailyEggsLastRefreshedDate).isAfter(midnightLastNight);
+    public async ensureDailyEggsFresh(user: SlackUser): Promise<SlackUser> {
+        const midnightLastNight = moment()
+            .hour(0)
+            .minute(0)
+            .second(0);
+        const refreshedToday = moment(user.dailyEggsLastRefreshedDate).isAfter(
+            midnightLastNight
+        );
 
         const eggsLeftOver = user.eggs?.filter(egg => !egg.givenByUser) ?? [];
         const maxDailyEggs = user.chickens?.length ?? 5;
         const numberOfDailyEggsToMake = maxDailyEggs - eggsLeftOver.length;
 
-        if (!refreshedToday && numberOfDailyEggsToMake > 0)
-        {
+        if (!refreshedToday && numberOfDailyEggsToMake > 0) {
             await this.createDailyEggs(user, numberOfDailyEggsToMake);
             user.dailyEggsLastRefreshedDate = new Date();
 
@@ -28,10 +30,11 @@ export class DailyEggsService
         return user;
     }
 
-    private async createDailyEggs(user: SlackUser, numberOfDailyEggsToMake: number): Promise<void>
-    {
-        for (let i = 0; i < numberOfDailyEggsToMake; i++)
-        {
+    private async createDailyEggs(
+        user: SlackUser,
+        numberOfDailyEggsToMake: number
+    ): Promise<void> {
+        for (let i = 0; i < numberOfDailyEggsToMake; i++) {
             const chicken = user.chickens?.[i]; // this is safe because of the check in ensureDailyEggsFresh
             const egg = new Egg();
             egg.ownedByUser = user;

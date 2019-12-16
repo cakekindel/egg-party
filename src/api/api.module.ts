@@ -3,10 +3,21 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '../shared/utility';
 
 import { HealthCheckController } from './controllers';
-import { SlackEventsController, SlackInteractionsController } from './controllers/slack';
+import {
+    SlackEventsController,
+    SlackInteractionsController,
+} from './controllers/slack';
 
-import { ChickenRenamingService, DailyEggsService, EggGivingService } from './services';
-import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from './services/slack';
+import {
+    ChickenRenamingService,
+    DailyEggsService,
+    EggGivingService,
+} from './services';
+import {
+    SlackApiService,
+    SlackGuideBookService,
+    SlackMessageBuilderService,
+} from './services/slack';
 import {
     SlackCommandHandler,
     SlackEventHandler,
@@ -17,9 +28,7 @@ import {
 
 import { DbModule } from '../db/db.module';
 @Module({
-    imports: [
-        DbModule,
-    ],
+    imports: [DbModule],
     controllers: [
         HealthCheckController,
         SlackEventsController,
@@ -41,4 +50,4 @@ import { DbModule } from '../db/db.module';
     ],
     exports: [],
 })
-export class ApiModule { }
+export class ApiModule {}

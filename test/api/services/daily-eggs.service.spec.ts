@@ -7,11 +7,11 @@ import { Chicken, Egg, SlackUser } from '../../../src/db/entities';
 import { EggRepo, SlackUserRepo } from '../../../src/db/repos';
 
 @suite()
-export class DailyEggsServiceSpec
-{
+export class DailyEggsServiceSpec {
     @test()
-    public async should_refreshEggs_when_itsBeenAHotMinuteSinceTheyGaveEggs(): Promise<void>
-    {
+    public async should_refreshEggs_when_itsBeenAHotMinuteSinceTheyGaveEggs(): Promise<
+        void
+    > {
         // arrange
         // - test data
         const user = new SlackUser();
@@ -36,15 +36,25 @@ export class DailyEggsServiceSpec
 
         // assert
         userRepo.received().save(user);
-        eggRepo.received().save(Arg.is((eggs?: Egg[]) => eggs?.length === user.chickens?.length));
+        eggRepo
+            .received()
+            .save(
+                Arg.is((eggs?: Egg[]) => eggs?.length === user.chickens?.length)
+            );
 
-        const lastRefreshedDateWasUpdated = moment(user.dailyEggsLastRefreshedDate).isSame(moment(), 'day');
-        expect(lastRefreshedDateWasUpdated, 'SlackUser.lastRefreshedDate was updated').to.be.true;
+        const lastRefreshedDateWasUpdated = moment(
+            user.dailyEggsLastRefreshedDate
+        ).isSame(moment(), 'day');
+        expect(
+            lastRefreshedDateWasUpdated,
+            'SlackUser.lastRefreshedDate was updated'
+        ).to.be.true;
     }
 
     @test()
-    public async should_notRefreshEggs_when_eggsWereRefreshedRecently(): Promise<void>
-    {
+    public async should_notRefreshEggs_when_eggsWereRefreshedRecently(): Promise<
+        void
+    > {
         // arrange
         // - test data
         const user = new SlackUser();
@@ -66,12 +76,17 @@ export class DailyEggsServiceSpec
 
         // assert
         userRepo.didNotReceive().save(user);
-        eggRepo.didNotReceive().save(Arg.is((eggs?: Egg[]) => eggs?.length === user.chickens?.length));
+        eggRepo
+            .didNotReceive()
+            .save(
+                Arg.is((eggs?: Egg[]) => eggs?.length === user.chickens?.length)
+            );
     }
 
     @test()
-    public async should_onlyRefreshUpToNumberOfChickens_when_someEggsLeft(): Promise<void>
-    {
+    public async should_onlyRefreshUpToNumberOfChickens_when_someEggsLeft(): Promise<
+        void
+    > {
         // arrange
         // - test data
         const user = new SlackUser();
@@ -96,6 +111,10 @@ export class DailyEggsServiceSpec
 
         // assert
         userRepo.received().save(user);
-        eggRepo.received().save(Arg.is((eggs?: Egg[]) => eggs.length === user.chickens.length));
+        eggRepo
+            .received()
+            .save(
+                Arg.is((eggs?: Egg[]) => eggs.length === user.chickens.length)
+            );
     }
 }

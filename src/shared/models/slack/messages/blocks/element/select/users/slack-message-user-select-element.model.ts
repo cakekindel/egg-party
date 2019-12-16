@@ -5,7 +5,8 @@ import { ISlackMessageSelectElement } from '../slack-message-select-element.inte
 
 // tslint:disable:variable-name
 /** @see {@link https://api.slack.com/reference/messaging/block-elements#select} */
-export class SlackMessageUserSelectElement implements ISlackMessageSelectElement {
+export class SlackMessageUserSelectElement
+    implements ISlackMessageSelectElement {
     public type = SlackMessageBlockElementType.UserSelect;
 
     /**
@@ -18,6 +19,6 @@ export class SlackMessageUserSelectElement implements ISlackMessageSelectElement
         public action_id: string,
         public placeholder: SlackMessageTextComposition,
         public initial_user?: string,
-        public confirm?: SlackMessageConfirmComposition,
-    ) { }
+        public confirm?: SlackMessageConfirmComposition
+    ) {}
 }

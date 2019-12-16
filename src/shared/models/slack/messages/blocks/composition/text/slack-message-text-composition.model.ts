@@ -10,6 +10,6 @@ export class SlackMessageTextComposition {
         public type: SlackMessageTextCompositionType,
         public text: string,
         public emoji?: boolean,
-        public verbatim?: boolean,
-    ) { }
+        public verbatim?: boolean
+    ) {}
 }

@@ -1,4 +1,3 @@
-export enum MessageSubtype
-{
+export enum MessageSubtype {
     Bot = 'bot_message',
 }

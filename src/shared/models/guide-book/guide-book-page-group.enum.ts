@@ -1,5 +1,4 @@
-export enum GuideBookPageGroup
-{
+export enum GuideBookPageGroup {
     None,
     LearnAbout,
     ChickenBreedFieldGuide,
