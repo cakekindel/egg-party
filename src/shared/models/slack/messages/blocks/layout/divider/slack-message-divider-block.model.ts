@@ -6,5 +6,5 @@ import { ISlackMessageLayoutBlock } from '../slack-message-layout-block.interfac
 export class SlackMessageDividerBlock implements ISlackMessageLayoutBlock {
     public type = SlackMessageLayoutBlockType.Divider;
 
-    constructor(public block_id?: string) { }
+    constructor(public block_id?: string) {}
 }

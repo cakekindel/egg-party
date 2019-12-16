@@ -1,7 +1,6 @@
 import { ISlackResponse } from '../slack-response.model';
 
-export interface ISlackAuthTestResponse extends ISlackResponse
-{
+export interface ISlackAuthTestResponse extends ISlackResponse {
     user: string;
     user_id: string;
 

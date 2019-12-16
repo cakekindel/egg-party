@@ -1,5 +1,4 @@
-export enum SlackDmCommand
-{
+export enum SlackDmCommand {
     Help = 'help',
     ManageChickens = 'chickens',
     Leaderboard = 'leaderboard',

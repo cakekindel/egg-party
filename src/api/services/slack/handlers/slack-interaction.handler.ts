@@ -11,56 +11,68 @@ import { ISlackInteractionPayload } from '../../../../shared/models/slack/intera
 import { SlackGuideBookService } from '../slack-guide-book.service';
 
 @Injectable()
-export class SlackInteractionHandler
-{
+export class SlackInteractionHandler {
     constructor(
         private api: SlackApiService,
         private messageBuilder: SlackMessageBuilderService,
         private userRepo: SlackUserRepo,
         private chickenRepo: ChickenRepo,
-        private guideBook: SlackGuideBookService,
-    ) { }
+        private guideBook: SlackGuideBookService
+    ) {}
 
-    public async handleInteraction(interaction: ISlackInteractionPayload): Promise<void>
-    {
+    public async handleInteraction(
+        interaction: ISlackInteractionPayload
+    ): Promise<void> {
         const action = interaction.actions[0];
 
-        const actionId = action.action_id.includes(SlackInteractionId.GuideBookJumpToPage)
-                            ? SlackInteractionId.GuideBookJumpToPage
-                            : action.action_id;
+        const actionId = action.action_id.includes(
+            SlackInteractionId.GuideBookJumpToPage
+        )
+            ? SlackInteractionId.GuideBookJumpToPage
+            : action.action_id;
 
         const userId = interaction.user.id;
         const botUserId = await this.api.getBotUserId();
 
-        switch (actionId)
-        {
-            case SlackInteractionId.GuideBookJumpToPage:
-                {
-                    const pageId = (action.value || action.selected_option && action.selected_option.value) as GuideBookPageId;
-                    return await this.api.sendHookMessage(interaction.response_url, this.guideBook.build(userId, botUserId, pageId));
+        switch (actionId) {
+            case SlackInteractionId.GuideBookJumpToPage: {
+                const pageId = (action.value ||
+                    (action.selected_option &&
+                        action.selected_option.value)) as GuideBookPageId;
+                return this.api.sendHookMessage(
+                    interaction.response_url,
+                    this.guideBook.build(userId, botUserId, pageId)
+                );
+            }
+            case SlackInteractionId.ManageChickens: {
+                const user = await this.userRepo.getBySlackId(
+                    userId,
+                    interaction.team.id
+                );
+                if (user && user.chickens) {
+                    await this.api.sendDirectMessage(
+                        userId,
+                        this.messageBuilder.manageChickens(user.chickens)
+                    );
                 }
-            case SlackInteractionId.ManageChickens:
-                {
-                    const user = await this.userRepo.getBySlackId(userId, interaction.team.id);
-                    if (user && user.chickens)
-                    {
-                        await this.api.sendDirectMessage(userId, this.messageBuilder.manageChickens(user.chickens));
-                    }
-                    break;
-                }
-            case SlackInteractionId.RenameChicken:
-                {
-                    const chickenId = parseInt(action.value || '0', 10);
-                    const chicken = await this.chickenRepo.getById(chickenId);
+                break;
+            }
+            case SlackInteractionId.RenameChicken: {
+                const chickenId = Number(action.value || '0');
+                const chicken = await this.chickenRepo.getById(chickenId);
 
-                    if (chicken)
-                    {
-                        chicken.awaitingRename = true;
-                        await this.chickenRepo.save(chicken);
-                        await this.api.sendDirectMessage(userId, this.messageBuilder.renameChicken(chicken));
-                    }
-                    break;
+                if (chicken) {
+                    chicken.awaitingRename = true;
+                    await this.chickenRepo.save(chicken);
+                    await this.api.sendDirectMessage(
+                        userId,
+                        this.messageBuilder.renameChicken(chicken)
+                    );
                 }
+                break;
+            }
+            default:
+                break;
         }
     }
 }

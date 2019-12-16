@@ -2,7 +2,8 @@ import { SlackMessageConfirmComposition } from '../../composition/confirm/slack-
 import { SlackMessageTextComposition } from '../../composition/text/slack-message-text-composition.model';
 import { ISlackMessageInteractiveBlockElement } from '../slack-message-interactive-block-element.interface';
 
-export interface ISlackMessageSelectElement extends ISlackMessageInteractiveBlockElement {
+export interface ISlackMessageSelectElement
+    extends ISlackMessageInteractiveBlockElement {
     placeholder: SlackMessageTextComposition;
     confirm?: SlackMessageConfirmComposition;
 }

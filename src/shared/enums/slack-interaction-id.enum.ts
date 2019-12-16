@@ -1,5 +1,4 @@
-export enum SlackInteractionId
-{
+export enum SlackInteractionId {
     LearnHowToGiveEggs = 'learn_how_to_give_eggs',
     LearnAboutChickens = 'learn_about_chickens',
     LearnCommands = 'learn_commands',

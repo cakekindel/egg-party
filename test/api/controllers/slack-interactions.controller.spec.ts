@@ -10,11 +10,11 @@ import { SlackInteractionHandler } from '../../../src/api/services/slack/handler
 import { SlackInteractionsController } from '../../../src/api/controllers/slack';
 
 @suite()
-export class SlackInteractionsControllerSpec
-{
+export class SlackInteractionsControllerSpec {
     @test()
-    public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<void>
-    {
+    public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<
+        void
+    > {
         // arrange
         // - dependencies
         const slackApi = Substitute.for<SlackApiService>();
@@ -37,8 +37,9 @@ export class SlackInteractionsControllerSpec
     }
 
     @test
-    public async should_callInteractionHandler_when_requestVerified(): Promise<void>
-    {
+    public async should_callInteractionHandler_when_requestVerified(): Promise<
+        void
+    > {
         // arrange
         // - dependencies
         const handler = Substitute.for<SlackInteractionHandler>();
@@ -61,22 +62,23 @@ export class SlackInteractionsControllerSpec
     }
 
     @test
-    public async should_parsePayload_when_requestVerified(): Promise<void>
-    {
+    public async should_parsePayload_when_requestVerified(): Promise<void> {
         // arrange
         // - dependencies
         const handler = Substitute.for<SlackInteractionHandler>();
         const slackApi = Substitute.for<SlackApiService>();
 
         // - test data
-        const handleInteractionFake = fake(() => { });
+        const handleInteractionFake = fake(() => {});
         handler.handleInteraction(Arg.any()).mimicks(handleInteractionFake);
 
         slackApi.verifySlackRequest(Arg.any()).returns(true);
 
         const testPayload = { foo: 'bar' };
 
-        const request = { body: 'payload=' + JSON.stringify(testPayload) } as Request;
+        const request = {
+            body: 'payload=' + JSON.stringify(testPayload),
+        } as Request;
         const respond = Substitute.for<Response>();
 
         // - unit under test
@@ -86,7 +88,9 @@ export class SlackInteractionsControllerSpec
         await uut.handleInteraction(request, respond);
 
         // assert
-        const payloadWasParsed = handleInteractionFake.calledWithMatch(testPayload);
+        const payloadWasParsed = handleInteractionFake.calledWithMatch(
+            testPayload
+        );
         expect(payloadWasParsed, 'payload was parsed').to.be.true;
     }
 }

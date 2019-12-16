@@ -2,7 +2,11 @@ import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { suite, test } from 'mocha-typescript';
 
-import { SlackApiService, SlackGuideBookService, SlackMessageBuilderService } from '../../../../../src/api/services/slack';
+import {
+    SlackApiService,
+    SlackGuideBookService,
+    SlackMessageBuilderService,
+} from '../../../../../src/api/services/slack';
 import { SlackInteractionHandler } from '../../../../../src/api/services/slack/handlers';
 import { Chicken, SlackUser } from '../../../../../src/db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../../../../src/db/repos';
@@ -12,11 +16,9 @@ import { ISlackInteractionPayload } from '../../../../../src/shared/models/slack
 import { SlackBlockMessage } from '../../../../../src/shared/models/slack/messages';
 
 @suite()
-export class SlackInteractionHandlerSpec
-{
+export class SlackInteractionHandlerSpec {
     @test()
-    public async should_sendGuideBookPage_when_jumpedTo(): Promise<void>
-    {
+    public async should_sendGuideBookPage_when_jumpedTo(): Promise<void> {
         // arrange
 
         // - dependencies
@@ -43,14 +45,20 @@ export class SlackInteractionHandlerSpec
                     type: 'static_select',
                     action_id: SlackInteractionId.GuideBookJumpToPage,
                     selected_option: {
-                        value: goToPage
-                    }
-                }
-            ]
+                        value: goToPage,
+                    },
+                },
+            ],
         });
 
         // - unit under test
-        const uut = new SlackInteractionHandler(api, null, null, null, guideBook);
+        const uut = new SlackInteractionHandler(
+            api,
+            null,
+            null,
+            null,
+            guideBook
+        );
 
         // act
         await uut.handleInteraction(interaction);
@@ -61,8 +69,9 @@ export class SlackInteractionHandlerSpec
     }
 
     @test()
-    public async should_sendManageChickens_when_manageChickensClicked(): Promise<void>
-    {
+    public async should_sendManageChickens_when_manageChickensClicked(): Promise<
+        void
+    > {
         // arrange
 
         // - dependencies
@@ -74,9 +83,7 @@ export class SlackInteractionHandlerSpec
         const userId = '1234';
         const teamId = 'slack';
         const user = new SlackUser();
-        user.chickens = [
-            new Chicken(),
-        ];
+        user.chickens = [new Chicken()];
 
         userRepo.getBySlackId(userId, teamId).returns(Promise.resolve(user));
 
@@ -91,12 +98,18 @@ export class SlackInteractionHandlerSpec
                     block_id: '1',
                     type: 'button',
                     action_id: SlackInteractionId.ManageChickens,
-                }
-            ]
+                },
+            ],
         });
 
         // - unit under test
-        const uut = new SlackInteractionHandler(api, messageBuilder, userRepo, null, null);
+        const uut = new SlackInteractionHandler(
+            api,
+            messageBuilder,
+            userRepo,
+            null,
+            null
+        );
 
         // act
         await uut.handleInteraction(interaction);
@@ -107,8 +120,9 @@ export class SlackInteractionHandlerSpec
     }
 
     @test()
-    public async should_flagChickenAsAwaitingRename_when_renameChickenClicked(): Promise<void>
-    {
+    public async should_flagChickenAsAwaitingRename_when_renameChickenClicked(): Promise<
+        void
+    > {
         // arrange
 
         // - dependencies
@@ -123,16 +137,24 @@ export class SlackInteractionHandlerSpec
         chickenRepo.getById(chicken.id).returns(Promise.resolve(chicken));
 
         const interaction = this.makePayload({
-            actions: [{
+            actions: [
+                {
                     action_id: SlackInteractionId.RenameChicken,
                     value: chicken.id.toString(),
                     block_id: '1',
                     type: 'button',
-            }]
+                },
+            ],
         });
 
         // - unit under test
-        const uut = new SlackInteractionHandler(api, messageBuilder, null, chickenRepo, null);
+        const uut = new SlackInteractionHandler(
+            api,
+            messageBuilder,
+            null,
+            chickenRepo,
+            null
+        );
 
         // act
         await uut.handleInteraction(interaction);
@@ -141,8 +163,9 @@ export class SlackInteractionHandlerSpec
         expect(chicken.awaitingRename).to.be.true;
     }
 
-    private makePayload(part: Partial<ISlackInteractionPayload>): ISlackInteractionPayload
-    {
+    private makePayload(
+        part: Partial<ISlackInteractionPayload>
+    ): ISlackInteractionPayload {
         const interactionBase: ISlackInteractionPayload = {
             type: 'block_actions',
             api_app_id: '12345',
@@ -157,7 +180,7 @@ export class SlackInteractionHandlerSpec
                 team_id: 'test',
                 username: 'sally_user',
             },
-            actions: [ ]
+            actions: [],
         };
 
         Object.assign(interactionBase, part);

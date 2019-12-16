@@ -1,5 +1,4 @@
-export interface ITypeormConfig
-{
+export interface ITypeormConfig {
     hostUrl: string;
     adminUsername: string;
     adminPassword: string;

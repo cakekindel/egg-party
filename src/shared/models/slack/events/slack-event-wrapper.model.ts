@@ -2,8 +2,8 @@ import { ISlackEvent } from './slack-event.model';
 
 import { SlackEventType } from './slack-event-type.enum';
 
-export interface ISlackEventWrapper<TInnerEvent = ISlackEvent> extends ISlackEvent
-{
+export interface ISlackEventWrapper<TInnerEvent = ISlackEvent>
+    extends ISlackEvent {
     type: SlackEventType.EventWrapper;
     event: TInnerEvent;
 

@@ -1,5 +1,4 @@
-export enum GuideBookPageId
-{
+export enum GuideBookPageId {
     Welcome = 'welcome',
 
     // Learn About...

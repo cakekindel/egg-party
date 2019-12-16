@@ -1,4 +1,3 @@
-export enum SlackEmoji
-{
+export enum SlackEmoji {
     Egg = 'egg',
 }

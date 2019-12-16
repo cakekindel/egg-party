@@ -1,5 +1,4 @@
-export interface ISlackConversation
-{
+export interface ISlackConversation {
     id: string;
     name: string;
 

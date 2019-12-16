@@ -7,11 +7,9 @@ import { Controller, Get } from '@nestjs/common';
  * https://tools.ietf.org/id/draft-inadarei-api-health-check-01.html
  */
 @Controller('health')
-export class HealthCheckController
-{
+export class HealthCheckController {
     @Get()
-    public getHealth(): { status: string }
-    {
+    public getHealth(): { status: string } {
         return { status: 'pass' };
     }
 }

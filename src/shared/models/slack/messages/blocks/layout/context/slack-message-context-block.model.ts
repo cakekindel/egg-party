@@ -10,11 +10,18 @@ export class SlackMessageContextBlock implements ISlackMessageLayoutBlock {
     public type = SlackMessageLayoutBlockType.Context;
 
     /** @param elements Elements to show in the context block. Max 10 */
-    constructor(public elements: Array<SlackMessageImageElement | SlackMessageTextComposition>, public block_id?: string) { }
+    constructor(
+        public elements: Array<
+            SlackMessageImageElement | SlackMessageTextComposition
+        >,
+        public block_id?: string
+    ) {}
 
-    public static fromText(text: string): SlackMessageContextBlock
-    {
-        const textObj = new SlackMessageTextComposition(SlackMessageTextCompositionType.Markdown, text);
+    public static fromText(text: string): SlackMessageContextBlock {
+        const textObj = new SlackMessageTextComposition(
+            SlackMessageTextCompositionType.Markdown,
+            text
+        );
         return new SlackMessageContextBlock([textObj]);
     }
 }

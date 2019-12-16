@@ -6,5 +6,5 @@ export class SlackMessageImageElement implements ISlackMessageBlockElement {
     public type = SlackMessageBlockElementType.Image;
 
     /** @param alt_text A plaintext summary of the image without markup */
-    constructor(public image_url: string, public alt_text?: string) { }
+    constructor(public image_url: string, public alt_text?: string) {}
 }

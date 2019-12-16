@@ -1,7 +1,6 @@
-export enum ChickenGrowthState
-{
+export enum ChickenGrowthState {
     FreshlyHatched = 1,
     Young = 2,
     Adolescent = 3,
-    Adult = 4
+    Adult = 4,
 }

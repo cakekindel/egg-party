@@ -12,6 +12,6 @@ export class SlackBlockMessage {
         public blocks: ISlackMessageLayoutBlock[],
         public text?: string,
         public thread_ts?: string,
-        public channel?: string,
-    ) { }
+        public channel?: string
+    ) {}
 }

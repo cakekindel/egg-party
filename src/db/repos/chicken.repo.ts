@@ -5,13 +5,14 @@ import { RepoBase } from './repo.base';
 import { Chicken, SlackUser } from '../entities';
 
 @Injectable()
-export class ChickenRepo extends RepoBase<Chicken>
-{
+export class ChickenRepo extends RepoBase<Chicken> {
     protected entityType = Chicken;
-    protected defaultRelations: Array<keyof Chicken> = ['laidEggs', 'ownedByUser'];
+    protected defaultRelations: Array<keyof Chicken> = [
+        'laidEggs',
+        'ownedByUser',
+    ];
 
-    public async createNewUserChickens(user: SlackUser): Promise<Chicken[]>
-    {
+    public async createNewUserChickens(user: SlackUser): Promise<Chicken[]> {
         const chickens = [
             new Chicken(),
             new Chicken(),
@@ -20,11 +21,10 @@ export class ChickenRepo extends RepoBase<Chicken>
             new Chicken(),
         ];
 
-        chickens.forEach(c =>
-        {
+        chickens.forEach(c => {
             c.ownedByUser = user;
         });
 
-        return await this.save(chickens);
+        return this.save(chickens);
     }
 }

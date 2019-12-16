@@ -11,6 +11,6 @@ export class SlackMessageConfirmComposition {
         public title: SlackMessageTextComposition,
         public text: SlackMessageTextComposition,
         public confirm: SlackMessageTextComposition,
-        public deny: SlackMessageTextComposition,
-    ) { }
+        public deny: SlackMessageTextComposition
+    ) {}
 }

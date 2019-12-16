@@ -1,5 +1,4 @@
-export interface ISlackInteractionAction
-{
+export interface ISlackInteractionAction {
     type: 'button' | 'static_select';
     action_id: string;
     block_id: string;

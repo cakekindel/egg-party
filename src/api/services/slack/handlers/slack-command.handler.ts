@@ -12,57 +12,62 @@ import { SlackMessageBuilderService } from '../slack-message-builder.service';
 type SlackCommandAsyncDelegate = (user: SlackUser) => Promise<void>;
 
 @Injectable()
-export class SlackCommandHandler
-{
-    private readonly commandDelegateMap: Map<SlackDmCommand, SlackCommandAsyncDelegate>;
+export class SlackCommandHandler {
+    private readonly commandDelegateMap: Map<
+        SlackDmCommand,
+        SlackCommandAsyncDelegate
+    >;
 
     constructor(
         private userRepo: SlackUserRepo,
         private slackApi: SlackApiService,
         private guideBook: SlackGuideBookService,
-        private messageBuilder: SlackMessageBuilderService,
-    )
-    {
+        private messageBuilder: SlackMessageBuilderService
+    ) {
         this.commandDelegateMap = new Map([
-            [
-                SlackDmCommand.Help,
-                async user => await this.handleHelp(user)
-            ],
+            [SlackDmCommand.Help, async user => this.handleHelp(user)],
             [
                 SlackDmCommand.ManageChickens,
-                async user => await this.handleChickens(user)
+                async user => this.handleChickens(user),
             ],
         ]);
     }
 
-    public async handleCommand(slackUserId: string, slackWorkspaceId: string, command: SlackDmCommand): Promise<void>
-    {
-        const user = await this.userRepo.getOrCreateAndSendGuideBook(slackUserId, slackWorkspaceId);
+    public async handleCommand(
+        slackUserId: string,
+        slackWorkspaceId: string,
+        command: SlackDmCommand
+    ): Promise<void> {
+        const user = await this.userRepo.getOrCreateAndSendGuideBook(
+            slackUserId,
+            slackWorkspaceId
+        );
 
         const asyncDelegate = this.commandDelegateMap.get(command);
-        if (asyncDelegate !== undefined)
-            await asyncDelegate(user);
-        else
-            await this.handleUnknownCommand(user, command);
+        if (asyncDelegate !== undefined) await asyncDelegate(user);
+        else await this.handleUnknownCommand(user, command);
     }
 
-    private async handleUnknownCommand(user: SlackUser, command: SlackDmCommand): Promise<void>
-    {
+    private async handleUnknownCommand(
+        user: SlackUser,
+        command: SlackDmCommand
+    ): Promise<void> {
         const unknownCommandMessage = new SlackMessageUnknownCommand();
-        await this.slackApi.sendDirectMessage(user.slackUserId, unknownCommandMessage);
+        await this.slackApi.sendDirectMessage(
+            user.slackUserId,
+            unknownCommandMessage
+        );
         await this.guideBook.send(user, GuideBookPageId.LearnAboutCommands);
     }
 
-    private async handleHelp(user: SlackUser): Promise<void>
-    {
+    private async handleHelp(user: SlackUser): Promise<void> {
         await this.guideBook.send(user);
     }
 
-    private async handleChickens(user: SlackUser): Promise<void>
-    {
+    private async handleChickens(user: SlackUser): Promise<void> {
         const userId = user.slackUserId;
         const message = this.messageBuilder.manageChickens(user.chickens ?? []);
 
-        return await this.slackApi.sendDirectMessage(userId, message);
+        return this.slackApi.sendDirectMessage(userId, message);
     }
 }
