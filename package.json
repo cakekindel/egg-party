@@ -23,7 +23,7 @@
         "build": "tsc --build",
         "build:prod": "tsc --build ./src/tsconfig.prod.json",
         "clean": "npm run style:fix && rimraf dist",
-        "\n -- Code --": "",
+        "\n -- Style --": "",
         "style:fix": "npm run style:fix-src & npm run style:fix-test",
         "style:check": "npm run style:check-src & npm run style:check-test",
         "\n -- Scripts Used by Other Scripts (don't invoke directly) --": "",
