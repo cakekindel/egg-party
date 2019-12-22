@@ -1,1 +1,4 @@
-./dist/test/**/*.js
+--require source-map-support/register
+--recursive
+
+./dist/test
