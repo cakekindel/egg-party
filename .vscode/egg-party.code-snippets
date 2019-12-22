@@ -47,7 +47,7 @@
         "description": "Quickly scaffold a Test in the EggParty style of unit testing",
         "prefix": "specm",
         "body": [
-            "@test()",
+            "@TestMethod()",
             "public async should_${1:doStuff}_when_${2:somethingHappens}(): Promise<void>",
             "{",
             "    $0",
@@ -58,12 +58,10 @@
         "description": "Quickly scaffold a Spec in the EggParty style of unit testing",
         "prefix": "spec",
         "body": [
-            "import { suite, test } from 'mocha-typescript';",
-            "",
             "// STEP 1: Type the name of the class you're testing",
             "// STEP 2: Make sure the array of dependencies in getUnitTestSetup() matches the constructor arguments of UnitUnderTest",
             "// STEP 3: Select one of the red squigglies and use: Quick Fix (Command Palette OR Ctrl|Cmd + .) > add all missing imports",
-            "@suite()",
+            "@TestClass()",
             "export class ${1:UnitUnderTest}Spec implements ISpec<${1:UnitUnderTest}>",
             "{",
             "    $0",
