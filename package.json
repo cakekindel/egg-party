@@ -5,7 +5,7 @@
         "start": "npm run serve",
         "test": "npm run test:single-run",
         "\n -- Serve --": "",
-        "serve": "npm run clean && concurrently      npm:build:watch npm:serve:run-on-build                       -k -c \"cyan.dim,green.dim\"          -n \" build ,  api  \"",
+        "serve": "npm run clean && concurrently npm:build:watch npm:serve:run-on-build -k -c \"cyan.dim,green.dim\" -n \" build ,  api  \"",
         "serve-test": "npm run clean && concurrently npm:build:watch npm:serve:run-on-build npm:test:run-on-build -k -c \"cyan.dim,green.dim,blue.dim\" -n \" build ,  api  , mocha \"",
         "\n -- Test --": "",
         "test:single-run": "npm run build && npm run test:run",
