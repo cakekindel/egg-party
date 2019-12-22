@@ -1,5 +1,7 @@
 {
     "recommendations": [
-        "eamodio.tsl-problem-matcher"
+        "eamodio.tsl-problem-matcher",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-typescript-tslint-plugin"
     ]
 }
