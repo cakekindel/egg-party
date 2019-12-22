@@ -1,14 +1,15 @@
 import { Substitute } from '@fluffy-spoon/substitute';
 import axios, { AxiosRequestConfig } from 'axios';
 import { expect } from 'chai';
-import { createHmac } from 'crypto';
+import { suite, test } from 'mocha-typescript';
 import * as Sinon from 'sinon';
+
+import { createHmac } from 'crypto';
 import { SlackApiService } from '../../../../src/api/services/slack';
 import { IRequestWithRawBody } from '../../../../src/shared/models/express/request-with-raw-body.model';
 import { ConfigService } from '../../../../src/shared/utility';
-import { TestClass, TestMethod } from '../../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class SlackApiServiceSpec {
     public axiosRequestStub: Sinon.SinonStub<
         [AxiosRequestConfig],
@@ -25,7 +26,7 @@ export class SlackApiServiceSpec {
         this.axiosRequestStub.restore();
     }
 
-    @TestMethod()
+    @test()
     public async should_acceptAuthenticRequests_when_verifySlackRequestInvoked(): Promise<
         void
     > {
@@ -64,7 +65,7 @@ export class SlackApiServiceSpec {
         expect(verified, 'request authentic').to.be.true;
     }
 
-    @TestMethod()
+    @test()
     public async should_rejectNonAuthenticRequests_when_verifySlackRequestInvoked(): Promise<
         void
     > {
@@ -102,7 +103,7 @@ export class SlackApiServiceSpec {
         expect(verified, 'request authentic').to.be.false;
     }
 
-    @TestMethod()
+    @test()
     public async should_throwError_when_getAllPublicChannelsReceivesBadResponse(): Promise<
         void
     > {
@@ -133,7 +134,7 @@ export class SlackApiServiceSpec {
         }
     }
 
-    @TestMethod()
+    @test()
     public async should_throwError_when_getChannelInfoReceivesBadResponse(): Promise<
         void
     > {
@@ -161,7 +162,7 @@ export class SlackApiServiceSpec {
         }
     }
 
-    @TestMethod()
+    @test()
     public async should_throwError_when_getBotUserIdReceivesBadResponse(): Promise<
         void
     > {
@@ -189,7 +190,7 @@ export class SlackApiServiceSpec {
         }
     }
 
-    @TestMethod()
+    @test()
     public async should_throwError_when_sendHookMessageReceivesBadResponse(): Promise<
         void
     > {
@@ -217,7 +218,7 @@ export class SlackApiServiceSpec {
         }
     }
 
-    @TestMethod()
+    @test()
     public async should_throwError_when_sendMessageReceivesBadResponse(): Promise<
         void
     > {
@@ -245,7 +246,7 @@ export class SlackApiServiceSpec {
         }
     }
 
-    @TestMethod()
+    @test()
     public async should_throwError_when_sendDirectMessageReceivesBadResponse(): Promise<
         void
     > {

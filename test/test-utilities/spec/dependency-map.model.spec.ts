@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common';
 import { expect } from 'chai';
+import { suite, test } from 'mocha-typescript';
 import { DependencySubstituteMap } from '../dependency-map.model';
-import { TestClass, TestMethod } from '../directives';
 import {
     BabyEmoji,
     EggInPanEmoji,
@@ -15,9 +15,9 @@ const testDeps: Array<Type<Emoji>> = [
     RockClimberEmoji,
 ];
 
-@TestClass()
+@suite()
 export class DependencyMapSpec {
-    @TestMethod()
+    @test()
     public should_createSeparateSubstitutes_when_created(): void {
         // arrange
         const uut = new DependencySubstituteMap(testDeps);
@@ -29,7 +29,7 @@ export class DependencyMapSpec {
         expect(this.allObjectInstancesDifferent(actual)).to.be.true;
     }
 
-    @TestMethod()
+    @test()
     public should_notCreateMultipleSubstitutes_when_createdWithDuplicatedDependency(): void {
         // arrange
         const uut = new DependencySubstituteMap([EggInPanEmoji, EggInPanEmoji]);
@@ -42,7 +42,7 @@ export class DependencyMapSpec {
         expect(actual.length).to.equal(1);
     }
 
-    @TestMethod()
+    @test()
     public should_returnSubstitute_when_getMockInvoked(): void {
         // arrange
         const newBabyEmoji = '👼';
@@ -58,7 +58,7 @@ export class DependencyMapSpec {
         expect(actual).to.equal(newBabyEmoji);
     }
 
-    @TestMethod()
+    @test()
     public should_throw_when_getMockInvokedForUnregisteredMock(): void {
         // arrange
         const uut = new DependencySubstituteMap([EggInPanEmoji]);

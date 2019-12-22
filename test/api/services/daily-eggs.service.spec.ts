@@ -1,14 +1,14 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
+import { suite, test } from 'mocha-typescript';
 import * as moment from 'moment';
 import { DailyEggsService } from '../../../src/api/services/daily-eggs.service';
 import { Chicken, Egg, SlackUser } from '../../../src/db/entities';
 import { EggRepo, SlackUserRepo } from '../../../src/db/repos';
-import { TestClass, TestMethod } from '../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class DailyEggsServiceSpec {
-    @TestMethod()
+    @test()
     public async should_refreshEggs_when_itsBeenAHotMinuteSinceTheyGaveEggs(): Promise<
         void
     > {
@@ -20,10 +20,7 @@ export class DailyEggsServiceSpec {
         user.chickens = [new Chicken(), new Chicken(), new Chicken()];
 
         const yesterday = moment().subtract(1, 'day');
-        const allMyTroublesSeemedSoFarAway = moment().subtract(1, 'day');
         user.dailyEggsLastRefreshedDate = yesterday.toDate();
-
-        allMyTroublesSeemedSoFarAway;
 
         // - dependencies
         const eggRepo = Substitute.for<EggRepo>();
@@ -54,7 +51,7 @@ export class DailyEggsServiceSpec {
         ).to.be.true;
     }
 
-    @TestMethod()
+    @test()
     public async should_notRefreshEggs_when_eggsWereRefreshedRecently(): Promise<
         void
     > {
@@ -86,7 +83,7 @@ export class DailyEggsServiceSpec {
             );
     }
 
-    @TestMethod()
+    @test()
     public async should_onlyRefreshUpToNumberOfChickens_when_someEggsLeft(): Promise<
         void
     > {

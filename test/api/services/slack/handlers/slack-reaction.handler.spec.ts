@@ -1,4 +1,6 @@
 import { Arg } from '@fluffy-spoon/substitute';
+import { suite, test } from 'mocha-typescript';
+
 import { isEqual } from 'lodash';
 import { EggGivingService } from '../../../../../src/api/services/egg-giving.service';
 import { SlackReactionHandler } from '../../../../../src/api/services/slack/handlers';
@@ -8,16 +10,15 @@ import {
     SlackEventType,
 } from '../../../../../src/shared/models/slack/events';
 import { ISpec, UnitTestSetup } from '../../../../test-utilities';
-import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class SlackReactionHandlerSpec implements ISpec<SlackReactionHandler> {
     private testConstants = {
         workspaceId: '🏫',
         userId: '👴',
     };
 
-    @TestMethod()
+    @test()
     public async should_callEggGivingService_when_eggReactionReceived(): Promise<
         void
     > {
@@ -41,7 +42,7 @@ export class SlackReactionHandlerSpec implements ISpec<SlackReactionHandler> {
             );
     }
 
-    @TestMethod()
+    @test()
     public async should_notCallEggGivingService_when_otherReactionReceived(): Promise<
         void
     > {

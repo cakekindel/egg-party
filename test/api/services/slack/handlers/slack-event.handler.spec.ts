@@ -1,3 +1,5 @@
+import { suite, test } from 'mocha-typescript';
+
 import {
     SlackEventHandler,
     SlackMessageHandler,
@@ -12,15 +14,14 @@ import {
     SlackEventType,
 } from '../../../../../src/shared/models/slack/events';
 import { ISpec, UnitTestSetup } from '../../../../test-utilities';
-import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class SlackEventHandlerSpec implements ISpec<SlackEventHandler> {
     private testConstants = {
         userId: 'U123',
     };
 
-    @TestMethod()
+    @test()
     public async should_callMessageHandler_when_messageEventFires(): Promise<
         void
     > {
@@ -38,7 +39,7 @@ export class SlackEventHandlerSpec implements ISpec<SlackEventHandler> {
             .handleMessage(event.event);
     }
 
-    @TestMethod()
+    @test()
     public async should_callReactionHandler_when_reactionEventFires(): Promise<
         void
     > {
@@ -56,7 +57,7 @@ export class SlackEventHandlerSpec implements ISpec<SlackEventHandler> {
             .handleReaction(event);
     }
 
-    @TestMethod()
+    @test()
     public async should_notThrow_when_otherEventFires(): Promise<void> {
         // arrange
         const event = { type: 'user_florped' as SlackEventType } as ISlackEvent;

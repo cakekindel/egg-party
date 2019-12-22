@@ -1,3 +1,5 @@
+import { suite, test } from 'mocha-typescript';
+
 import { Arg } from '@fluffy-spoon/substitute';
 import {
     SlackApiService,
@@ -12,9 +14,8 @@ import { GuideBookPageId } from '../../../../../src/shared/models/guide-book';
 import { SlackMessageUnknownCommand } from '../../../../../src/shared/models/messages';
 import { SlackBlockMessage } from '../../../../../src/shared/models/slack/messages';
 import { ISpec, UnitTestSetup } from '../../../../test-utilities';
-import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
     public readonly testConstants = {
         botId: '🤖',
@@ -23,7 +24,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
         guideBook: new SlackBlockMessage([]),
     } as const;
 
-    @TestMethod()
+    @test()
     public async should_sendGuideBook_when_helpCommandReceived(): Promise<
         void
     > {
@@ -49,7 +50,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
             .send(user);
     }
 
-    @TestMethod()
+    @test()
     public async should_sendChickenManagement_when_chickensCommandReceived(): Promise<
         void
     > {
@@ -73,7 +74,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
             .manageChickens(user.chickens);
     }
 
-    @TestMethod()
+    @test()
     public async should_sendUnknownCommandMessage_when_unknownCommandSent(): Promise<
         void
     > {
@@ -108,7 +109,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
     }
 
     // TODO: implement, tracked in issue #64
-    @TestMethod.skip()
+    @test.skip()
     public async should_sendProfile_when_profileCommandReceived(): Promise<
         void
     > {
@@ -129,7 +130,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
     }
 
     // TODO: implement, tracked in issue #66
-    @TestMethod.skip()
+    @test.skip()
     public async should_sendLeaderboard_when_leaderboardCommandReceived(): Promise<
         void
     > {

@@ -1,5 +1,7 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
+import { suite, test } from 'mocha-typescript';
 import { fake } from 'sinon';
+
 import { DailyEggsService } from '../../../src/api/services/daily-eggs.service';
 import { EggGivingService } from '../../../src/api/services/egg-giving.service';
 import {
@@ -13,11 +15,10 @@ import {
     SlackMessageYouCantGiveEggsToYourself,
     SlackMessageYouGaveEggs,
 } from '../../../src/shared/models/messages';
-import { TestClass, TestMethod } from '../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class EggGivingServiceSpec {
-    @TestMethod()
+    @test()
     public async should_giveEggs(): Promise<void> {
         // parameterize
         interface ITestCase {
@@ -88,7 +89,7 @@ export class EggGivingServiceSpec {
         }
     }
 
-    @TestMethod()
+    @test()
     public async should_messageGiver_when_eggsGivenToThemselves(): Promise<
         void
     > {
@@ -136,7 +137,7 @@ export class EggGivingServiceSpec {
         );
     }
 
-    @TestMethod()
+    @test()
     public async should_messageGiver_when_eggsGivenToEggParty(): Promise<void> {
         // arrange
         // - dependencies
@@ -184,7 +185,7 @@ export class EggGivingServiceSpec {
         );
     }
 
-    @TestMethod()
+    @test()
     public async should_messageGiver_when_eggsGiven(): Promise<void> {
         // arrange
         // - dependencies
@@ -232,7 +233,7 @@ export class EggGivingServiceSpec {
         eggRepo.received().giveToUser(egg, Arg.any());
     }
 
-    @TestMethod()
+    @test()
     public async should_messageGiver_when_giveEggsInvokedAndUserCannotGiveThatMany(): Promise<
         void
     > {
@@ -282,7 +283,7 @@ export class EggGivingServiceSpec {
         );
     }
 
-    @TestMethod()
+    @test()
     public async should_messageGiver_when_giveEggsInvokedAndUserOutOfEggs(): Promise<
         void
     > {

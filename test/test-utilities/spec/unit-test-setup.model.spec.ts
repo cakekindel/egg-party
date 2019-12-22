@@ -1,14 +1,14 @@
 import { expect } from 'chai';
-import { TestClass, TestMethod } from '../directives';
+import { suite, test } from 'mocha-typescript';
 import { UnitTestSetup } from '../unit-test-setup.model';
 import {
     WeatherController,
     WeatherStation,
 } from './unit-test-setup.model.test-data';
 
-@TestClass()
+@suite
 export class UnitTestSetupSpec {
-    @TestMethod()
+    @test()
     public async should_createDependencyMapFromMetadata_when_created(): Promise<
         void
     > {
@@ -22,7 +22,7 @@ export class UnitTestSetupSpec {
         expect(uut.dependencies.getAll().length).to.equal(1);
     }
 
-    @TestMethod()
+    @test()
     public async should_createUutWithDependencies_when_created(): Promise<
         void
     > {

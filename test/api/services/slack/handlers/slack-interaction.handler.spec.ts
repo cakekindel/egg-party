@@ -1,5 +1,7 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
+import { suite, test } from 'mocha-typescript';
+
 import {
     SlackApiService,
     SlackGuideBookService,
@@ -12,11 +14,10 @@ import { SlackInteractionId } from '../../../../../src/shared/enums';
 import { GuideBookPageId } from '../../../../../src/shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../../src/shared/models/slack/interactions/slack-interaction-payload.model';
 import { SlackBlockMessage } from '../../../../../src/shared/models/slack/messages';
-import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class SlackInteractionHandlerSpec {
-    @TestMethod()
+    @test()
     public async should_sendGuideBookPage_when_jumpedTo(): Promise<void> {
         // arrange
 
@@ -67,7 +68,7 @@ export class SlackInteractionHandlerSpec {
         api.received().sendHookMessage(responseHookUrl, testPage);
     }
 
-    @TestMethod()
+    @test()
     public async should_sendManageChickens_when_manageChickensClicked(): Promise<
         void
     > {
@@ -118,7 +119,7 @@ export class SlackInteractionHandlerSpec {
         api.received().sendDirectMessage(userId, message);
     }
 
-    @TestMethod()
+    @test()
     public async should_flagChickenAsAwaitingRename_when_renameChickenClicked(): Promise<
         void
     > {

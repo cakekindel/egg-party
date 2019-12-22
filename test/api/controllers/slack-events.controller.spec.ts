@@ -1,19 +1,22 @@
 import { Arg, Substitute } from '@fluffy-spoon/substitute';
+import { suite, test } from 'mocha-typescript';
+
 import { HttpStatus } from '@nestjs/common';
 import { Request, Response, Send } from 'express';
+import { fake } from 'sinon';
 import { SlackEventsController } from '../../../src/api/controllers/slack';
 import { SlackApiService } from '../../../src/api/services/slack';
+import { SlackEventHandler } from '../../../src/api/services/slack/handlers';
 import {
     ISlackEvent,
     ISlackEventChallenge,
     SlackEventType,
 } from '../../../src/shared/models/slack/events';
 import { ISpec, UnitTestSetup } from '../../test-utilities';
-import { TestClass, TestMethod } from '../../test-utilities/directives';
 
-@TestClass()
+@suite()
 export class SlackEventsControllerSpec implements ISpec<SlackEventsController> {
-    @TestMethod()
+    @test()
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<
         void
     > {
@@ -30,7 +33,7 @@ export class SlackEventsControllerSpec implements ISpec<SlackEventsController> {
         respond.received().sendStatus(HttpStatus.UNAUTHORIZED);
     }
 
-    @TestMethod()
+    @test()
     public async should_respondWithChallenge_when_challengeEventReceived(): Promise<
         void
     > {
