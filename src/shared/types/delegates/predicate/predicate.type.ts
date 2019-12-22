@@ -1,5 +1,4 @@
 import { PureFunc } from '../func';
-import { Immutable } from '../../immutable';
 
 /**
  * Pure delegate type that tests an object for a condition

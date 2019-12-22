@@ -1,5 +1,4 @@
 import { PureFunc } from '../func';
-import { Immutable } from '../../immutable';
 
 /**
  * Pure counterpart to Action<T>
