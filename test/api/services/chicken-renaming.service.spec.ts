@@ -2,16 +2,16 @@
 import { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import * as _ from 'lodash';
-import { suite, test } from 'mocha-typescript';
 import { ChickenRenamingService } from '../../../src/api/services/chicken-renaming.service';
 import { Chicken, SlackUser } from '../../../src/db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../../src/db/repos';
 import { ErrorMissingRelatedData } from '../../../src/shared/errors';
 import { UnitTestSetup } from '../../test-utilities';
+import { TestClass, TestMethod } from '../../test-utilities/directives';
 
-@suite()
+@TestClass()
 export class ChickenRenamingServiceSpec {
-    @test()
+    @TestMethod()
     public async should_returnUndefined_when_getWaitingForUserInvokedAndNoChickensWaiting(): Promise<
         void
     > {
@@ -34,7 +34,7 @@ export class ChickenRenamingServiceSpec {
         expect(actual).to.be.undefined;
     }
 
-    @test()
+    @TestMethod()
     public async should_returnChicken_when_getWaitingForUserInvokedAndOneChickenWaiting(): Promise<
         void
     > {
@@ -62,7 +62,7 @@ export class ChickenRenamingServiceSpec {
         expect(actual).to.equal(chicken);
     }
 
-    @test()
+    @TestMethod()
     public async should_cancelAllRenames_when_multipleChickensWaiting(): Promise<
         void
     > {
@@ -98,7 +98,7 @@ export class ChickenRenamingServiceSpec {
             .save(Arg.is(chickens => _.isEqual(chickens, chickensWaiting)));
     }
 
-    @test()
+    @TestMethod()
     public async should_markChickenWaitingForRename_when_markChickenForRenameInvoked(): Promise<
         void
     > {
@@ -125,7 +125,7 @@ export class ChickenRenamingServiceSpec {
             .save(chicken);
     }
 
-    @test()
+    @TestMethod()
     public async should_cancelPreviousRename_when_markChickenForRenameInvoked(): Promise<
         void
     > {
@@ -165,7 +165,7 @@ export class ChickenRenamingServiceSpec {
             .save(secondChicken);
     }
 
-    @test()
+    @TestMethod()
     public async should_throw_when_markChickenForRenameInvokedWithChickenWithoutUser(): Promise<
         void
     > {
@@ -191,7 +191,7 @@ export class ChickenRenamingServiceSpec {
         expect(err).to.be.instanceof(ErrorMissingRelatedData);
     }
 
-    @test()
+    @TestMethod()
     public async should_updateChickenNameAndMarkNotAwaitingRename_when_handleRenameInvoked(): Promise<
         void
     > {

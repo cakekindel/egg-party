@@ -1,2 +1,3 @@
 --reporter mocha-junit-reporter
-./dist/test/**/*.js
+--recursive
+./dist/test

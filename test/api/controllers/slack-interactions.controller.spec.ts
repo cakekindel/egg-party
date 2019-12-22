@@ -1,17 +1,15 @@
 import { Arg, Substitute } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { Request, Response } from 'express';
-import { suite, test } from 'mocha-typescript';
 import { fake } from 'sinon';
-
+import { SlackInteractionsController } from '../../../src/api/controllers/slack';
 import { SlackApiService } from '../../../src/api/services/slack';
 import { SlackInteractionHandler } from '../../../src/api/services/slack/handlers';
+import { TestClass, TestMethod } from '../../test-utilities/directives';
 
-import { SlackInteractionsController } from '../../../src/api/controllers/slack';
-
-@suite()
+@TestClass()
 export class SlackInteractionsControllerSpec {
-    @test()
+    @TestMethod()
     public async should_respondUnauthorized_when_slackRequestUnverified(): Promise<
         void
     > {
@@ -36,7 +34,7 @@ export class SlackInteractionsControllerSpec {
         response.received().sendStatus(401);
     }
 
-    @test
+    @TestMethod()
     public async should_callInteractionHandler_when_requestVerified(): Promise<
         void
     > {
@@ -61,7 +59,7 @@ export class SlackInteractionsControllerSpec {
         handler.received().handleInteraction(Arg.any());
     }
 
-    @test
+    @TestMethod()
     public async should_parsePayload_when_requestVerified(): Promise<void> {
         // arrange
         // - dependencies
