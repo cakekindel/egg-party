@@ -1,9 +1,5 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
-import { suite, test } from 'mocha-typescript';
-
-import { expect } from 'chai';
 import { isEqual } from 'lodash';
-import { fake } from 'sinon';
 import { ChickenRenamingService } from '../../../../../src/api/services/chicken-renaming.service';
 import { EggGivingService } from '../../../../../src/api/services/egg-giving.service';
 import {
@@ -16,10 +12,11 @@ import { ConversationType } from '../../../../../src/shared/models/slack/convers
 import { ISlackEventMessagePosted } from '../../../../../src/shared/models/slack/events';
 import { MessageSubtype } from '../../../../../src/shared/models/slack/events/message-subtype.enum';
 import { UnitTestSetup } from '../../../../test-utilities';
+import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 
-@suite()
+@TestClass()
 export class SlackMessageHandlerSpec {
-    @test()
+    @TestMethod()
     public async should_callCommandHandler_when_dmReceivedAndNoChickensToRename(): Promise<
         void
     > {
@@ -54,7 +51,7 @@ export class SlackMessageHandlerSpec {
             );
     }
 
-    @test()
+    @TestMethod()
     public async should_notCallCommandHandler_when_dmReceivedAndChickensToRename(): Promise<
         void
     > {
@@ -94,7 +91,7 @@ export class SlackMessageHandlerSpec {
             .renameChicken(Arg.any(), message.text);
     }
 
-    @test()
+    @TestMethod()
     public async should_notCallServices_when_botDmReceived(): Promise<void> {
         // arrange
         const message = this.createMessage({
@@ -121,7 +118,7 @@ export class SlackMessageHandlerSpec {
             .renameChicken(Arg.any(), Arg.any());
     }
 
-    @test()
+    @TestMethod()
     public async should_callEggGivingService_when_channelMessageWithEggsReceived(): Promise<
         void
     > {
@@ -183,7 +180,7 @@ export class SlackMessageHandlerSpec {
         }
     }
 
-    @test()
+    @TestMethod()
     public async should_notCallEggGivingService_when_channelMessageWithoutEggsReceived(): Promise<
         void
     > {
