@@ -17,8 +17,6 @@ export class ChickenRenamingServiceSpec {
     > {
         // arrange
         const unitTestSetup = this.getUnitTestSetup();
-        console.log('soup');
-        console.log('soup');
         const user = this.createTestUser([new Chicken()]);
 
         unitTestSetup.dependencies
