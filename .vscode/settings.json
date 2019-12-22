@@ -1,7 +1,10 @@
 {
-    "tslint.configFile": "tslint.json",
-    "debug.internalConsoleOptions": "openOnFirstSessionStart",
-    "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
-    "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
-    "files.eol": "\n"
+    "files.eol": "\n",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.tslint": true
+    },
+    "[typescript]": {
+        "editor.formatOnSave": true
+    }
 }
