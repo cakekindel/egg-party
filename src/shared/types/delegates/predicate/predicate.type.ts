@@ -9,4 +9,4 @@ import { Immutable } from '../../immutable';
  * const nums = [5, 6, 7];
  * const filteredNums = nums.filter(shouldKeep); // [6, 7]
  */
-export type Predicate<T> = PureFunc<Immutable<T>, boolean>;
+export type Predicate<T> = PureFunc<T, boolean>;

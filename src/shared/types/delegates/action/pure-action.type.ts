@@ -13,4 +13,4 @@ import { Immutable } from '../../immutable';
  *
  * console.log(thing === copiedThing); // false, different references
  */
-export type PureAction<T> = PureFunc<Immutable<T>, T>;
+export type PureAction<T> = PureFunc<T, T>;

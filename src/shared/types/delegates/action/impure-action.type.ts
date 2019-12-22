@@ -7,7 +7,7 @@ import { ImpureFunc } from '../func';
  *
  * @example
  * // returns something with a side effect applied
- * const mutate: Action<Something> = thing => ...;
+ * const mutate: ImpureAction<Something> = thing => ...;
  *
  * const thing: Something = ...;
  * const thingSnapshot: Something = deepCopy(thing);
@@ -16,4 +16,4 @@ import { ImpureFunc } from '../func';
  *
  * console.log(deepCompare(thing, thingSnapshot)); // false, object was mutated
  */
-export type Action<T> = ImpureFunc<T, void>;
+export type ImpureAction<T> = ImpureFunc<T, void>;
