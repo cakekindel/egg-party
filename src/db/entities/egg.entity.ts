@@ -1,15 +1,29 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { EntityName } from './entity-name.enum';
-import { EntityBase } from './entity.base';
+import { EntityBase, IEntityBase } from './entity.base';
 
-import { Chicken } from './chicken.entity';
-import { SlackUser } from './slack-user.entity';
+import { Chicken, IChickenIntrinsic } from './chicken.entity';
+import { SlackUser, ISlackUserIntrinsic } from './slack-user.entity';
+
+export interface IEggIntrinsic extends IEntityBase {
+    didHatch: boolean;
+    givenOnDate?: Date;
+}
+
+export interface IEggRelated {
+    laidByChicken?: Chicken;
+    ownedByUser?: SlackUser;
+    givenByUser?: SlackUser;
+}
 
 @Entity(EntityName.Egg)
-export class Egg extends EntityBase {
+export class Egg extends EntityBase implements IEggIntrinsic, IEggRelated {
     @Column()
     public didHatch: boolean = false;
+
+    @Column({ nullable: true })
+    public givenOnDate?: Date;
 
     @ManyToOne(
         () => Chicken,
@@ -17,7 +31,7 @@ export class Egg extends EntityBase {
         { nullable: false }
     )
     @JoinColumn({ name: 'laidByChickenId', referencedColumnName: 'id' })
-    public laidByChicken?: Chicken;
+    public laidByChicken?: IChickenIntrinsic;
 
     @ManyToOne(
         () => SlackUser,
@@ -25,7 +39,7 @@ export class Egg extends EntityBase {
         { nullable: false }
     )
     @JoinColumn({ name: 'ownedByUserId', referencedColumnName: 'id' })
-    public ownedByUser?: SlackUser;
+    public ownedByUser?: ISlackUserIntrinsic;
 
     @ManyToOne(
         () => SlackUser,
@@ -33,8 +47,5 @@ export class Egg extends EntityBase {
         { nullable: true }
     )
     @JoinColumn({ name: 'givenByUserId', referencedColumnName: 'id' })
-    public givenByUser?: SlackUser;
-
-    @Column({ nullable: true })
-    public givenOnDate?: Date;
+    public givenByUser?: ISlackUserIntrinsic;
 }

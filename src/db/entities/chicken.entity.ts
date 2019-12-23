@@ -1,16 +1,29 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
-import { EntityBase } from './entity.base';
+import { EntityBase, IEntityBase } from './entity.base';
 
 import { ChickenGrowthState } from '../../shared/enums/chicken-growth-state.enum';
-import { Egg } from './egg.entity';
+import { Egg, IEggIntrinsic } from './egg.entity';
 import { EntityName } from './entity-name.enum';
-import { SlackUser } from './slack-user.entity';
+import { SlackUser, ISlackUserIntrinsic } from './slack-user.entity';
+
+export interface IChickenIntrinsic extends IEntityBase {
+    name: string;
+    lastFedDate: Date;
+    growthState: ChickenGrowthState;
+    awaitingRename: boolean;
+}
+
+export interface IChickenRelated {
+    laidEggs?: Egg[];
+    ownedByUser?: SlackUser;
+}
 
 @Entity(EntityName.Chicken)
-export class Chicken extends EntityBase {
+export class Chicken extends EntityBase
+    implements IChickenIntrinsic, IChickenRelated {
     @Column()
-    public name: string = '';
+    public name: string = 'Chicken';
 
     @Column()
     public lastFedDate: Date = new Date();
@@ -25,7 +38,7 @@ export class Chicken extends EntityBase {
         () => Egg,
         egg => egg.laidByChicken
     )
-    public laidEggs?: Egg[];
+    public laidEggs?: IEggIntrinsic[];
 
     @ManyToOne(
         () => SlackUser,
@@ -33,5 +46,5 @@ export class Chicken extends EntityBase {
         { nullable: false }
     )
     @JoinColumn({ name: 'ownedByUserId', referencedColumnName: 'id' })
-    public ownedByUser?: SlackUser;
+    public ownedByUser?: ISlackUserIntrinsic;
 }

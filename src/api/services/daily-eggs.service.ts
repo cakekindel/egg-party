@@ -12,11 +12,15 @@ export class DailyEggsService {
             .hour(0)
             .minute(0)
             .second(0);
-        const refreshedToday = moment(user.dailyEggsLastRefreshedDate).isAfter(
-            midnightLastNight
-        );
 
-        const eggsLeftOver = user.eggs?.filter(egg => !egg.givenByUser) ?? [];
+        const lastRefreshed = user.dailyEggsLastRefreshedDate;
+        const refreshedToday =
+            (user.dailyEggsLastRefreshedDate ?? false) &&
+            moment(lastRefreshed).isAfter(midnightLastNight);
+
+        const eggIds = user.eggs?.map(e => e.id) ?? [];
+        const eggs = await this.eggRepo.getByIds(eggIds);
+        const eggsLeftOver = eggs.filter(egg => !egg.givenByUser);
         const maxDailyEggs = user.chickens?.length ?? 5;
         const numberOfDailyEggsToMake = maxDailyEggs - eggsLeftOver.length;
 

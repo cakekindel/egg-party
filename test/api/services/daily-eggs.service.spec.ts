@@ -5,6 +5,7 @@ import { DailyEggsService } from '../../../src/api/services/daily-eggs.service';
 import { Chicken, Egg, SlackUser } from '../../../src/db/entities';
 import { EggRepo, SlackUserRepo } from '../../../src/db/repos';
 import { TestClass, TestMethod } from '../../test-utilities/directives';
+import _ = require('lodash');
 
 @TestClass()
 export class DailyEggsServiceSpec {
@@ -20,13 +21,13 @@ export class DailyEggsServiceSpec {
         user.chickens = [new Chicken(), new Chicken(), new Chicken()];
 
         const yesterday = moment().subtract(1, 'day');
-        const allMyTroublesSeemedSoFarAway = moment().subtract(1, 'day');
         user.dailyEggsLastRefreshedDate = yesterday.toDate();
-
-        allMyTroublesSeemedSoFarAway;
 
         // - dependencies
         const eggRepo = Substitute.for<EggRepo>();
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
         const userRepo = Substitute.for<SlackUserRepo>();
 
         // - dependency setup
@@ -48,6 +49,7 @@ export class DailyEggsServiceSpec {
         const lastRefreshedDateWasUpdated = moment(
             user.dailyEggsLastRefreshedDate
         ).isSame(moment(), 'day');
+
         expect(
             lastRefreshedDateWasUpdated,
             'SlackUser.lastRefreshedDate was updated'
@@ -68,6 +70,9 @@ export class DailyEggsServiceSpec {
         // - dependencies
         const eggRepo = Substitute.for<EggRepo>();
         const userRepo = Substitute.for<SlackUserRepo>();
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
 
         // - dependency setup
 
@@ -103,6 +108,9 @@ export class DailyEggsServiceSpec {
         // - dependencies
         const eggRepo = Substitute.for<EggRepo>();
         const userRepo = Substitute.for<SlackUserRepo>();
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
 
         // - dependency setup
 
