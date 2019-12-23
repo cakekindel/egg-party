@@ -1,9 +1,19 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-
-import { Chicken } from './chicken.entity';
-import { Egg } from './egg.entity';
+import { Chicken, IChickenIntrinsic } from './chicken.entity';
+import { Egg, IEggIntrinsic } from './egg.entity';
 import { EntityName } from './entity-name.enum';
-import { EntityBase } from './entity.base';
+import { EntityBase, IEntityBase } from './entity.base';
+
+export interface ISlackUserIntrinsic extends IEntityBase {
+    slackUserId: string;
+    slackWorkspaceId: string;
+    dailyEggsLastRefreshedDate?: Date;
+}
+export interface ISlackUserRelated extends IEntityBase {
+    eggsGiven?: IEggIntrinsic[];
+    eggs?: IEggIntrinsic[];
+    chickens?: IChickenIntrinsic[];
+}
 
 @Entity(EntityName.SlackUser)
 export class SlackUser extends EntityBase {
@@ -13,24 +23,24 @@ export class SlackUser extends EntityBase {
     @Column()
     public slackWorkspaceId: string = '';
 
-    @Column({ default: () => 'GETDATE()' })
-    public dailyEggsLastRefreshedDate: Date = new Date();
+    @Column({ nullable: true })
+    public dailyEggsLastRefreshedDate?: Date;
 
     @OneToMany(
         () => Egg,
         egg => egg.ownedByUser
     )
-    public eggs?: Egg[];
+    public eggs?: IEggIntrinsic[];
 
     @OneToMany(
         () => Egg,
         egg => egg.givenByUser
     )
-    public eggsGiven?: Egg[];
+    public eggsGiven?: IEggIntrinsic[];
 
     @OneToMany(
         () => Chicken,
         chicken => chicken.ownedByUser
     )
-    public chickens?: Chicken[];
+    public chickens?: IChickenIntrinsic[];
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Egg, SlackUser } from '../../db/entities';
+import { Egg, SlackUser, IEggIntrinsic } from '../../db/entities';
 import { EggRepo, SlackUserRepo } from '../../db/repos';
 import {
     SlackMessageYouCantGiveEggsToEggParty,
@@ -41,8 +41,9 @@ export class EggGivingService {
         );
 
         if (canGiveEggs && recipientsValid) {
-            for (const toUser of toUsers)
+            for (const toUser of toUsers) {
                 await this.giveEggsToUser(giver, giveNumberOfEggs, toUser);
+            }
 
             const giveableEggsLeft = (await this.getGiveableEggs(giver)).length;
             const message = new SlackMessageYouGaveEggs(
@@ -50,6 +51,7 @@ export class EggGivingService {
                 giveNumberOfEggs,
                 giveableEggsLeft
             );
+
             await this.slackApi.sendDirectMessage(giver.slackUserId, message);
         }
     }
@@ -65,6 +67,7 @@ export class EggGivingService {
         );
 
         const giveableEggs = await this.getGiveableEggs(giver);
+
         for (let i = 0; i < numberOfEggs; i++) {
             const egg = giveableEggs[i];
             await this.eggRepo.giveToUser(egg, receiver);
@@ -81,16 +84,17 @@ export class EggGivingService {
         );
         const botIsARecipient = recipientIds.some(id => id === botId);
 
-        if (giverIsARecipient)
+        if (giverIsARecipient) {
             await this.slackApi.sendDirectMessage(
                 user.slackUserId,
                 new SlackMessageYouCantGiveEggsToYourself()
             );
-        else if (botIsARecipient)
+        } else if (botIsARecipient) {
             await this.slackApi.sendDirectMessage(
                 user.slackUserId,
                 new SlackMessageYouCantGiveEggsToEggParty()
             );
+        }
 
         return !giverIsARecipient && !botIsARecipient;
     }
@@ -101,22 +105,26 @@ export class EggGivingService {
     ): Promise<boolean> {
         const giveableEggCount = (await this.getGiveableEggs(user)).length;
 
-        if (giveableEggCount === 0)
+        if (giveableEggCount === 0) {
             await this.slackApi.sendDirectMessage(
                 user.slackUserId,
                 this.messageBuilder.outOfEggs()
             );
-        else if (numberOfEggs > giveableEggCount)
+        } else if (numberOfEggs > giveableEggCount) {
             await this.slackApi.sendDirectMessage(
                 user.slackUserId,
                 this.messageBuilder.triedToGiveTooManyEggs()
             );
+        }
 
         return numberOfEggs <= giveableEggCount;
     }
 
-    private async getGiveableEggs(user: SlackUser): Promise<Egg[]> {
+    private async getGiveableEggs(user: SlackUser): Promise<IEggIntrinsic[]> {
         const newRef = await this.userRepo.getById(user.id);
-        return newRef?.eggs?.filter(egg => !egg.givenByUser) ?? [];
+        const eggIds = newRef?.eggs?.map(e => e.id) ?? [];
+        const eggs = await this.eggRepo.getByIds(eggIds);
+
+        return eggs.filter(egg => !egg.givenByUser);
     }
 }

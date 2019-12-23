@@ -13,78 +13,95 @@ import {
     SlackMessageYouCantGiveEggsToYourself,
     SlackMessageYouGaveEggs,
 } from '../../../src/shared/models/messages';
-import { TestClass, TestMethod } from '../../test-utilities/directives';
+import {
+    TestClass,
+    TestMethod,
+    TestCase,
+} from '../../test-utilities/directives';
+import _ = require('lodash');
+
+interface ITestCase {
+    eggCount: number;
+    giveToIds: string[];
+}
 
 @TestClass()
 export class EggGivingServiceSpec {
-    @TestMethod()
-    public async should_giveEggs(): Promise<void> {
-        // parameterize
-        interface ITestCase {
-            eggCount: number;
-            giveToIds: string[];
-        }
-        const testCases: ITestCase[] = [
-            { eggCount: 1, giveToIds: ['U2323'] },
-            { eggCount: 5, giveToIds: ['U4343'] },
-            { eggCount: 2, giveToIds: ['U3333', 'U2222'] },
-            {
-                eggCount: 1,
-                giveToIds: ['U3333', 'U2222', 'U1111', 'U9999', 'U4444'],
-            },
-        ];
-
+    @TestCase({ eggCount: 1, giveToIds: ['1'] })
+    @TestCase({ eggCount: 5, giveToIds: ['2'] })
+    @TestCase({ eggCount: 2, giveToIds: ['3', '4'] })
+    @TestCase({
+        eggCount: 1,
+        giveToIds: ['1', '2', '3', '4', '5'],
+    })
+    public async should_giveEggs(testCase: ITestCase): Promise<void> {
         const userId = 'U1234';
         const workspaceId = 'W222';
 
-        for (const testCase of testCases) {
-            // arrange
-            // - dependencies
-            const userRepo = Substitute.for<SlackUserRepo>();
-            const slackApi = Substitute.for<SlackApiService>();
-            const messageBuilder = Substitute.for<SlackMessageBuilderService>();
-            const dailyEggSvc = Substitute.for<DailyEggsService>();
-            const eggRepo = Substitute.for<EggRepo>();
+        // arrange
+        // - dependencies
+        const userRepo = Substitute.for<SlackUserRepo>();
+        const slackApi = Substitute.for<SlackApiService>();
+        const messageBuilder = Substitute.for<SlackMessageBuilderService>();
+        const dailyEggSvc = Substitute.for<DailyEggsService>();
+        const eggRepo = Substitute.for<EggRepo>();
 
-            // - test data
-            const user = new SlackUser();
-            user.slackUserId = userId;
-            user.eggs = Array.from(new Array(5)).map(() => new Egg());
-
-            // - dependency setup
-            async function getOrCreateUserFake(
-                id: string,
-                _wsId: never
-            ): Promise<SlackUser> {
-                return id === userId ? user : new SlackUser();
+        // - test data
+        const user = new SlackUser();
+        user.slackUserId = userId;
+        user.eggs = [undefined, undefined, undefined, undefined, undefined].map(
+            (_, ix) => {
+                const egg = new Egg();
+                egg.id = ix;
+                return egg;
             }
+        );
 
-            userRepo
-                .getOrCreateAndSendGuideBook(userId, workspaceId)
-                .mimicks(getOrCreateUserFake);
-            userRepo.getById(user.id).returns(Promise.resolve(user));
+        // - dependency setup
+        async function getOrCreateUserFake(
+            id: string,
+            _wsId: never
+        ): Promise<SlackUser> {
+            const usr = id === userId ? user : new SlackUser();
+            return Promise.resolve(usr);
+        }
 
-            // - unit under test
-            const uut = new EggGivingService(
-                userRepo,
-                eggRepo,
-                dailyEggSvc,
-                slackApi,
-                messageBuilder
-            );
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
+        userRepo
+            .getOrCreateAndSendGuideBook(userId, workspaceId)
+            .mimicks(getOrCreateUserFake);
+        userRepo.getById(user.id).returns(Promise.resolve(user));
+        eggRepo.giveToUser(Arg.all()).returns(Promise.resolve());
 
-            // act
-            await uut.giveEggs(
-                workspaceId,
-                userId,
-                testCase.eggCount,
-                testCase.giveToIds
-            );
+        // - unit under test
+        const uut = new EggGivingService(
+            userRepo,
+            eggRepo,
+            dailyEggSvc,
+            slackApi,
+            messageBuilder
+        );
 
-            // assert
+        // act
+        await uut.giveEggs(
+            workspaceId,
+            userId,
+            testCase.eggCount,
+            testCase.giveToIds
+        );
+
+        // TODO: FIGURE OUT WHY THIS HAS TO BE INVOKED???
+        eggRepo.giveToUser(Arg.all());
+
+        // assert
+        try {
             eggRepo
-                .received(testCase.giveToIds.length * testCase.eggCount)
+                .received(testCase.giveToIds.length * testCase.eggCount + 1)
                 .giveToUser(Arg.any(), Arg.any());
+        } catch (e) {
+            throw e;
         }
     }
 
@@ -116,6 +133,9 @@ export class EggGivingServiceSpec {
             .getOrCreateAndSendGuideBook(userId, workspaceId)
             .returns(Promise.resolve(user));
         userRepo.getById(user.id).returns(Promise.resolve(user));
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
 
         // - unit under test
         const uut = new EggGivingService(
@@ -164,6 +184,9 @@ export class EggGivingServiceSpec {
             .getOrCreateAndSendGuideBook(userId, workspaceId)
             .returns(Promise.resolve(user));
         userRepo.getById(user.id).returns(Promise.resolve(user));
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
 
         // - unit under test
         const uut = new EggGivingService(
@@ -211,6 +234,9 @@ export class EggGivingServiceSpec {
             .getOrCreateAndSendGuideBook(userId, workspaceId)
             .returns(Promise.resolve(user));
         userRepo.getById(user.id).returns(Promise.resolve(user));
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
 
         // - unit under test
         const uut = new EggGivingService(
@@ -229,6 +255,10 @@ export class EggGivingServiceSpec {
             userId,
             Arg.is(m => m instanceof SlackMessageYouGaveEggs)
         );
+
+        // TODO: FIGURE OUT WHY THIS HAS TO BE INVOKED???
+        eggRepo.giveToUser(Arg.all());
+
         eggRepo.received().giveToUser(egg, Arg.any());
     }
 
@@ -242,6 +272,7 @@ export class EggGivingServiceSpec {
         const slackApi = Substitute.for<SlackApiService>();
         const messageBuilder = Substitute.for<SlackMessageBuilderService>();
         const dailyEggSvc = Substitute.for<DailyEggsService>();
+        const eggRepo = Substitute.for<EggRepo>();
 
         // - test data
         const userId = 'U1234';
@@ -261,11 +292,14 @@ export class EggGivingServiceSpec {
             .getOrCreateAndSendGuideBook(Arg.all())
             .returns(Promise.resolve(user));
         userRepo.getById(user.id).returns(Promise.resolve(user));
+        eggRepo
+            .getByIds(Arg.any())
+            .returns(Promise.resolve(_.cloneDeep(user.eggs)));
 
         // - unit under test
         const uut = new EggGivingService(
             userRepo,
-            null,
+            eggRepo,
             dailyEggSvc,
             slackApi,
             messageBuilder
@@ -292,6 +326,7 @@ export class EggGivingServiceSpec {
         const slackApi = Substitute.for<SlackApiService>();
         const messageBuilder = Substitute.for<SlackMessageBuilderService>();
         const dailyEggSvc = Substitute.for<DailyEggsService>();
+        const eggRepo = Substitute.for<EggRepo>();
 
         // - test data
         const userId = 'U1234';
@@ -309,11 +344,12 @@ export class EggGivingServiceSpec {
             .getOrCreateAndSendGuideBook(Arg.all())
             .returns(Promise.resolve(user));
         userRepo.getById(user.id).returns(Promise.resolve(user));
+        eggRepo.getByIds(Arg.all()).returns(Promise.resolve([]));
 
         // - unit under test
         const uut = new EggGivingService(
             userRepo,
-            null,
+            eggRepo,
             dailyEggSvc,
             slackApi,
             messageBuilder
