@@ -2,6 +2,7 @@ import { Inject, Type } from '@nestjs/common';
 import { Connection, Repository as TypeOrmRepository } from 'typeorm';
 
 import { EntityBase } from '../entities';
+import { Nullable } from '../../shared/types/nullable.type';
 
 type OneOrMany<T> = T | T[];
 
@@ -19,7 +20,16 @@ export abstract class RepoBase<TEntity extends EntityBase> {
         });
     }
 
-    public async getById(id: string | number): Promise<TEntity | undefined> {
+    public async getByIds(ids: string[] | number[]): Promise<TEntity[]> {
+        const repo = this.getRepo();
+        const entities = repo.findByIds(ids, {
+            relations: this.defaultRelations as string[],
+        });
+
+        return entities ?? [];
+    }
+
+    public async getById(id: string | number): Promise<Nullable<TEntity>> {
         const repo = this.getRepo();
         return repo.findOne(id, {
             relations: this.defaultRelations as string[],
