@@ -1,15 +1,15 @@
 import moment = require('moment');
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
-import { Egg } from '../../../../src/db/entities';
-import { TimePeriod } from '../../../../src/shared/enums';
-import { LeaderboardMode } from '../../../../src/shared/models/messages/leaderboard';
+import { Egg } from '../../../../../src/db/entities';
+import { TimePeriod } from '../../../../../src/shared/enums';
+import { LeaderboardMode } from '../../../../../src/shared/models/messages/leaderboard';
 import {
     LeaderboardData,
     UserStub,
-} from '../../../../src/shared/models/messages/leaderboard/data';
-import { TimePeriodService } from '../../../../src/shared/utility/time-period.service';
-import { TestClass, TestMethod } from '../../../test-utilities/directives';
+} from '../../../../../src/shared/models/messages/leaderboard/data';
+import { TimePeriodService } from '../../../../../src/shared/utility/time-period.service';
+import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 import _ = require('lodash');
 
 type EggAge =
@@ -18,7 +18,6 @@ type EggAge =
     | '1 week ago'
     | '1 month ago'
     | '1 year ago';
-
 @TestClass()
 export class LeaderboardDataSpec {
     private readonly ageMomentMap = new Map<EggAge, moment.Moment>([
@@ -166,6 +165,51 @@ export class LeaderboardDataSpec {
             score: 4,
             userId: userIds.second,
         });
+    }
+
+    @TestMethod()
+    public async should_notThrow_when_noUsersWithEggs(): Promise<void> {
+        // arrange
+        const users = [
+            this.testUser('🧓', [], []),
+            this.testUser('🎄', [], []),
+        ];
+
+        const timeHelper = Substitute.for<TimePeriodService>();
+        timeHelper.dateIsWithinPeriod(Arg.all()).returns(true);
+
+        // act
+        const constructClosure = () =>
+            new LeaderboardData(
+                timeHelper,
+                users,
+                '',
+                LeaderboardMode.Receivers,
+                TimePeriod.AllTime
+            );
+
+        // assert
+        expect(constructClosure).to.not.throw();
+    }
+
+    @TestMethod()
+    public async should_notThrow_when_noUsers(): Promise<void> {
+        // arrange
+        const timeHelper = Substitute.for<TimePeriodService>();
+        timeHelper.dateIsWithinPeriod(Arg.all()).returns(true);
+
+        // act
+        const constructClosure = () =>
+            new LeaderboardData(
+                timeHelper,
+                [],
+                '',
+                LeaderboardMode.Receivers,
+                TimePeriod.AllTime
+            );
+
+        // assert
+        expect(constructClosure).to.not.throw();
     }
 
     private eggFromAge(age: EggAge): Egg {

@@ -4,6 +4,7 @@ import { SlackApiService } from '../../../../src/api/services/slack';
 import {
     LeaderboardSlackMessage,
     LeaderboardMode,
+    LeaderboardConstants,
 } from '../../../../src/shared/models/messages/leaderboard';
 import { ISpec, UnitTestSetup } from '../../../test-utilities';
 import {
@@ -118,6 +119,51 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
                     expect(m).to.be.instanceOf(LeaderboardSlackMessage);
                     expect(m.data.mode).to.equal(expectedMode);
                     expect(m.data.period).to.equal(expectedPeriod);
+
+                    return true;
+                })
+            );
+    }
+
+    @TestMethod()
+    public async should_useDefaultMode_when_interactionFiredAndModeUnknown(): Promise<
+        void
+    > {
+        // arrange
+        const testSetup = this.getUnitTestSetup();
+
+        const badMode = 'eek bad data';
+        const goodPeriod = TimePeriod.Week;
+
+        const interaction = {
+            selected_option: {
+                value: qs.stringify({
+                    mode: badMode,
+                    period: goodPeriod,
+                }),
+            },
+        };
+
+        // act
+        await testSetup.unitUnderTest.handleInteraction(
+            this.testData.userId,
+            this.testData.wsId,
+            this.testData.hookUrl,
+            interaction as any
+        );
+
+        // assert
+        testSetup.dependencies
+            .get(SlackApiService)
+            .received()
+            .sendHookMessage(
+                this.testData.hookUrl,
+                Arg.is((m: LeaderboardSlackMessage) => {
+                    expect(m).to.be.instanceOf(LeaderboardSlackMessage);
+                    expect(m.data.mode).to.equal(
+                        LeaderboardConstants.DefaultMode
+                    );
+                    expect(m.data.period).to.equal(goodPeriod);
 
                     return true;
                 })

@@ -3,6 +3,7 @@ import { TimePeriod } from '../../../../enums/time-period.enum';
 import { ISlackInteractionAction } from '../../../slack/interactions/slack-interaction-action.model';
 import { LeaderboardMode } from '../leaderboard-mode.enum';
 import { ILeaderboardInteractionPayload } from './leaderboard-interaction-payload.model';
+import { LeaderboardConstants } from '../leaderboard-constants';
 
 export class LeaderboardInteraction implements ISlackInteractionAction {
     public readonly type = 'static_select';
@@ -11,8 +12,8 @@ export class LeaderboardInteraction implements ISlackInteractionAction {
     public readonly value?: string;
     public readonly selected_option?: { value: string };
 
-    public readonly mode?: LeaderboardMode;
-    public readonly period?: TimePeriod;
+    public readonly mode: LeaderboardMode = LeaderboardConstants.DefaultMode;
+    public readonly period: TimePeriod = LeaderboardConstants.DefaultPeriod;
 
     constructor(rawInteraction: ISlackInteractionAction) {
         this.action_id = rawInteraction.action_id;

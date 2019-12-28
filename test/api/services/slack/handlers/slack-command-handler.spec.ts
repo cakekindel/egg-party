@@ -13,6 +13,7 @@ import { SlackMessageUnknownCommand } from '../../../../../src/shared/models/mes
 import { SlackBlockMessage } from '../../../../../src/shared/models/slack/messages';
 import { ISpec, UnitTestSetup } from '../../../../test-utilities';
 import { TestClass, TestMethod } from '../../../../test-utilities/directives';
+import { LeaderboardService } from '../../../../../src/api/services/messaging';
 
 @TestClass()
 export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
@@ -128,8 +129,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
         // assert
     }
 
-    // TODO: implement, tracked in issue #66
-    @TestMethod.skip()
+    @TestMethod()
     public async should_sendLeaderboard_when_leaderboardCommandReceived(): Promise<
         void
     > {
@@ -147,6 +147,11 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
         );
 
         // assert
+
+        unitTestSetup.dependencies
+            .get(LeaderboardService)
+            .received()
+            .send(user.slackUserId, user.slackWorkspaceId);
     }
 
     private setupGuideBook(

@@ -1,8 +1,11 @@
 import { expect } from 'chai';
-import { SlackInteractionId, TimePeriod } from '../../../../src/shared/enums';
-import { TestClass, TestMethod } from '../../../test-utilities/directives';
-import { LeaderboardDropdown } from '../../../../src/shared/models/messages/leaderboard/interaction';
-import { LeaderboardMode } from '../../../../src/shared/models/messages/leaderboard';
+import {
+    SlackInteractionId,
+    TimePeriod,
+} from '../../../../../src/shared/enums';
+import { TestClass, TestMethod } from '../../../../test-utilities/directives';
+import { LeaderboardDropdown } from '../../../../../src/shared/models/messages/leaderboard/interaction';
+import { LeaderboardMode } from '../../../../../src/shared/models/messages/leaderboard';
 
 @TestClass()
 export class LeaderboardDropdownSpec {

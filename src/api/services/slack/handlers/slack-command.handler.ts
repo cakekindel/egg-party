@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { SlackUser } from '../../../../db/entities';
 import { SlackUserRepo } from '../../../../db/repos';
-import { SlackDmCommand } from '../../../../shared/enums';
+import { SlackDmCommand as Command } from '../../../../shared/enums';
 import { GuideBookPageId } from '../../../../shared/models/guide-book';
 import { SlackMessageUnknownCommand } from '../../../../shared/models/messages';
 import { SlackApiService } from '../slack-api.service';
@@ -14,7 +14,7 @@ import { ImpureFuncAsync } from '../../../../shared/types/delegates/func/async';
 @Injectable()
 export class SlackCommandHandler {
     private readonly commandDelegateMap: Map<
-        SlackDmCommand,
+        Command,
         ImpureFuncAsync<SlackUser, void>
     >;
 
@@ -26,22 +26,16 @@ export class SlackCommandHandler {
         private readonly leaderboardService: LeaderboardService
     ) {
         this.commandDelegateMap = new Map([
-            [SlackDmCommand.Help, async user => this.handleHelp(user)],
-            [
-                SlackDmCommand.ManageChickens,
-                async user => this.handleChickens(user),
-            ],
-            [
-                SlackDmCommand.Leaderboard,
-                async user => this.handleLeaderboard(user),
-            ],
+            [Command.Help, async user => this.handleHelp(user)],
+            [Command.ManageChickens, async user => this.handleChickens(user)],
+            [Command.Leaderboard, async user => this.handleLeaderboard(user)],
         ]);
     }
 
     public async handleCommand(
         slackUserId: string,
         slackWorkspaceId: string,
-        command: SlackDmCommand
+        command: Command
     ): Promise<void> {
         const user = await this.userRepo.getOrCreateAndSendGuideBook(
             slackUserId,
@@ -59,7 +53,7 @@ export class SlackCommandHandler {
 
     private async handleUnknownCommand(
         user: SlackUser,
-        command: SlackDmCommand
+        command: Command
     ): Promise<void> {
         const unknownCommandMessage = new SlackMessageUnknownCommand();
         await this.slackApi.sendDirectMessage(
