@@ -9,17 +9,15 @@ import { SlackInteractionId } from '../../../../shared/enums';
 import { GuideBookPageId } from '../../../../shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../shared/models/slack/interactions/slack-interaction-payload.model';
 import { SlackGuideBookService } from '../slack-guide-book.service';
-import { LeaderboardService } from '../../messaging';
 
 @Injectable()
 export class SlackInteractionHandler {
     constructor(
-        private readonly api: SlackApiService,
-        private readonly messageBuilder: SlackMessageBuilderService,
-        private readonly userRepo: SlackUserRepo,
-        private readonly chickenRepo: ChickenRepo,
-        private readonly guideBook: SlackGuideBookService,
-        private readonly leaderboard: LeaderboardService
+        private api: SlackApiService,
+        private messageBuilder: SlackMessageBuilderService,
+        private userRepo: SlackUserRepo,
+        private chickenRepo: ChickenRepo,
+        private guideBook: SlackGuideBookService
     ) {}
 
     public async handleInteraction(
@@ -35,15 +33,6 @@ export class SlackInteractionHandler {
 
         const userId = interaction.user.id;
         const botUserId = await this.api.getBotUserId();
-
-        if (this.leaderboard.shouldHandleInteraction(action)) {
-            return this.leaderboard.handleInteraction(
-                interaction.user.id,
-                interaction.team.id,
-                interaction.response_url,
-                action
-            );
-        }
 
         switch (actionId) {
             case SlackInteractionId.GuideBookJumpToPage: {

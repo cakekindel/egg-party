@@ -13,68 +13,23 @@ import { GuideBookPageId } from '../../../../../src/shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../../src/shared/models/slack/interactions/slack-interaction-payload.model';
 import { SlackBlockMessage } from '../../../../../src/shared/models/slack/messages';
 import { TestClass, TestMethod } from '../../../../test-utilities/directives';
-import { ISpec, UnitTestSetup } from '../../../../test-utilities';
-import { LeaderboardService } from '../../../../../src/api/services/messaging';
 
 @TestClass()
-export class SlackInteractionHandlerSpec
-    implements ISpec<SlackInteractionHandler> {
-    @TestMethod()
-    public async should_deferToLeaderboardService_when_leaderboardInteraction(): Promise<
-        void
-    > {
-        // arrange
-        const setup = this.getUnitTestSetup();
-
-        setup.dependencies
-            .get(LeaderboardService)
-            .shouldHandleInteraction(Arg.any())
-            .returns(true);
-
-        const interaction = this.makePayload({
-            team: { id: 'foo', domain: '' },
-            user: { id: 'U' } as any,
-            actions: [{ action_id: '' } as any],
-            response_url: 'fart',
-        });
-
-        // act
-        await setup.unitUnderTest.handleInteraction(interaction);
-
-        // assert
-        setup.dependencies
-            .get(LeaderboardService)
-            .received()
-            .handleInteraction(
-                interaction.user.id,
-                interaction.team.id,
-                interaction.response_url,
-                interaction.actions[0]
-            );
-    }
-
+export class SlackInteractionHandlerSpec {
     @TestMethod()
     public async should_sendGuideBookPage_when_jumpedTo(): Promise<void> {
         // arrange
-        const setup = this.getUnitTestSetup();
+
+        // - dependencies
+        const api = Substitute.for<SlackApiService>();
+        const guideBook = Substitute.for<SlackGuideBookService>();
 
         // - test data
-        setup.dependencies
-            .get(LeaderboardService)
-            .shouldHandleInteraction(Arg.any())
-            .returns(false);
-
         const testPage = new SlackBlockMessage([], 'test');
-        setup.dependencies
-            .get(SlackGuideBookService)
-            .build(Arg.all())
-            .returns(testPage);
+        guideBook.build(Arg.all()).returns(testPage);
 
         const botId = 'Z789';
-        setup.dependencies
-            .get(SlackApiService)
-            .getBotUserId()
-            .returns(Promise.resolve(botId));
+        api.getBotUserId().returns(Promise.resolve(botId));
 
         const userId = 'U1234';
         const goToPage = GuideBookPageId.LearnAboutChicks;
@@ -95,18 +50,21 @@ export class SlackInteractionHandlerSpec
             ],
         });
 
+        // - unit under test
+        const uut = new SlackInteractionHandler(
+            api,
+            null,
+            null,
+            null,
+            guideBook
+        );
+
         // act
-        await setup.unitUnderTest.handleInteraction(interaction);
+        await uut.handleInteraction(interaction);
 
         // assert
-        setup.dependencies
-            .get(SlackGuideBookService)
-            .received()
-            .build(userId, botId, goToPage);
-        setup.dependencies
-            .get(SlackApiService)
-            .received()
-            .sendHookMessage(responseHookUrl, testPage);
+        guideBook.received().build(userId, botId, goToPage);
+        api.received().sendHookMessage(responseHookUrl, testPage);
     }
 
     @TestMethod()
@@ -114,29 +72,22 @@ export class SlackInteractionHandlerSpec
         void
     > {
         // arrange
-        const setup = this.getUnitTestSetup();
+
+        // - dependencies
+        const api = Substitute.for<SlackApiService>();
+        const userRepo = Substitute.for<SlackUserRepo>();
+        const messageBuilder = Substitute.for<SlackMessageBuilderService>();
 
         // - test data
-        setup.dependencies
-            .get(LeaderboardService)
-            .shouldHandleInteraction(Arg.any())
-            .returns(false);
-
         const userId = '1234';
         const teamId = 'slack';
         const user = new SlackUser();
         user.chickens = [new Chicken()];
 
-        setup.dependencies
-            .get(SlackUserRepo)
-            .getBySlackId(userId, teamId)
-            .returns(Promise.resolve(user));
+        userRepo.getBySlackId(userId, teamId).returns(Promise.resolve(user));
 
         const message = new SlackBlockMessage([], 'test');
-        setup.dependencies
-            .get(SlackMessageBuilderService)
-            .manageChickens(user.chickens)
-            .returns(message);
+        messageBuilder.manageChickens(user.chickens).returns(message);
 
         const interaction = this.makePayload({
             team: { domain: 'slack', id: teamId },
@@ -150,18 +101,21 @@ export class SlackInteractionHandlerSpec
             ],
         });
 
+        // - unit under test
+        const uut = new SlackInteractionHandler(
+            api,
+            messageBuilder,
+            userRepo,
+            null,
+            null
+        );
+
         // act
-        await setup.unitUnderTest.handleInteraction(interaction);
+        await uut.handleInteraction(interaction);
 
         // assert
-        setup.dependencies
-            .get(SlackMessageBuilderService)
-            .received()
-            .manageChickens(user.chickens);
-        setup.dependencies
-            .get(SlackApiService)
-            .received()
-            .sendDirectMessage(userId, message);
+        messageBuilder.received().manageChickens(user.chickens);
+        api.received().sendDirectMessage(userId, message);
     }
 
     @TestMethod()
@@ -169,21 +123,17 @@ export class SlackInteractionHandlerSpec
         void
     > {
         // arrange
-        const setup = this.getUnitTestSetup();
+
+        // - dependencies
+        const api = Substitute.for<SlackApiService>();
+        const messageBuilder = Substitute.for<SlackMessageBuilderService>();
+        const chickenRepo = Substitute.for<ChickenRepo>();
 
         // - test data
         const chicken = new Chicken();
         chicken.id = 12;
 
-        setup.dependencies
-            .get(ChickenRepo)
-            .getById(chicken.id)
-            .returns(Promise.resolve(chicken));
-
-        setup.dependencies
-            .get(LeaderboardService)
-            .shouldHandleInteraction(Arg.any())
-            .returns(false);
+        chickenRepo.getById(chicken.id).returns(Promise.resolve(chicken));
 
         const interaction = this.makePayload({
             actions: [
@@ -196,8 +146,17 @@ export class SlackInteractionHandlerSpec
             ],
         });
 
+        // - unit under test
+        const uut = new SlackInteractionHandler(
+            api,
+            messageBuilder,
+            null,
+            chickenRepo,
+            null
+        );
+
         // act
-        await setup.unitUnderTest.handleInteraction(interaction);
+        await uut.handleInteraction(interaction);
 
         // assert
         expect(chicken.awaitingRename).to.be.true;
@@ -226,9 +185,5 @@ export class SlackInteractionHandlerSpec
         Object.assign(interactionBase, part);
 
         return interactionBase;
-    }
-
-    public getUnitTestSetup(): UnitTestSetup<SlackInteractionHandler> {
-        return new UnitTestSetup(SlackInteractionHandler);
     }
 }
