@@ -9,6 +9,7 @@ import {
 } from '../../api/services/slack';
 import { SlackUser } from '../entities';
 import { ChickenRepo } from './chicken.repo';
+import { Immutable } from '../../shared/types/immutable';
 
 @Injectable()
 export class SlackUserRepo extends RepoBase<SlackUser> {
@@ -27,6 +28,16 @@ export class SlackUserRepo extends RepoBase<SlackUser> {
         private messageBuilder: SlackMessageBuilderService
     ) {
         super(db);
+    }
+
+    public async getAllInWorkspace(
+        slackWorkspaceId: string
+    ): Promise<Immutable<SlackUser[]>> {
+        const repo = this.getRepo();
+        return repo.find({
+            where: { slackWorkspaceId },
+            relations: this.defaultRelations,
+        });
     }
 
     public async getBySlackId(

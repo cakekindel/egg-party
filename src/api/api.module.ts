@@ -25,17 +25,18 @@ import {
     SlackMessageHandler,
     SlackReactionHandler,
 } from './services/slack/handlers';
+import { LeaderboardService } from './services/messaging';
 
 import { DbModule } from '../db/db.module';
+import { SharedModule } from '../shared/shared.module';
 @Module({
-    imports: [DbModule],
+    imports: [SharedModule, DbModule],
     controllers: [
         HealthCheckController,
         SlackEventsController,
         SlackInteractionsController,
     ],
     providers: [
-        ConfigService,
         SlackApiService,
         SlackMessageBuilderService,
         SlackGuideBookService,
@@ -46,6 +47,7 @@ import { DbModule } from '../db/db.module';
         SlackCommandHandler,
         SlackReactionHandler,
         DailyEggsService,
+        LeaderboardService,
         ChickenRenamingService,
     ],
     exports: [],
