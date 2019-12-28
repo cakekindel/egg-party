@@ -16,7 +16,7 @@ export class SlackMessageSectionBlock implements ISlackMessageLayoutBlock {
      * @param accessory An Element to display in the section
      */
     constructor(
-        public text: SlackMessageTextComposition,
+        public text?: SlackMessageTextComposition,
         public fields?: SlackMessageTextComposition[],
         public accessory?: ISlackMessageBlockElement,
         public block_id?: string
