@@ -8,9 +8,9 @@
             "smartStep": true,
             "showAsyncStacks": true,
             "protocol": "inspector",
-            "timeout": 120000,
-            "restart": true,
+            "timeout": 60000,
             "port": 9230,
+            "preLaunchTask": "serve",
             "skipFiles": [
                 "<node_internals>/**",
                 "${workspaceFolder}/node_modules/**"
@@ -23,8 +23,7 @@
             "smartStep": true,
             "showAsyncStacks": true,
             "protocol": "inspector",
-            "timeout": 120000,
-            "restart": true,
+            "timeout": 60000,
             "port": 9231,
             "skipFiles": [
                 "<node_internals>/**",
