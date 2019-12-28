@@ -14,9 +14,9 @@ enum AutoAssignedEnum {
 }
 
 interface ITestCase {
-    enum: object;
-    value: string;
-    expected: string | number | undefined;
+    enum: typeof AutoAssignedEnum | typeof InitializedEnum;
+    value: string | number;
+    expected: AutoAssignedEnum | InitializedEnum | undefined;
 }
 
 @TestClass()
@@ -32,8 +32,18 @@ export class EnumUtilitySpec {
         expected: InitializedEnum.NumericValue,
     })
     @TestCase({
+        enum: InitializedEnum,
+        value: 'NumericValue',
+        expected: InitializedEnum.NumericValue,
+    })
+    @TestCase({
         enum: AutoAssignedEnum,
         value: 2,
+        expected: AutoAssignedEnum.Baz,
+    })
+    @TestCase({
+        enum: AutoAssignedEnum,
+        value: 'Baz',
         expected: AutoAssignedEnum.Baz,
     })
     @TestCase({

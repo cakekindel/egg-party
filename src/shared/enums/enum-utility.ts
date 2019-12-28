@@ -1,17 +1,26 @@
 import { Nullable } from '../types/nullable.type';
 
+interface Enum {
+    [key: string]: string | number;
+}
 type EnumValue<TEnum> = TEnum[keyof TEnum];
 
 export const EnumUtility = {
-    Parse<TEnum extends object>(
+    Parse<TEnum extends Enum>(
         enumInstance: TEnum,
         value: string | number
     ): Nullable<EnumValue<TEnum>> {
-        const entries = Object.entries(enumInstance);
-        const key = entries.find(
-            ([_key, enumValue]) => value === enumValue
-        )?.[0];
+        const valueIsKey = value in enumInstance;
+        const valueInEnum = Object.entries(enumInstance).some(
+            ([_, enumVal]) => enumVal === value
+        );
 
-        return key ? enumInstance[key as keyof TEnum] : undefined;
+        if (valueIsKey && typeof value !== 'number') {
+            return enumInstance[value as keyof TEnum];
+        } else if (valueInEnum) {
+            return value as EnumValue<TEnum>;
+        } else {
+            return undefined;
+        }
     },
 };
