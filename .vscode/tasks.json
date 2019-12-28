@@ -17,6 +17,14 @@
                 "echo": false,
                 "panel": "shared"
             }
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": "build"
         }
     ]
 }
