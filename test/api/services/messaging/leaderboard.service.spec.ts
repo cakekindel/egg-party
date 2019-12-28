@@ -14,8 +14,14 @@ import {
 } from '../../../test-utilities/directives';
 import { SlackUserRepo } from '../../../../src/db/repos';
 import { expect } from 'chai';
-import { SlackInteractionId, TimePeriod } from '../../../../src/shared/enums';
+import {
+    SlackInteractionId,
+    TimePeriod,
+    EnumUtility,
+} from '../../../../src/shared/enums';
 import qs = require('qs');
+import sinon = require('sinon');
+import Sinon = require('sinon');
 
 @TestClass()
 export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
@@ -24,6 +30,15 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
         wsId: 'W123',
         hookUrl: 'http://www.cheese.com',
     };
+
+    private sandbox: Sinon.SinonSandbox;
+    public before(): void {
+        this.sandbox = sinon.createSandbox();
+    }
+
+    public after(): void {
+        this.sandbox.restore();
+    }
 
     @TestMethod()
     public async should_sendLeaderboard_when_sendInvoked(): Promise<void> {
@@ -92,6 +107,8 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
         const expectedMode = LeaderboardMode.Receivers;
         const expectedPeriod = TimePeriod.Month;
 
+        this.sandbox.stub(EnumUtility, 'Parse').callsFake((_, val) => val);
+
         const interaction = {
             selected_option: {
                 value: qs.stringify({
@@ -134,6 +151,10 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
 
         const badMode = 'eek bad data';
         const goodPeriod = TimePeriod.Week;
+
+        this.sandbox.stub(EnumUtility, 'Parse').callsFake((_, val) => {
+            return val === goodPeriod ? goodPeriod : undefined;
+        });
 
         const interaction = {
             selected_option: {
