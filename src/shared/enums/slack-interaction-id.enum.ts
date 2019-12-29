@@ -6,4 +6,5 @@ export enum SlackInteractionId {
     ManageChickens = 'manage_chickens',
     RenameChicken = 'rename_chicken',
     GuideBookJumpToPage = 'guide_book_jump_to_page',
+    LeaderboardModeChange = 'leaderboard_mode_change',
 }
