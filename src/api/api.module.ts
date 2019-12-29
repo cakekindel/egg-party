@@ -1,19 +1,20 @@
 import { Module } from '@nestjs/common';
-
-import { ConfigService } from '../shared/utility';
-
+import { DbModule } from '../db/db.module';
+import { SharedModule } from '../shared/shared.module';
 import { HealthCheckController } from './controllers';
 import {
     SlackEventsController,
     SlackInteractionsController,
+    SlackOauthController,
 } from './controllers/slack';
-
 import {
     ChickenRenamingService,
     DailyEggsService,
     EggGivingService,
 } from './services';
+import { LeaderboardService } from './services/messaging';
 import {
+    SlackApiOauthService,
     SlackApiService,
     SlackGuideBookService,
     SlackMessageBuilderService,
@@ -25,19 +26,18 @@ import {
     SlackMessageHandler,
     SlackReactionHandler,
 } from './services/slack/handlers';
-import { LeaderboardService } from './services/messaging';
 
-import { DbModule } from '../db/db.module';
-import { SharedModule } from '../shared/shared.module';
 @Module({
     imports: [SharedModule, DbModule],
     controllers: [
         HealthCheckController,
         SlackEventsController,
+        SlackOauthController,
         SlackInteractionsController,
     ],
     providers: [
         SlackApiService,
+        SlackApiOauthService,
         SlackMessageBuilderService,
         SlackGuideBookService,
         SlackMessageHandler,
