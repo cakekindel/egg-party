@@ -5,12 +5,22 @@ import { ITypeormConfig } from './typeorm-options.interface';
 
 @Injectable()
 export class ConfigService {
+    public slackClientId(): string {
+        return this.getRequiredEnv('SLACK_CLIENT_ID');
+    }
+
+    public slackClientSecret(): string {
+        return this.getRequiredEnv('SLACK_CLIENT_SECRET');
+    }
+
     public get slackApiToken(): string {
         return this.getRequiredEnv('SLACK_APITOKEN');
     }
+
     public get slackSigningSecret(): string {
         return this.getRequiredEnv('SLACK_SIGNINGSECRET');
     }
+
     public get environment(): Environment {
         return this.getRequiredEnv('ENVIRONMENT') as Environment;
     }
@@ -27,11 +37,11 @@ export class ConfigService {
             this.getEnv(variableName) ??
             this.getEnv('APPSETTING_' + variableName);
 
-        if (!val)
+        if (!val) {
             throw new Error(
                 `Required Environment Variable not set: ${variableName}`
             );
-
+        }
         return val;
     }
 
