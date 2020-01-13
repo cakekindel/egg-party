@@ -57,7 +57,7 @@
     "license": "ISC",
     "dependencies": {
         "@azure/functions": "^1.0.3",
-        "@nestjs/azure-func-http": "^0.3.1",
+        "@nestjs/azure-func-http": "^0.4.0",
         "@nestjs/common": "^6.8.4",
         "@nestjs/core": "^6.8.4",
         "@nestjs/microservices": "^6.8.4",
