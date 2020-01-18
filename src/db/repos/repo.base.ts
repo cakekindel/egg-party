@@ -1,12 +1,14 @@
 import { Inject, Type } from '@nestjs/common';
 import { Connection, Repository as TypeOrmRepository } from 'typeorm';
-
-import { EntityBase } from '../entities';
 import { Nullable } from '../../shared/types/nullable.type';
+import { EntityBase } from '../entities';
 
 type OneOrMany<T> = T | T[];
 
-export abstract class RepoBase<TEntity extends EntityBase> {
+export abstract class RepoBase<
+    TEntity extends EntityBase & TEntityWithoutRelations,
+    TEntityWithoutRelations = TEntity
+> {
     protected abstract entityType: Type<TEntity>;
     protected abstract defaultRelations: Array<keyof TEntity> = [];
 
@@ -36,12 +38,25 @@ export abstract class RepoBase<TEntity extends EntityBase> {
         });
     }
 
-    public async save(entities: TEntity[]): Promise<TEntity[]>;
-    public async save(entity: TEntity): Promise<TEntity>;
+    public async saveOne(entity: TEntity): Promise<TEntityWithoutRelations> {
+        return this.save(entity);
+    }
 
-    public async save(entity: OneOrMany<TEntity>): Promise<OneOrMany<TEntity>> {
+    public async saveMany(
+        entities: TEntity[]
+    ): Promise<TEntityWithoutRelations[]> {
+        return this.save(entities);
+    }
+
+    public async save(entities: TEntity[]): Promise<TEntityWithoutRelations[]>;
+    public async save(entity: TEntity): Promise<TEntityWithoutRelations>;
+    public async save(
+        entity: OneOrMany<TEntity>
+    ): Promise<OneOrMany<TEntityWithoutRelations>> {
         const repo = this.getRepo();
-        return repo.save<object>(entity);
+        const saved = repo.save(entity as TEntity);
+
+        return saved;
     }
 
     public async delete(entity: TEntity): Promise<void> {

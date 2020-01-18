@@ -1,22 +1,26 @@
-import { map, pipe, prop, then, defaultTo, tap } from 'ramda';
+import { Maybe } from 'purify-ts/Maybe';
+import { MaybeAsync } from 'purify-ts/MaybeAsync';
+import { map, pipe, prop, then } from 'ramda';
 import { IViewModel } from '../../../business/view-models';
 import { EntityBase } from '../../../db/entities';
 import { RepoBase } from '../../../db/repos';
+import { CreateMaybeAsync } from '../../../purify/create-maybe-async.fns';
 import { Immutable } from '../../../shared/types/immutable';
-import { ModelMapperBase } from '../mappers/model-mapper.base';
+import { ResourceMapperBase } from './resource-mappers/resource-mapper.base';
 
 export abstract class ProviderBase<
     TViewModel extends IViewModel,
     TEntity extends EntityBase
 > {
-    protected abstract readonly mapper: ModelMapperBase<TViewModel, TEntity>;
+    protected abstract readonly mapper: ResourceMapperBase<TViewModel, TEntity>;
     protected abstract readonly repo: RepoBase<TEntity, EntityBase>;
 
-    public async getById(id: number): Promise<TViewModel | undefined> {
+    public getById(id: number): MaybeAsync<TViewModel> {
         const getAndMap = pipe(
             this.repo.getById,
-            then(defaultTo(undefined)),
-            then(this.mapper.mapNullableToViewModel)
+            then(Maybe.fromNullable),
+            then(this.mapper.mapMaybeToViewModel),
+            CreateMaybeAsync.fromPromiseOfMaybe
         );
 
         return getAndMap(id);
