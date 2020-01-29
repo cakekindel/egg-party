@@ -82,7 +82,7 @@
         "@types/chai-as-promised": "^7.1.2",
         "@types/express": "4.17.2",
         "@types/lodash": "^4.14.149",
-        "@types/mocha": "^5.2.7",
+        "@types/mocha": "^7.0.0",
         "@types/node": "^13.1.0",
         "@types/qs": "^6.5.3",
         "@types/ramda": "^0.26.39",
