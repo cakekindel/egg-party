@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Environment } from '../enums/environment.enum';
-import { ITypeormConfig } from './typeorm-options.interface';
+import { ITypeormConfig } from './typeorm-config.interface';
 
 @Injectable()
 export class ConfigService {
@@ -24,12 +24,20 @@ export class ConfigService {
     public get environment(): Environment {
         return this.getRequiredEnv('ENVIRONMENT') as Environment;
     }
-    public get typeOrmConfig(): ITypeormConfig {
+
+    public getTypeOrmConfig(): ITypeormConfig {
         const hostUrl = this.getRequiredEnv('TYPEORM_HOST');
         const adminUsername = this.getRequiredEnv('TYPEORM_USERNAME');
         const adminPassword = this.getRequiredEnv('TYPEORM_PASSWORD');
         const databaseName = this.getRequiredEnv('TYPEORM_DATABASE');
-        return { hostUrl, adminUsername, adminPassword, databaseName };
+        const entities = this.getRequiredEnv('TYPEORM_ENTITIES');
+        return {
+            hostUrl,
+            adminUsername,
+            adminPassword,
+            databaseName,
+            entities,
+        };
     }
 
     private getRequiredEnv(variableName: string): string {
@@ -42,6 +50,7 @@ export class ConfigService {
                 `Required Environment Variable not set: ${variableName}`
             );
         }
+
         return val;
     }
 
