@@ -2,6 +2,7 @@
     "recommendations": [
         "eamodio.tsl-problem-matcher",
         "esbenp.prettier-vscode",
-        "ms-vscode.vscode-typescript-tslint-plugin"
+        "ms-vscode.vscode-typescript-tslint-plugin",
+        "hbenl.vscode-mocha-test-adapter"
     ]
 }
