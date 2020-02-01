@@ -1,24 +1,23 @@
-import { Type } from '@nestjs/common';
 import { SqlServerConnectionOptions } from 'typeorm/driver/sqlserver/SqlServerConnectionOptions';
-import { ConfigService } from '../shared/utility';
-import { Entities, EntityBase } from './entities';
+import { ITypeormConfig } from '../shared/utility/typeorm-config.interface';
 
-export class DbConnectionConfig implements SqlServerConnectionOptions {
-    public readonly type = 'mssql' as const;
+export class DbConnectionOptions implements SqlServerConnectionOptions {
+    public readonly type = 'mssql';
     public readonly name: string;
     public readonly database: string;
     public readonly host: string;
     public readonly username: string;
     public readonly password: string;
-    public readonly entities: Array<Type<EntityBase>>;
+    public readonly entities: string[];
     public readonly options = { encrypt: true };
 
-    constructor(config: ConfigService) {
-        this.name = config.environment;
-        this.database = config.typeOrmConfig.databaseName;
-        this.host = config.typeOrmConfig.hostUrl;
-        this.username = config.typeOrmConfig.adminUsername;
-        this.password = config.typeOrmConfig.adminPassword;
-        this.entities = Entities;
+    constructor(environmentName: string, config: ITypeormConfig) {
+        this.name = environmentName;
+
+        this.database = config.databaseName;
+        this.host = config.hostUrl;
+        this.username = config.adminUsername;
+        this.password = config.adminPassword;
+        this.entities = [config.entities];
     }
 }

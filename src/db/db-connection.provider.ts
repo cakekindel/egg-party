@@ -1,22 +1,24 @@
 import { Provider, Scope } from '@nestjs/common';
 import { Connection, getConnectionManager } from 'typeorm';
 import { ConfigService } from '../shared/utility';
-import { DbConnectionConfig } from './db-connection-config.model';
+import { DbConnectionOptions } from './db-connection-config.model';
 
 async function connectionFactory(
-    environment: ConfigService
+    configService: ConfigService
 ): Promise<Connection> {
-    const config = new DbConnectionConfig(environment);
+    const dbOptions = new DbConnectionOptions(
+        configService.environment,
+        configService.getTypeOrmConfig()
+    );
 
     const connections = getConnectionManager();
-    const alreadyConfigured = connections.has(environment.environment);
-    const connection = alreadyConfigured
-        ? connections.get(environment.environment)
-        : connections.create(config);
+    const alreadyConfigured = connections.has(configService.environment);
+    const getConnection = () => connections.get(configService.environment);
+    const createConnection = () => connections.create(dbOptions);
 
-    if (!connection.isConnected) return connection.connect();
+    const connection = alreadyConfigured ? getConnection() : createConnection();
 
-    return connection;
+    return connection.isConnected ? connection : connection.connect();
 }
 
 export const DbConnectionProvider: Provider = {
