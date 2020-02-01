@@ -63,7 +63,7 @@ export class LeaderboardData {
     public readonly period: TimePeriod;
 
     private readonly getScore: PureFunc<UserStub, number> = u =>
-        this.scoreForMode.get(this.mode)?.(u) ?? 0;
+        this.scoreForMode.get(this.mode)?.(u) ?? 0
 
     private readonly copyUserAndFilterEggs: PureFunc<
         UserStub,
@@ -78,7 +78,7 @@ export class LeaderboardData {
             eggs: user?.eggs?.filter(eggInPeriod),
             eggsGiven: user?.eggsGiven?.filter(eggInPeriod),
         };
-    };
+    }
 
     private readonly eggInPeriod: PureFunc<Egg, TimePeriod, boolean> = (
         egg,
@@ -86,10 +86,10 @@ export class LeaderboardData {
     ) => {
         const givenDate = egg.givenOnDate ?? new Date(0);
         return this.timePeriodHelper.dateIsWithinPeriod(givenDate, period);
-    };
+    }
 
     private readonly filterEggsByPeriod: PureAction<UserStub> = u =>
-        this.copyUserAndFilterEggs(u, this.period);
+        this.copyUserAndFilterEggs(u, this.period)
 
     private readonly toLeaderboardEntry: PureFunc<
         string,
@@ -99,5 +99,5 @@ export class LeaderboardData {
         userId: u.slackUserId,
         score: this.getScore(u),
         place: +ix + 1,
-    });
+    })
 }

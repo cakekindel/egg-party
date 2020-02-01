@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Moment } from 'moment';
 import { TimePeriod } from '../enums';
-import { ImmutableMap, Immutable } from '../types/immutable';
+import { Immutable, ImmutableMap } from '../types/immutable';
 import moment = require('moment');
-import { ImpureFunc } from '../types/delegates/func';
 
 @Injectable()
 export class TimePeriodService {
     private readonly getPeriodStartMap: ImmutableMap<
         TimePeriod,
-        ImpureFunc<Moment>
+        () => Moment
     > = new Map([
         [
             TimePeriod.Today,

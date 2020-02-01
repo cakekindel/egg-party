@@ -14,7 +14,7 @@ import {
 } from './services';
 import { LeaderboardService } from './services/messaging';
 import {
-    SlackApiOauthService,
+    SlackOauthService,
     SlackApiService,
     SlackGuideBookService,
     SlackMessageBuilderService,
@@ -37,7 +37,7 @@ import {
     ],
     providers: [
         SlackApiService,
-        SlackApiOauthService,
+        SlackOauthService,
         SlackMessageBuilderService,
         SlackGuideBookService,
         SlackMessageHandler,

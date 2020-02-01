@@ -3,11 +3,11 @@ import { NestFactory } from '@nestjs/core';
 import { config as loadDotEnv } from 'dotenv';
 import { json, urlencoded } from 'express';
 import { AppModule } from './app.module';
-import { ImpureFunc } from './shared/types/delegates/func';
+import { Func } from './shared/types/delegates/func';
 import { IRequestWithRawBody } from './shared/models/express/request-with-raw-body.model';
 import { Nullable } from './shared/types/nullable.type';
 
-type VerifyMiddleware = ImpureFunc<
+type VerifyMiddleware = Func<
     IRequestWithRawBody,
     object,
     Buffer,

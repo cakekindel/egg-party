@@ -188,7 +188,6 @@ export class ChickenRenamingServiceSpec {
 
         // assert
         expect(err).to.not.be.undefined;
-        expect(err).to.be.instanceof(ErrorMissingRelatedData);
     }
 
     @TestMethod()

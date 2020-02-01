@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { SlackOauthController } from '../../../src/api/controllers/slack';
-import { SlackApiOauthService } from '../../../src/api/services/slack';
+import { SlackOauthService } from '../../../src/api/services/slack';
 import { ConfigService } from '../../../src/shared/utility';
 import { ISpec, UnitTestSetup } from '../../test-utilities';
 import { TestClass, TestMethod } from '../../test-utilities/directives';
@@ -37,9 +37,9 @@ export class SlackOauthControllerSpec implements ISpec<SlackOauthController> {
 
         // assert
         test.dependencies
-            .get(SlackApiOauthService)
+            .get(SlackOauthService)
             .received()
-            .access(code, clientId, clientSecret);
+            .handleInstallation(code);
     }
 
     @TestMethod()

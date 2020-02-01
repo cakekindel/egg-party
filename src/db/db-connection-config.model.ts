@@ -1,8 +1,8 @@
 import { SqlServerConnectionOptions } from 'typeorm/driver/sqlserver/SqlServerConnectionOptions';
-import { ITypeormConfig } from '../shared/utility/typeorm-config.interface';
+import { ConfigService } from '../shared/utility';
 
-export class DbConnectionOptions implements SqlServerConnectionOptions {
-    public readonly type = 'mssql';
+export class DbConnectionConfig implements SqlServerConnectionOptions {
+    public readonly type = 'mssql' as const;
     public readonly name: string;
     public readonly database: string;
     public readonly host: string;
@@ -11,13 +11,12 @@ export class DbConnectionOptions implements SqlServerConnectionOptions {
     public readonly entities: string[];
     public readonly options = { encrypt: true };
 
-    constructor(environmentName: string, config: ITypeormConfig) {
-        this.name = environmentName;
-
-        this.database = config.databaseName;
-        this.host = config.hostUrl;
-        this.username = config.adminUsername;
-        this.password = config.adminPassword;
-        this.entities = [config.entities];
+    constructor(config: ConfigService) {
+        this.name = config.environment;
+        this.database = config.typeOrmConfig.databaseName;
+        this.host = config.typeOrmConfig.hostUrl;
+        this.username = config.typeOrmConfig.adminUsername;
+        this.password = config.typeOrmConfig.adminPassword;
+        this.entities = [config.typeOrmConfig.entities];
     }
 }

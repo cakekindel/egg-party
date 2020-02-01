@@ -24,8 +24,7 @@ export class ConfigService {
     public get environment(): Environment {
         return this.getRequiredEnv('ENVIRONMENT') as Environment;
     }
-
-    public getTypeOrmConfig(): ITypeormConfig {
+    public get typeOrmConfig(): ITypeormConfig {
         const hostUrl = this.getRequiredEnv('TYPEORM_HOST');
         const adminUsername = this.getRequiredEnv('TYPEORM_USERNAME');
         const adminPassword = this.getRequiredEnv('TYPEORM_PASSWORD');

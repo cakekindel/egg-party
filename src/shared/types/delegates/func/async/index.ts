@@ -1,2 +1,2 @@
-export * from './impure-func-async.type';
+export * from './async-func';
 export * from './pure-func-async.type';

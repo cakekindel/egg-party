@@ -9,13 +9,13 @@ import { SlackApiService } from '../slack-api.service';
 import { SlackGuideBookService } from '../slack-guide-book.service';
 import { SlackMessageBuilderService } from '../slack-message-builder.service';
 import { LeaderboardService } from '../../messaging';
-import { ImpureFuncAsync } from '../../../../shared/types/delegates/func/async';
+import { AsyncFunc } from '../../../../shared/types/delegates/func/async';
 
 @Injectable()
 export class SlackCommandHandler {
     private readonly commandDelegateMap: Map<
         Command,
-        ImpureFuncAsync<SlackUser, void>
+        AsyncFunc<SlackUser, void>
     >;
 
     constructor(

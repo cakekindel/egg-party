@@ -7,12 +7,12 @@ import {
     SlackApiService,
     SlackMessageBuilderService,
 } from '../../api/services/slack';
-import { SlackUser } from '../entities';
+import { SlackUser, ISlackUserIntrinsic } from '../entities';
 import { ChickenRepo } from './chicken.repo';
 import { Immutable } from '../../shared/types/immutable';
 
 @Injectable()
-export class SlackUserRepo extends RepoBase<SlackUser> {
+export class SlackUserRepo extends RepoBase<SlackUser, ISlackUserIntrinsic> {
     protected entityType = SlackUser;
     protected defaultRelations: Array<keyof SlackUser> = [
         'chickens',
@@ -61,14 +61,11 @@ export class SlackUserRepo extends RepoBase<SlackUser> {
 
         const savedUser = await this.save(user);
 
-        const chickens = await this.chickenRepo.createNewUserChickens(
-            savedUser
-        );
+        await this.chickenRepo.createNewUserChickens(savedUser);
 
-        return (await this.getBySlackId(
-            slackUserId,
-            slackWorkspaceId
-        )) as SlackUser;
+        const slackUser = await this.getById(savedUser.id);
+
+        return slackUser as SlackUser;
     }
 
     // TODO: move to a provider layer SlackUser service
@@ -90,9 +87,10 @@ export class SlackUserRepo extends RepoBase<SlackUser> {
     // TODO: move to a provider layer SlackUser service
     public async getOrCreateAndSendGuideBook(
         slackUserId: string,
-        slackWorkspaceId: string
+        slackTeamId: string
     ): Promise<SlackUser> {
-        const userMeta = await this.getOrCreate(slackUserId, slackWorkspaceId);
+        const userMeta = await this.getOrCreate(slackUserId, slackTeamId);
+
         if (userMeta.wasCreated) {
             const botId = await this.slackApi.getBotUserId();
             this.slackApi.sendDirectMessage(

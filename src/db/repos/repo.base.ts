@@ -1,7 +1,12 @@
 import { Inject, Type } from '@nestjs/common';
-import { Connection, Repository as TypeOrmRepository } from 'typeorm';
-import { Nullable } from '../../shared/types/nullable.type';
+import {
+    Connection,
+    Repository as TypeOrmRepository,
+    DeepPartial,
+} from 'typeorm';
+
 import { EntityBase } from '../entities';
+import { Nullable } from '../../shared/types/nullable.type';
 
 type OneOrMany<T> = T | T[];
 
