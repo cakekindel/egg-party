@@ -1,11 +1,11 @@
+import Substitute, { Arg } from '@fluffy-spoon/substitute';
+import { expect } from 'chai';
 import { Request, Response } from 'express';
 import { SlackOauthController } from '../../../src/api/controllers/slack';
-import { SlackOauthService } from '../../../src/api/services/slack';
+import { SlackOauthService } from '../../../src/api/services/slack/slack-oauth.service';
 import { ConfigService } from '../../../src/shared/utility';
 import { ISpec, UnitTestSetup } from '../../test-utilities';
 import { TestClass, TestMethod } from '../../test-utilities/directives';
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
-import { expect } from 'chai';
 
 @TestClass()
 export class SlackOauthControllerSpec implements ISpec<SlackOauthController> {
