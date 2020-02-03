@@ -1,13 +1,11 @@
-import { map, pipe, prop, then, defaultTo, tap, __ } from 'ramda';
+import { Just } from 'purify-ts/Maybe';
+import { MaybeAsync } from 'purify-ts/MaybeAsync';
 import { IViewModel } from '../../../business/view-models';
 import { EntityBase } from '../../../db/entities';
 import { RepoBase } from '../../../db/repos';
+import { CreateMaybeAsync } from '../../../purify/create-maybe-async.fns';
 import { Immutable } from '../../../shared/types/immutable';
 import { ResourceMapperBase } from './resource-mappers/resource-mapper.base';
-import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
-import { MaybeAsync, MaybeAsyncHelpers } from 'purify-ts/MaybeAsync';
-import { CreateMaybeAsync } from '../../../purify/create-maybe-async.fns';
-import { closureOf } from '../../../shared/functions';
 
 export abstract class ProviderBase<
     TViewModel extends IViewModel,
@@ -32,13 +30,14 @@ export abstract class ProviderBase<
     }
 
     public async saveOne(viewModel: Immutable<TViewModel>): Promise<number> {
-        const mapToEntity = closureOf(this.mapper.mapToEntity);
-        const saveEntity = (e: TEntity): MaybeAsync<EntityBase> =>
-            CreateMaybeAsync.fromPromiseOfNullable(this.repo.saveOne(e));
+        const mapToEntity = (vm: TViewModel) => this.mapper.mapToEntity(vm);
+        const saveEntity = (e: TEntity): Promise<EntityBase> =>
+            this.repo.saveOne(e);
 
         return Just(viewModel as TViewModel)
             .map(mapToEntity)
             .map(saveEntity)
+            .map(CreateMaybeAsync.fromPromiseOfNullable)
             .orDefault(CreateMaybeAsync.ofNothing())
             .run()
             .then(entity => entity.map(e => e.id).orDefault(0));
@@ -47,15 +46,17 @@ export abstract class ProviderBase<
     public async saveMany(
         viewModels: Immutable<TViewModel[]>
     ): Promise<number[]> {
-        const mapToEntities = closureOf(this.mapper.mapArrayToEntities);
+        const mapToEntities = (vms: TViewModel[]) =>
+            this.mapper.mapArrayToEntities(vms);
         const mapToIds = (entities: EntityBase[]): number[] =>
             entities.map(e => e.id);
-        const saveEntities = (e: TEntity[]): MaybeAsync<EntityBase[]> =>
-            CreateMaybeAsync.fromPromiseOfNullable(this.repo.saveMany(e));
+        const saveEntities = (e: TEntity[]): Promise<EntityBase[]> =>
+            this.repo.saveMany(e);
 
         return Just([...viewModels] as TViewModel[])
             .map(mapToEntities)
             .map(saveEntities)
+            .map(CreateMaybeAsync.fromPromiseOfNullable)
             .orDefault(CreateMaybeAsync.ofNothing())
             .run()
             .then(savedEntities => savedEntities.orDefault([]))
@@ -63,12 +64,9 @@ export abstract class ProviderBase<
     }
 
     public async delete(viewModel: Immutable<TViewModel>): Promise<void> {
-        const mapToEntity = closureOf(this.mapper.mapToEntity);
-        const deleteFromRepo = closureOf(this.repo.delete);
-
         return Just(viewModel as TViewModel)
-            .map(mapToEntity)
-            .map(deleteFromRepo)
+            .map(vm => this.mapper.mapToEntity(vm))
+            .map(e => this.repo.delete(e))
             .extract();
     }
 }
