@@ -5,7 +5,7 @@ import {
     SlackMessageBuilderService,
 } from '../../../../../src/api/services/slack';
 import { SlackCommandHandler } from '../../../../../src/api/services/slack/handlers';
-import { SlackUser } from '../../../../../src/db/entities';
+import { SlackUser, SlackTeam } from '../../../../../src/db/entities';
 import { SlackUserRepo } from '../../../../../src/db/repos';
 import { SlackDmCommand } from '../../../../../src/shared/enums';
 import { GuideBookPageId } from '../../../../../src/shared/models/guide-book';
@@ -98,6 +98,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
             .get(SlackApiService)
             .received(1)
             .sendDirectMessage(
+                user.team.oauthToken,
                 user.slackUserId,
                 Arg.is(m => m instanceof SlackMessageUnknownCommand)
             );
@@ -161,11 +162,6 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
             .get(SlackGuideBookService)
             .build(Arg.all())
             .returns(this.testConstants.guideBook);
-
-        unitTestSetup.dependencies
-            .get(SlackApiService)
-            .getBotUserId()
-            .returns(Promise.resolve(this.testConstants.botId));
     }
 
     public getUnitTestSetup(): UnitTestSetup<SlackCommandHandler> {
@@ -179,6 +175,7 @@ export class SlackCommandHandlerSpec implements ISpec<SlackCommandHandler> {
         user.slackUserId = this.testConstants.userId;
         user.slackWorkspaceId = this.testConstants.workspaceId;
         user.chickens = [];
+        user.team = { oauthToken: '🔑' } as SlackTeam;
 
         unitTestSetup.dependencies
             .get(SlackUserRepo)

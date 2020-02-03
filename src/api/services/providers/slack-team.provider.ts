@@ -3,6 +3,8 @@ import * as Entity from '../../../db/entities';
 import { SlackTeamRepo } from '../../../db/repos';
 import { ProviderBase } from './provider.base';
 import { SlackTeamMapper } from './resource-mappers';
+import { MaybeAsync } from 'purify-ts/MaybeAsync';
+import { then, pipe } from 'ramda';
 
 export class SlackTeamProvider extends ProviderBase<
     SlackTeam,
@@ -14,6 +16,12 @@ export class SlackTeamProvider extends ProviderBase<
     ) {
         super();
     }
+
+    public getBySlackId: (
+        slackTeamId: string
+    ) => MaybeAsync<SlackTeam> = pipe(this.repo.getBySlackId, maybeAsync =>
+        maybeAsync.map(this.mapper.mapToViewModel)
+    );
 
     public async create(
         slackTeamId: string,

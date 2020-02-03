@@ -13,10 +13,6 @@ export class ConfigService {
         return this.getRequiredEnv('SLACK_CLIENT_SECRET');
     }
 
-    public get slackApiToken(): string {
-        return this.getRequiredEnv('SLACK_APITOKEN');
-    }
-
     public get slackSigningSecret(): string {
         return this.getRequiredEnv('SLACK_SIGNINGSECRET');
     }

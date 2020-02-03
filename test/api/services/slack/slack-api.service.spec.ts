@@ -7,13 +7,18 @@ import { SlackApiService } from '../../../../src/api/services/slack';
 import { IRequestWithRawBody } from '../../../../src/shared/models/express/request-with-raw-body.model';
 import { ConfigService } from '../../../../src/shared/utility';
 import { TestClass, TestMethod } from '../../../test-utilities/directives';
+import { ISpec, UnitTestSetup } from '../../../test-utilities';
 
 @TestClass()
-export class SlackApiServiceSpec {
+export class SlackApiServiceSpec implements ISpec<SlackApiService> {
     public axiosRequestStub: Sinon.SinonStub<
         [AxiosRequestConfig],
         Promise<unknown>
     >;
+
+    public testData = {
+        apiToken: '🔑',
+    };
 
     public before(): void {
         // beforeEach
@@ -107,30 +112,31 @@ export class SlackApiServiceSpec {
         void
     > {
         // arrange
-        // - test data
         const errorMessage =
             'this is a helpful error from the slack api and definitely not a unit test';
+
         const notOkResponse = Promise.resolve({
             data: { ok: false, error: errorMessage },
         });
+
         this.axiosRequestStub.returns(notOkResponse);
-        // - unit under test
-        const uut = new SlackApiService(({
-            slackApiToken: 'foo',
-        } as unknown) as ConfigService);
+
+        const test = this.getUnitTestSetup();
 
         // act
+        let error: Error;
+
         try {
-            await uut.getAllPublicChannels();
-            expect.fail(
-                null,
-                null,
-                'getAllPublicChannels should throw if not OK.'
+            await test.unitUnderTest.getAllPublicChannels(
+                this.testData.apiToken
             );
         } catch (e) {
-            // assert
-            expect(e.message).to.equal(errorMessage);
+            error = e;
         }
+
+        // assert
+        expect(error).to.not.be.undefined;
+        expect(error.message).to.equal(errorMessage);
     }
 
     @TestMethod()
@@ -147,46 +153,23 @@ export class SlackApiServiceSpec {
         this.axiosRequestStub.returns(notOkResponse);
 
         // - unit under test
-        const uut = new SlackApiService(({
-            slackApiToken: 'foo',
-        } as unknown) as ConfigService);
+        const test = this.getUnitTestSetup();
 
         // act
+        let error: Error;
+
         try {
-            await uut.getChannelInfo('12345');
-            expect.fail(null, null, 'getChannelInfo should throw if not OK.');
+            await test.unitUnderTest.getChannelInfo(
+                this.testData.apiToken,
+                '12345'
+            );
         } catch (e) {
-            // assert
-            expect(e.message).to.equal(errorMessage);
+            error = e;
         }
-    }
 
-    @TestMethod()
-    public async should_throwError_when_getBotUserIdReceivesBadResponse(): Promise<
-        void
-    > {
-        // arrange
-        // - test data
-        const errorMessage =
-            'this is a helpful error from the slack api and definitely not a unit test';
-        const notOkResponse = Promise.resolve({
-            data: { ok: false, error: errorMessage },
-        });
-        this.axiosRequestStub.returns(notOkResponse);
-
-        // - unit under test
-        const uut = new SlackApiService(({
-            slackApiToken: 'foo',
-        } as unknown) as ConfigService);
-
-        // act
-        try {
-            await uut.getBotUserId();
-            expect.fail(null, null, 'getBotUserId should throw if not OK.');
-        } catch (e) {
-            // assert
-            expect(e.message).to.equal(errorMessage);
-        }
+        // assert
+        expect(error).to.not.be.undefined;
+        expect(error.message).to.equal(errorMessage);
     }
 
     @TestMethod()
@@ -208,13 +191,20 @@ export class SlackApiServiceSpec {
         } as unknown) as ConfigService);
 
         // act
+        let error: Error;
+
         try {
-            await uut.sendHookMessage('hookUrl', { blocks: [], text: 'foo' });
-            expect.fail(null, null, 'sendHookMessage should throw if not OK.');
+            await uut.sendHookMessage(this.testData.apiToken, 'hookUrl', {
+                blocks: [],
+                text: 'foo',
+            });
         } catch (e) {
-            // assert
-            expect(e.message).to.equal(errorMessage);
+            error = e;
         }
+
+        // assert
+        expect(error).to.not.be.undefined;
+        expect(error.message).to.equal(errorMessage);
     }
 
     @TestMethod()
@@ -236,13 +226,20 @@ export class SlackApiServiceSpec {
         } as unknown) as ConfigService);
 
         // act
+        let error: Error;
+
         try {
-            await uut.sendMessage('channelId', { blocks: [], text: 'foo' });
-            expect.fail(null, null, 'sendMessage should throw if not OK.');
+            await uut.sendMessage(this.testData.apiToken, 'channelId', {
+                blocks: [],
+                text: 'foo',
+            });
         } catch (e) {
-            // assert
-            expect(e.message).to.equal(errorMessage);
+            error = e;
         }
+
+        // assert
+        expect(error).to.not.be.undefined;
+        expect(error.message).to.equal(errorMessage);
     }
 
     @TestMethod()
@@ -264,16 +261,23 @@ export class SlackApiServiceSpec {
         } as unknown) as ConfigService);
 
         // act
+        let error: Error;
+
         try {
-            await uut.sendDirectMessage('userId', { blocks: [], text: 'foo' });
-            expect.fail(
-                null,
-                null,
-                'sendDirectMessage should throw if not OK.'
-            );
+            await uut.sendDirectMessage(this.testData.apiToken, 'userId', {
+                blocks: [],
+                text: 'foo',
+            });
         } catch (e) {
-            // assert
-            expect(e.message).to.equal(errorMessage);
+            error = e;
         }
+
+        // assert
+        expect(error).to.not.be.undefined;
+        expect(error.message).to.equal(errorMessage);
+    }
+
+    public getUnitTestSetup(): UnitTestSetup<SlackApiService> {
+        return new UnitTestSetup(SlackApiService);
     }
 }

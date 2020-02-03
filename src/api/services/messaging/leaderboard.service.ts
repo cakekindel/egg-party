@@ -15,18 +15,29 @@ import { LeaderboardInteraction } from '../../../shared/models/messages/leaderbo
 import { ISlackInteractionAction } from '../../../shared/models/slack/interactions/slack-interaction-action.model';
 import { TimePeriodService } from '../../../shared/utility/time-period.service';
 import { SlackApiService } from '../slack';
+import { SlackTeamProvider } from '../providers';
 
 @Injectable()
 export class LeaderboardService {
     constructor(
         private readonly timePeriodHelper: TimePeriodService,
         private readonly slackApi: SlackApiService,
-        private readonly userRepo: SlackUserRepo
+        private readonly userRepo: SlackUserRepo,
+        private readonly slackTeams: SlackTeamProvider
     ) {}
 
     public async send(userId: string, workspaceId: string): Promise<void> {
         const message = await this.createMessage(userId, workspaceId);
-        return this.slackApi.sendDirectMessage(userId, message);
+        const apiToken = await this.slackTeams
+            .getBySlackId(workspaceId)
+            .map(t => t.oauthToken)
+            .run();
+
+        return this.slackApi.sendDirectMessage(
+            apiToken.orDefault(''),
+            userId,
+            message
+        );
     }
 
     public shouldHandleInteraction(
@@ -60,7 +71,16 @@ export class LeaderboardService {
             period
         );
 
-        return this.slackApi.sendHookMessage(responseUrl, message);
+        const apiToken = await this.slackTeams
+            .getBySlackId(workspaceId)
+            .map(t => t.oauthToken)
+            .run();
+
+        return this.slackApi.sendHookMessage(
+            apiToken.orDefault(''),
+            responseUrl,
+            message
+        );
     }
 
     private async createMessage(

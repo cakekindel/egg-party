@@ -92,10 +92,13 @@ export class SlackUserRepo extends RepoBase<SlackUser, ISlackUserIntrinsic> {
         const userMeta = await this.getOrCreate(slackUserId, slackTeamId);
 
         if (userMeta.wasCreated) {
-            const botId = await this.slackApi.getBotUserId();
             this.slackApi.sendDirectMessage(
+                userMeta.user.team?.oauthToken ?? '',
                 slackUserId,
-                this.messageBuilder.guideBook(slackUserId, botId)
+                this.messageBuilder.guideBook(
+                    slackUserId,
+                    userMeta.user.team?.oauthToken ?? ''
+                )
             );
         }
 

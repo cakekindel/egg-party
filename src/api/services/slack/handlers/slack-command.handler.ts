@@ -57,6 +57,7 @@ export class SlackCommandHandler {
     ): Promise<void> {
         const unknownCommandMessage = new SlackMessageUnknownCommand();
         await this.slackApi.sendDirectMessage(
+            user.team?.oauthToken ?? '',
             user.slackUserId,
             unknownCommandMessage
         );
@@ -71,7 +72,11 @@ export class SlackCommandHandler {
         const userId = user.slackUserId;
         const message = this.messageBuilder.manageChickens(user.chickens ?? []);
 
-        return this.slackApi.sendDirectMessage(userId, message);
+        return this.slackApi.sendDirectMessage(
+            user.team?.oauthToken ?? '',
+            userId,
+            message
+        );
     }
 
     private async handleLeaderboard(user: SlackUser): Promise<void> {
