@@ -17,9 +17,8 @@ export abstract class ProviderBase<
     public getById(id: number): MaybeAsync<TViewModel> {
         const getById$ = this.repo.getById(id);
         const getByIdMaybe = CreateMaybeAsync.fromPromiseOfNullable(getById$);
-        const toViewModel = this.mapper.mapToViewModel;
 
-        return getByIdMaybe.map(toViewModel);
+        return getByIdMaybe.map(e => this.mapper.mapToViewModel(e));
     }
 
     public async getAll(): Promise<TViewModel[]> {
