@@ -25,6 +25,6 @@ import { SlackTeamRepo } from './repos/slack-team.repo';
         SlackMessageBuilderService,
         SlackGuideBookService,
     ],
-    exports: [SlackUserRepo, ChickenRepo, EggRepo],
+    exports: [SlackUserRepo, SlackTeamRepo, ChickenRepo, EggRepo],
 })
 export class DbModule {}

@@ -1,7 +1,13 @@
-import { Maybe } from 'purify-ts/Maybe';
+import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
 import { MaybeAsync } from 'purify-ts/MaybeAsync';
 
 export const CreateMaybeAsync = {
+    ofNothing<T>(): MaybeAsync<T> {
+        return CreateMaybeAsync.fromMaybe<T>(Nothing);
+    },
+    fromJust<T>(value: T): MaybeAsync<T> {
+        return MaybeAsync(({ liftMaybe }) => liftMaybe(Just(value)));
+    },
     fromMaybe<T>(maybe: Maybe<T>): MaybeAsync<T> {
         return MaybeAsync(({ liftMaybe }) => liftMaybe(maybe));
     },

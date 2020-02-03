@@ -5,7 +5,9 @@ import { ProviderBase } from './provider.base';
 import { SlackTeamMapper } from './resource-mappers';
 import { MaybeAsync } from 'purify-ts/MaybeAsync';
 import { then, pipe } from 'ramda';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class SlackTeamProvider extends ProviderBase<
     SlackTeam,
     Entity.SlackTeam
@@ -28,11 +30,14 @@ export class SlackTeamProvider extends ProviderBase<
         oauthToken: string,
         botUserId: string
     ): Promise<number> {
-        const newTeam = {
+        const newTeam: SlackTeam = {
+            id: 0,
             botUserId,
             slackTeamId,
             oauthToken,
-        } as SlackTeam;
+            users: [],
+            createdDate: new Date(),
+        };
 
         const newTeamId = await this.saveOne(newTeam);
 

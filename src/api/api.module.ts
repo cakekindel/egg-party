@@ -27,6 +27,10 @@ import {
     SlackReactionHandler,
 } from './services/slack/handlers';
 import { SlackTeamProvider } from './services/providers';
+import {
+    SlackTeamMapper,
+    SlackUserStubMapper,
+} from './services/providers/resource-mappers';
 
 @Module({
     imports: [SharedModule, DbModule],
@@ -50,6 +54,8 @@ import { SlackTeamProvider } from './services/providers';
         DailyEggsService,
         LeaderboardService,
         ChickenRenamingService,
+        SlackTeamMapper,
+        SlackUserStubMapper,
         SlackTeamProvider,
     ],
     exports: [],
