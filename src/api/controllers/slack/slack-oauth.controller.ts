@@ -1,5 +1,6 @@
-import { Controller, Get, HttpStatus, Req, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { sendRedirectResponse } from '../../functions/response';
 import { SlackTeamProvider } from '../../services/providers';
 import { SlackOauthService } from '../../services/slack';
 
@@ -24,10 +25,9 @@ export class SlackOauthController {
             authResponse.botUserId
         );
 
-        const redirectToAppInSlack = `https://slack.com/app_redirect?app=${authResponse.appId}`;
-
-        resp.status(HttpStatus.MOVED_PERMANENTLY)
-            .header('Location', redirectToAppInSlack)
-            .send();
+        sendRedirectResponse(
+            resp,
+            `https://slack.com/app_redirect?app=${authResponse.appId}`
+        );
     }
 }
