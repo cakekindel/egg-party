@@ -24,8 +24,10 @@ export class SlackOauthController {
             authResponse.botUserId
         );
 
+        const redirectToAppInSlack = `https://slack.com/app_redirect?app=${authResponse.appId}`;
+
         resp.status(HttpStatus.MOVED_PERMANENTLY)
-            .header('Location', 'https://www.slack.com/')
+            .header('Location', redirectToAppInSlack)
             .send();
     }
 }

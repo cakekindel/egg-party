@@ -10,6 +10,7 @@ import {
 import { SlackUser, ISlackUserIntrinsic } from '../entities';
 import { ChickenRepo } from './chicken.repo';
 import { Immutable } from '../../shared/types/immutable';
+import { SlackTeamRepo } from './slack-team.repo';
 
 @Injectable()
 export class SlackUserRepo extends RepoBase<SlackUser, ISlackUserIntrinsic> {
@@ -18,11 +19,13 @@ export class SlackUserRepo extends RepoBase<SlackUser, ISlackUserIntrinsic> {
         'chickens',
         'eggs',
         'eggsGiven',
+        'team',
     ];
 
     constructor(
         protected db: Connection,
         private chickenRepo: ChickenRepo,
+        private readonly teams: SlackTeamRepo,
         // TODO: remove when there's a provider layer SlackUser service
         private slackApi: SlackApiService,
         private messageBuilder: SlackMessageBuilderService
@@ -58,6 +61,11 @@ export class SlackUserRepo extends RepoBase<SlackUser, ISlackUserIntrinsic> {
         const user = new SlackUser();
         user.slackUserId = slackUserId;
         user.slackWorkspaceId = slackWorkspaceId;
+
+        user.team = await this.teams
+            .getBySlackId(slackWorkspaceId)
+            .run()
+            .then(t => t.extract());
 
         const savedUser = await this.save(user);
 

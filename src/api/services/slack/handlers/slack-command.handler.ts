@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-
 import { SlackUser } from '../../../../db/entities';
 import { SlackUserRepo } from '../../../../db/repos';
 import { SlackDmCommand as Command } from '../../../../shared/enums';
 import { GuideBookPageId } from '../../../../shared/models/guide-book';
 import { SlackMessageUnknownCommand } from '../../../../shared/models/messages';
+import { AsyncFunc } from '../../../../shared/types/delegates/func/async';
+import { LeaderboardService } from '../../messaging';
 import { SlackApiService } from '../slack-api.service';
 import { SlackGuideBookService } from '../slack-guide-book.service';
 import { SlackMessageBuilderService } from '../slack-message-builder.service';
-import { LeaderboardService } from '../../messaging';
-import { AsyncFunc } from '../../../../shared/types/delegates/func/async';
 
 @Injectable()
 export class SlackCommandHandler {

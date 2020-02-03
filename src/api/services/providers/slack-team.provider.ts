@@ -1,11 +1,10 @@
+import { Injectable } from '@nestjs/common';
+import { MaybeAsync } from 'purify-ts/MaybeAsync';
 import { SlackTeam } from '../../../business/view-models';
 import * as Entity from '../../../db/entities';
 import { SlackTeamRepo } from '../../../db/repos';
 import { ProviderBase } from './provider.base';
 import { SlackTeamMapper } from './resource-mappers';
-import { MaybeAsync } from 'purify-ts/MaybeAsync';
-import { then, pipe } from 'ramda';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SlackTeamProvider extends ProviderBase<
@@ -19,11 +18,11 @@ export class SlackTeamProvider extends ProviderBase<
         super();
     }
 
-    public getBySlackId: (
-        slackTeamId: string
-    ) => MaybeAsync<SlackTeam> = pipe(this.repo.getBySlackId, maybeAsync =>
-        maybeAsync.map(this.mapper.mapToViewModel)
-    );
+    public getBySlackId(teamSlackId: string): MaybeAsync<SlackTeam> {
+        return this.repo
+            .getBySlackId(teamSlackId)
+            .map(e => this.mapper.mapToViewModel(e));
+    }
 
     public async create(
         slackTeamId: string,

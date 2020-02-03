@@ -144,6 +144,10 @@ In order to run locally against Slack, you'll need:
 1. Replace the Request URL you put earlier with `https://{{ngrokUrl}}/api/v1/slack/events`
 1. From the **Features** sidebar, go to **Interactive Components**.
 1. Replace the Request URL you put earlier with `https://{{ngrokUrl}}/api/v1/slack/interactions`
+1. From the **Features** sidebar, go to **Manage Distribution**.
+1. Click the **Embeddable Slack Button** to install your app to your workspace.
+    * This should create a `slack_team` entry in your database,
+        and redirect you to Egg Party in your Slack Workspace.
 
 <br/>
 
