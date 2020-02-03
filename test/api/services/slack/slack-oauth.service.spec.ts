@@ -1,13 +1,12 @@
-import { TestClass, TestMethod } from '../../../test-utilities/directives';
-import { ISpec, UnitTestSetup } from '../../../test-utilities';
-import { SlackOauthService } from '../../../../src/api/services/slack';
-import sinon = require('sinon');
 import Axios, { AxiosRequestConfig } from 'axios';
 import { expect, use } from 'chai';
-import chaiPromises = require('chai-as-promised');
+import { SlackOauthService } from '../../../../src/api/services/slack';
 import { SlackOauthAccessRequest } from '../../../../src/shared/models/slack/api/oauth';
 import { ConfigService } from '../../../../src/shared/utility';
-import { SlackTeamProvider } from '../../../../src/api/services/providers';
+import { ISpec, UnitTestSetup } from '../../../test-utilities';
+import { TestClass, TestMethod } from '../../../test-utilities/directives';
+import sinon = require('sinon');
+import chaiPromises = require('chai-as-promised');
 
 use(chaiPromises);
 
@@ -17,7 +16,7 @@ export class SlackOauthServiceSpec implements ISpec<SlackOauthService> {
         oauthCode: 'foo',
         clientId: '123',
         clientSecret: 'shhh',
-        accessResponse: {
+        authResponse: {
             ok: true,
             access_token: 'foo',
             token_type: 'bot',
@@ -44,96 +43,45 @@ export class SlackOauthServiceSpec implements ISpec<SlackOauthService> {
     }
 
     @TestMethod()
-    public async handleInstallation_should_getAccess(): Promise<void> {
-        // arrange
-        const expectedRequest = new SlackOauthAccessRequest(
-            this.testData.oauthCode,
-            this.testData.clientId,
-            this.testData.clientSecret
-        );
-
-        const test = this.getUnitTestSetup();
-        test.dependencies
-            .get(ConfigService)
-            .slackClientId()
-            .returns(this.testData.clientId);
-        test.dependencies
-            .get(ConfigService)
-            .slackClientSecret()
-            .returns(this.testData.clientSecret);
-        this.axiosStub.returns(
-            Promise.resolve({ data: this.testData.accessResponse })
-        );
-
-        // act
-        await test.unitUnderTest.handleInstallation('foo');
-
-        // assert
-        expect(this.axiosStub.calledOnce).to.be.true;
-        const request = this.axiosStub.getCalls()[0]
-            .args[0] as SlackOauthAccessRequest;
-        expect(request).to.deep.equal(expectedRequest);
-    }
-
-    @TestMethod()
-    public async handleInstallation_should_createSlackTeam(): Promise<void> {
-        // arrange
-        const test = this.getUnitTestSetup();
-        this.axiosStub.returns(
-            Promise.resolve({ data: this.testData.accessResponse })
-        );
-
-        // act
-        await test.unitUnderTest.handleInstallation('foo');
-
-        // assert
-        test.dependencies
-            .get(SlackTeamProvider)
-            .received()
-            .create(
-                this.testData.accessResponse.team.id,
-                this.testData.accessResponse.access_token,
-                this.testData.accessResponse.bot_user_id
-            );
-    }
-
-    @TestMethod()
-    public async getOauthAccess_should_deserializeOauthV2Response(): Promise<
+    public async authenticate_should_sendSlackOauthAccessRequest(): Promise<
         void
     > {
         // arrange
         const test = this.getUnitTestSetup();
+        const installCode = '🔑';
+        const appClientId = '🤖';
+        const appClientSecret = '🗝';
 
-        const expected = {
-            ok: true,
-            accessToken: 'foo',
-            tokenType: 'bot',
-            scopes: ['user.list', 'reaction.add'],
-            botUserId: 'B234',
-            appId: 'A123',
-            team: {
-                id: 'T123',
-                name: 'Rowdy Rangers',
-            },
-        };
+        const request = new SlackOauthAccessRequest(
+            installCode,
+            appClientId,
+            appClientSecret
+        );
+
+        test.dependencies
+            .get(ConfigService)
+            .slackClientId()
+            .returns(appClientId);
+
+        test.dependencies
+            .get(ConfigService)
+            .slackClientSecret()
+            .returns(appClientSecret);
 
         this.axiosStub.returns(
-            Promise.resolve({ data: this.testData.accessResponse })
+            Promise.resolve({ data: this.testData.authResponse })
         );
 
         // act
-        const actual = await test.unitUnderTest.getOauthAccess(
-            'code',
-            'client id',
-            'client secret'
-        );
+        await test.unitUnderTest.authenticate(installCode);
 
         // assert
-        expect(actual).to.deep.equal(expected);
+        const actualRequest = this.axiosStub.getCalls()[0].args[0];
+        expect(actualRequest).to.deep.equal(request);
     }
 
     @TestMethod()
-    public async getOauthAccess_should_throw_when_OauthV2ResponseNotOk(): Promise<
+    public async authenticate_should_throw_when_OauthV2ResponseNotOk(): Promise<
         void
     > {
         // arrange
@@ -146,8 +94,7 @@ export class SlackOauthServiceSpec implements ISpec<SlackOauthService> {
         this.axiosStub.returns(Promise.resolve({ data: response }));
 
         // act
-        const accessClosure = async () =>
-            test.unitUnderTest.getOauthAccess('', '', '');
+        const accessClosure = async () => test.unitUnderTest.authenticate('');
 
         // assert
         expect(accessClosure()).to.be.rejected;

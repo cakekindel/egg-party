@@ -14,7 +14,7 @@ export class SlackTeamRepo extends RepoBase<SlackTeam, ISlackTeamIntrinsic> {
             slackTeamId: slackId,
             oauthToken,
             botUserId: botId,
-        } as SlackTeam;
+        } as ISlackTeamIntrinsic;
 
         const saved = await this.save(entity);
         return saved;

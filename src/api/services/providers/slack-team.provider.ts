@@ -16,19 +16,18 @@ export class SlackTeamProvider extends ProviderBase<
     }
 
     public async create(
-        slackId: string,
+        slackTeamId: string,
         oauthToken: string,
-        botId: string
-    ): Promise<SlackTeam> {
-        const entity = await this.repo.create(slackId, oauthToken, botId);
+        botUserId: string
+    ): Promise<number> {
+        const newTeam = {
+            botUserId,
+            slackTeamId,
+            oauthToken,
+        } as SlackTeam;
 
-        // note: for now, ISlackTeamIntrinsic and SlackTeam are structurally assignable,
-        //   because the users collection is nullable.
+        const newTeamId = await this.saveOne(newTeam);
 
-        // if we want to include that collection,
-        //   or add a non-nullable property to SlackTeam,
-        //   then we will need to call repo.getById
-        //   to get the rich object with relations.
-        return this.mapper.mapToViewModel(entity);
+        return newTeamId;
     }
 }

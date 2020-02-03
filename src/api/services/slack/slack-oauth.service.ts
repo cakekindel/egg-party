@@ -10,34 +10,18 @@ import { SlackTeamProvider } from '../providers';
 
 @Injectable()
 export class SlackOauthService {
-    constructor(
-        private readonly config: ConfigService,
-        private readonly slackTeams: SlackTeamProvider
-    ) {}
+    constructor(private readonly config: ConfigService) {}
 
-    public async handleInstallation(oauthCode: string): Promise<void> {
-        const oauthAccess = await this.getOauthAccess(
-            oauthCode,
-            this.config.slackClientId(),
-            this.config.slackClientSecret()
-        );
-
-        await this.slackTeams.create(
-            oauthAccess.team.id,
-            oauthAccess.accessToken,
-            oauthAccess.botUserId
-        );
-    }
-
-    public async getOauthAccess(
-        code: string,
-        clientId: string,
-        clientSecret: string
+    public async authenticate(
+        installationCode: string
     ): Promise<SlackOauthAccessResponse> {
+        const slackAppId = this.config.slackClientId();
+        const slackAppSecret = this.config.slackClientSecret();
+
         const request = new SlackOauthAccessRequest(
-            code,
-            clientId,
-            clientSecret
+            installationCode,
+            slackAppId,
+            slackAppSecret
         );
 
         const response = await Axios.request<ISlackResponse>(request);

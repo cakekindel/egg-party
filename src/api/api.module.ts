@@ -26,6 +26,7 @@ import {
     SlackMessageHandler,
     SlackReactionHandler,
 } from './services/slack/handlers';
+import { SlackTeamProvider } from './services/providers';
 
 @Module({
     imports: [SharedModule, DbModule],
@@ -49,6 +50,7 @@ import {
         DailyEggsService,
         LeaderboardService,
         ChickenRenamingService,
+        SlackTeamProvider,
     ],
     exports: [],
 })

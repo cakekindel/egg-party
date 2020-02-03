@@ -1,75 +1,57 @@
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
-import { expect } from 'chai';
 import { Request, Response } from 'express';
 import { SlackOauthController } from '../../../src/api/controllers/slack';
 import { SlackOauthService } from '../../../src/api/services/slack/slack-oauth.service';
 import { ConfigService } from '../../../src/shared/utility';
 import { ISpec, UnitTestSetup } from '../../test-utilities';
 import { TestClass, TestMethod } from '../../test-utilities/directives';
+import { SlackOauthAccessResponse } from '../../../src/shared/models/slack/api/oauth';
+import { SlackTeamProvider } from '../../../src/api/services/providers';
+import Substitute from '@fluffy-spoon/substitute';
 
 @TestClass()
 export class SlackOauthControllerSpec implements ISpec<SlackOauthController> {
     @TestMethod()
-    public async should_authorizeWithCodeFromUrl_when_userRedirected(): Promise<
+    public async should_authenticateAndCreateTeam_when_installed(): Promise<
         void
     > {
         // arrange
-        const code = 'foo';
-        const clientId = 'meep';
-        const clientSecret = 'shhh';
+        const installCode = 'foo';
+        const mockAuthResponse = {
+            team: {
+                id: 'robot team',
+            },
+            accessToken: '🔑',
+            botUserId: '🤖',
+        } as SlackOauthAccessResponse;
 
         const test = this.getUnitTestSetup();
 
         test.dependencies
-            .get(ConfigService)
-            .slackClientId()
-            .returns(clientId);
+            .get(SlackOauthService)
+            .authenticate(installCode)
+            .returns(Promise.resolve(mockAuthResponse));
 
-        test.dependencies
-            .get(ConfigService)
-            .slackClientSecret()
-            .returns(clientSecret);
-
-        const request = ({ query: { code } } as unknown) as Request;
+        const request = ({
+            query: { code: installCode },
+        } as unknown) as Request;
 
         // act
-        test.unitUnderTest.redirect(request, undefined);
+        await test.unitUnderTest.redirect(request, Substitute.for<Response>());
 
         // assert
         test.dependencies
             .get(SlackOauthService)
             .received()
-            .handleInstallation(code);
-    }
-
-    @TestMethod()
-    public async should_redirectToSlackOauthInstall_when_installRequest(): Promise<
-        void
-    > {
-        // arrange
-        const clientId = 'meep';
-
-        const test = this.getUnitTestSetup();
+            .authenticate(installCode);
 
         test.dependencies
-            .get(ConfigService)
-            .slackClientId()
-            .returns(clientId);
-
-        const respond = Substitute.for<Response>();
-
-        // act
-        test.unitUnderTest.install(respond);
-
-        // assert
-        respond.received().sendStatus(301);
-        respond.received().header(
-            'Location',
-            Arg.is((url: string) => {
-                expect(url).to.include('https://slack.com/oauth/v2/authorize');
-                return true;
-            })
-        );
+            .get(SlackTeamProvider)
+            .received()
+            .create(
+                mockAuthResponse.team.id,
+                mockAuthResponse.accessToken,
+                mockAuthResponse.botUserId
+            );
     }
 
     public getUnitTestSetup(): UnitTestSetup<SlackOauthController> {
