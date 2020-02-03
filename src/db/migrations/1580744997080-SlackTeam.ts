@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddSlackTeam1577636789973 implements MigrationInterface {
-    public name = 'AddSlackTeam1577636789973';
+export class SlackTeam1580744997080 implements MigrationInterface {
+    name = 'SlackTeam1580744997080';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            `CREATE TABLE "slack_team" ("id" int NOT NULL IDENTITY(1,1), "isActive" bit NOT NULL, "createdDate" datetime2 NOT NULL CONSTRAINT "DF_f7c9eb990174b204dc8a1754b94" DEFAULT getdate(), "slack_team_id" nvarchar(255) NOT NULL, "oauth_token" nvarchar(255) NOT NULL, "bot_user_id" nvarchar(255) NOT NULL, CONSTRAINT "PK_c80f54cebf5fa6544a40ec0d186" PRIMARY KEY ("id"))`,
+            `CREATE TABLE "slack_team" ("id" int NOT NULL IDENTITY(1,1), "is_active" bit NOT NULL, "created_date" datetime2 NOT NULL CONSTRAINT "DF_b251eb81c5aef7776a778800c2b" DEFAULT getdate(), "slack_team_id" nvarchar(255) NOT NULL, "oauth_token" nvarchar(255) NOT NULL, "bot_user_id" nvarchar(255) NOT NULL, CONSTRAINT "PK_c80f54cebf5fa6544a40ec0d186" PRIMARY KEY ("id"))`,
             undefined
         );
         await queryRunner.query(

@@ -10,9 +10,9 @@ export abstract class EntityBase {
     @PrimaryGeneratedColumn('increment')
     public id: number = 0;
 
-    @Column()
+    @Column({ name: 'is_active' })
     public isActive: boolean = true;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ name: 'created_date' })
     public createdDate: Date = new Date();
 }

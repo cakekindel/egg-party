@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import {
+    Column,
+    Entity,
+    OneToMany,
+    CreateDateColumn,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { EntityBase, IEntityBase } from './entity.base';
 import { SlackUser, ISlackUserIntrinsic } from './slack-user.entity';
 
