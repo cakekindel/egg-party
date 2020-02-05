@@ -35,17 +35,17 @@ export class ProviderBaseSpec {
         };
 
         provider.repo.getById(testId).returns(Promise.resolve(entity));
-
         provider.mapper.mapToViewModel(Arg.any()).returns(entity as MockVm);
 
         // act
         const actual = await provider.getById(testId).run();
 
         // assert
-        provider.repo.received().getById(testId);
-
-        provider.mapper.received().mapToViewModel(entity);
-        expect(actual.extract()).to.deep.equal(entity);
+        actual
+            .ifLeft(() => expect.fail('getById returned Error'))
+            .unsafeCoerce()
+            .ifNothing(() => expect.fail('getById returned Nothing'))
+            .ifJust(val => expect(val).to.deep.equal(entity));
     }
 
     @TestMethod()
