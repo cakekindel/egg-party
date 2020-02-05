@@ -1,5 +1,4 @@
-import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
-import { MaybeAsync } from 'purify-ts/MaybeAsync';
+import { Just, Maybe, MaybeAsync, Nothing } from 'purify-ts';
 
 export const CreateMaybeAsync = {
     ofNothing<T>(): MaybeAsync<T> {

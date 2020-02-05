@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Just, Maybe, Nothing } from 'purify-ts/Maybe';
+import { Just, Maybe, Nothing } from 'purify-ts';
 import { fake } from 'sinon';
 import { ResourceMapperBase } from '../../../../../src/api/services/providers/resource-mappers';
 import { TestCase, TestClass } from '../../../../test-utilities/directives';

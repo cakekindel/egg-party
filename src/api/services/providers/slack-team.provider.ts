@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MaybeAsync } from 'purify-ts/MaybeAsync';
+import { MaybeAsync } from 'purify-ts';
 import { SlackTeam } from '../../../business/view-models';
 import * as Entity from '../../../db/entities';
 import { SlackTeamRepo } from '../../../db/repos';

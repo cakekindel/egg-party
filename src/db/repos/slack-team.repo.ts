@@ -1,10 +1,8 @@
-import { MaybeAsync } from 'purify-ts/MaybeAsync';
-import { pipe } from 'rxjs';
-import { FindConditions, FindOneOptions } from 'typeorm';
+import { MaybeAsync } from 'purify-ts';
+import { FindConditions } from 'typeorm';
 import { CreateMaybeAsync } from '../../purify/create-maybe-async.fns';
 import { ISlackTeamIntrinsic, SlackTeam } from '../entities/slack-team.entity';
 import { RepoBase } from './repo.base';
-import { Just } from 'purify-ts/Maybe';
 
 export class SlackTeamRepo extends RepoBase<SlackTeam, ISlackTeamIntrinsic> {
     protected readonly entityType = SlackTeam;

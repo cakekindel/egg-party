@@ -1,6 +1,6 @@
 import { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
-import { Just } from 'purify-ts/Maybe';
+import { Just } from 'purify-ts';
 import { LeaderboardService } from '../../../../../src/api/services/messaging';
 import { SlackTeamProvider } from '../../../../../src/api/services/providers';
 import {

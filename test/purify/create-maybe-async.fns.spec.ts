@@ -1,6 +1,6 @@
 import { expect, use } from 'chai';
 import * as promiseAssertions from 'chai-as-promised';
-import { Maybe, Just, Nothing } from 'purify-ts/Maybe';
+import { Maybe, Just, Nothing } from 'purify-ts';
 import { CreateMaybeAsync } from '../../src/purify/create-maybe-async.fns';
 import { TestClass, TestMethod } from '../test-utilities/directives';
 

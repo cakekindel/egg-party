@@ -1,33 +1,27 @@
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
-import { LeaderboardService } from '../../../../src/api/services/messaging';
-import { SlackApiService } from '../../../../src/api/services/slack';
-import {
-    LeaderboardSlackMessage,
-    LeaderboardMode,
-    LeaderboardConstants,
-} from '../../../../src/shared/models/messages/leaderboard';
-import { ISpec, UnitTestSetup } from '../../../test-utilities';
-import {
-    TestClass,
-    TestMethod,
-    TestCase,
-} from '../../../test-utilities/directives';
-import { SlackUserRepo } from '../../../../src/db/repos';
+import { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
+import { Just } from 'purify-ts';
+import { LeaderboardService } from '../../../../src/api/services/messaging';
+import { SlackTeamProvider } from '../../../../src/api/services/providers';
+import { SlackApiService } from '../../../../src/api/services/slack';
+import * as ViewModel from '../../../../src/business/view-models';
+import { SlackUserRepo } from '../../../../src/db/repos';
+import { CreateMaybeAsync } from '../../../../src/purify/create-maybe-async.fns';
 import {
+    EnumUtility,
     SlackInteractionId,
     TimePeriod,
-    EnumUtility,
 } from '../../../../src/shared/enums';
+import {
+    LeaderboardConstants,
+    LeaderboardMode,
+    LeaderboardSlackMessage,
+} from '../../../../src/shared/models/messages/leaderboard';
+import { ISpec, UnitTestSetup } from '../../../test-utilities';
+import { TestClass, TestMethod } from '../../../test-utilities/directives';
 import qs = require('qs');
 import sinon = require('sinon');
 import Sinon = require('sinon');
-import { SlackTeamProvider } from '../../../../src/api/services/providers';
-import { MaybeAsync } from 'purify-ts/MaybeAsync';
-import { CreateMaybeAsync } from '../../../../src/purify/create-maybe-async.fns';
-import { Just } from 'purify-ts/Maybe';
-import { SlackTeam } from '../../../../src/db/entities';
-import * as ViewModel from '../../../../src/business/view-models';
 
 @TestClass()
 export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
