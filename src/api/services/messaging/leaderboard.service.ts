@@ -15,7 +15,7 @@ import { LeaderboardInteraction } from '../../../shared/models/messages/leaderbo
 import { ISlackInteractionAction } from '../../../shared/models/slack/interactions/slack-interaction-action.model';
 import { TimePeriodService } from '../../../shared/utility/time-period.service';
 import { SlackApiService } from '../slack';
-import { SlackTeamProvider } from '../providers';
+import { SlackTeamProvider } from '../../../business/providers';
 
 @Injectable()
 export class LeaderboardService {

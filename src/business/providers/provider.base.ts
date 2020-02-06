@@ -1,8 +1,8 @@
 import { Right, EitherAsync, Maybe } from 'purify-ts';
-import { IViewModel } from '../../../business/view-models';
-import { EntityBase } from '../../../db/entities';
-import { RepoBase } from '../../../db/repos';
-import { Immutable } from '../../../shared/types/immutable';
+import { IViewModel } from '../view-models';
+import { EntityBase } from '../../db/entities';
+import { RepoBase } from '../../db/repos';
+import { Immutable } from '../../shared/types/immutable';
 import { ResourceMapperBase } from './resource-mappers/resource-mapper.base';
 
 export abstract class ProviderBase<

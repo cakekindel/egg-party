@@ -14,10 +14,10 @@ import {
 } from './services';
 import { LeaderboardService } from './services/messaging';
 import {
-    SlackOauthService,
     SlackApiService,
     SlackGuideBookService,
     SlackMessageBuilderService,
+    SlackOauthService,
 } from './services/slack';
 import {
     SlackCommandHandler,
@@ -26,11 +26,6 @@ import {
     SlackMessageHandler,
     SlackReactionHandler,
 } from './services/slack/handlers';
-import { SlackTeamProvider } from './services/providers';
-import {
-    SlackTeamMapper,
-    SlackUserStubMapper,
-} from './services/providers/resource-mappers';
 
 @Module({
     imports: [SharedModule, DbModule],
@@ -54,9 +49,6 @@ import {
         DailyEggsService,
         LeaderboardService,
         ChickenRenamingService,
-        SlackTeamMapper,
-        SlackUserStubMapper,
-        SlackTeamProvider,
     ],
     exports: [],
 })

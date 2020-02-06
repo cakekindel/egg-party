@@ -13,7 +13,7 @@ import { ISlackEventMessagePosted } from '../../../../../src/shared/models/slack
 import { MessageSubtype } from '../../../../../src/shared/models/slack/events/message-subtype.enum';
 import { UnitTestSetup } from '../../../../test-utilities';
 import { TestClass, TestMethod } from '../../../../test-utilities/directives';
-import { SlackTeamProvider } from '../../../../../src/api/services/providers';
+import { SlackTeamProvider } from '../../../../../src/business/providers';
 import { CreateMaybeAsync } from '../../../../../src/purify/create-maybe-async.fns';
 import { SlackTeam } from '../../../../../src/business/view-models';
 

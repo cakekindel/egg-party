@@ -4,7 +4,7 @@ import { ConversationType } from '../../../../shared/models/slack/conversations'
 import { ISlackEventMessagePosted } from '../../../../shared/models/slack/events';
 import { ChickenRenamingService } from '../../chicken-renaming.service';
 import { EggGivingService } from '../../egg-giving.service';
-import { SlackTeamProvider } from '../../providers';
+import { SlackTeamProvider } from '../../../../business/providers';
 import { SlackCommandHandler } from './slack-command.handler';
 
 @Injectable()

@@ -10,7 +10,7 @@ import { GuideBookPageId } from '../../../../shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../shared/models/slack/interactions/slack-interaction-payload.model';
 import { SlackGuideBookService } from '../slack-guide-book.service';
 import { LeaderboardService } from '../../messaging';
-import { SlackTeamProvider } from '../../providers';
+import { SlackTeamProvider } from '../../../../business/providers';
 
 // TODO: Refactor to behave more like a fan-out delegate map-based service like SlackEventHandler.
 @Injectable()

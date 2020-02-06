@@ -6,7 +6,7 @@ import {
 } from '../../../shared/models/slack/api/oauth';
 import { ISlackResponse } from '../../../shared/models/slack/api';
 import { ConfigService } from '../../../shared/utility';
-import { SlackTeamProvider } from '../providers';
+import { SlackTeamProvider } from '../../../business/providers';
 
 @Injectable()
 export class SlackOauthService {

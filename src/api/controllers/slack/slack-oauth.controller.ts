@@ -1,7 +1,7 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { sendRedirectResponse } from '../../functions/response';
-import { SlackTeamProvider } from '../../services/providers';
+import { SlackTeamProvider } from '../../../business/providers';
 import { SlackOauthService } from '../../services/slack';
 
 @Controller('v1/slack/oauth')

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as ViewModel from '../../../../business/view-models';
-import * as Entity from '../../../../db/entities';
+import * as ViewModel from '../../view-models';
+import * as Entity from '../../../db/entities';
 import { ResourceMapperBase } from './resource-mapper.base';
 import { SlackUserStubMapper } from './slack-user-stub.mapper';
 

@@ -2,7 +2,7 @@ import Substitute from '@fluffy-spoon/substitute';
 import { Request, Response } from 'express';
 import { SlackOauthController } from '../../../src/api/controllers/slack';
 import { sendRedirectResponse } from '../../../src/api/functions/response';
-import { SlackTeamProvider } from '../../../src/api/services/providers';
+import { SlackTeamProvider } from '../../../src/business/providers';
 import { SlackOauthService } from '../../../src/api/services/slack/slack-oauth.service';
 import { SlackOauthAccessResponse } from '../../../src/shared/models/slack/api/oauth';
 import { ISpec, UnitTestSetup } from '../../test-utilities';

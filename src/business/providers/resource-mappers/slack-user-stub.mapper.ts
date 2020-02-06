@@ -1,5 +1,5 @@
-import * as Stub from '../../../../business/view-models/view-model-stubs';
-import * as Entity from '../../../../db/entities';
+import * as Stub from '../../view-models/view-model-stubs';
+import * as Entity from '../../../db/entities';
 
 import { ResourceMapperBase } from './resource-mapper.base';
 import { Injectable } from '@nestjs/common';
