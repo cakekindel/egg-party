@@ -90,11 +90,9 @@ export class SlackMessageHandler {
         const eggPartyBotId = await this.teams
             .getBySlackId(message.workspaceId)
             .map(team => team.botUserId)
-            .run();
+            .run()
+            .then(id => id.orDefault(''));
 
-        return (
-            message.subtype === undefined &&
-            message.user !== eggPartyBotId.orDefault('')
-        );
+        return message.subtype === undefined && message.user !== eggPartyBotId;
     }
 }
