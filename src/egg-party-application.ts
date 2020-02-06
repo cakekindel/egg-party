@@ -5,13 +5,6 @@ import { json, Response, urlencoded } from 'express';
 import { AppModule } from './app.module';
 import { IRequestWithRawBody } from './shared/models/express/request-with-raw-body.model';
 
-type VerifyMiddleware = (
-    req: IRequestWithRawBody,
-    res: unknown,
-    buf: Buffer,
-    encoding?: string
-) => void;
-
 export class EggPartyApplication {
     private nestApp?: INestApplication;
 
