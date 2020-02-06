@@ -1,33 +1,19 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { config as loadDotEnv } from 'dotenv';
-import { json, urlencoded } from 'express';
+import { json, Response, urlencoded } from 'express';
 import { AppModule } from './app.module';
-import { Func } from './shared/types/delegates/func';
 import { IRequestWithRawBody } from './shared/models/express/request-with-raw-body.model';
-import { Nullable } from './shared/types/nullable.type';
 
-type VerifyMiddleware = Func<
-    IRequestWithRawBody,
-    object,
-    Buffer,
-    Nullable<string>,
-    void
->;
+type VerifyMiddleware = (
+    req: IRequestWithRawBody,
+    res: unknown,
+    buf: Buffer,
+    encoding?: string
+) => void;
 
 export class EggPartyApplication {
     private nestApp?: INestApplication;
-
-    private readonly keepRawBodyMiddleware: VerifyMiddleware = (
-        request,
-        _,
-        buffer,
-        encoding
-    ) => {
-        if (buffer?.length) {
-            request.rawBody = buffer.toString(encoding || 'utf8');
-        }
-    };
 
     public async run(): Promise<void> {
         this.loadEnvironmentVariables();
@@ -46,7 +32,7 @@ export class EggPartyApplication {
     }
 
     private keepRawBodyOfRequests(): void {
-        const verify = this.keepRawBodyMiddleware;
+        const verify = this.populateRawBody;
         this.nestApp?.use(json({ verify }));
         this.nestApp?.use(urlencoded({ verify, extended: true }));
     }
@@ -68,5 +54,16 @@ export class EggPartyApplication {
         const app = await NestFactory.create(AppModule, { bodyParser: false });
 
         return app;
+    }
+
+    private populateRawBody(
+        req: IRequestWithRawBody,
+        _: Response,
+        buf: Buffer,
+        encoding?: string
+    ): void {
+        if (buf?.length) {
+            req.rawBody = buf.toString(encoding || 'utf8');
+        }
     }
 }
