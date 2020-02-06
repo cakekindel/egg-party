@@ -14,7 +14,7 @@ import { SlackMessageBuilderService } from '../slack-message-builder.service';
 export class SlackCommandHandler {
     private readonly commandDelegateMap: Map<
         Command,
-        AsyncFunc<SlackUser, void>
+        (u: SlackUser) => Promise<void>
     >;
 
     constructor(
