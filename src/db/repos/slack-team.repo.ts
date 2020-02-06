@@ -1,4 +1,4 @@
-import { MaybeAsync } from 'purify-ts';
+import { MaybeAsync, EitherAsync, Maybe } from 'purify-ts';
 import { FindConditions } from 'typeorm';
 import { CreateMaybeAsync } from '../../purify/create-maybe-async.fns';
 import { ISlackTeamIntrinsic, SlackTeam } from '../entities/slack-team.entity';
@@ -8,15 +8,17 @@ export class SlackTeamRepo extends RepoBase<SlackTeam, ISlackTeamIntrinsic> {
     protected readonly entityType = SlackTeam;
     protected readonly defaultRelations: Array<keyof SlackTeam> = ['users'];
 
-    public getBySlackId(slackTeamId: string): MaybeAsync<SlackTeam> {
+    public getBySlackId(
+        slackTeamId: string
+    ): EitherAsync<unknown, Maybe<SlackTeam>> {
         const conditions = {
             where: { teamId: slackTeamId },
             relations: this.defaultRelations,
         } as FindConditions<SlackTeam>;
 
-        const findTeam$ = this.getRepo().findOne(conditions);
+        const getTeam = () => this.getRepo().findOne(conditions);
 
-        return CreateMaybeAsync.fromPromiseOfNullable(findTeam$);
+        return EitherAsync(getTeam).map(Maybe.fromNullable);
     }
 
     public async create(
