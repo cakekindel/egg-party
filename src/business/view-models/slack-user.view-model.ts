@@ -1,4 +1,4 @@
-import { Nullable } from '../../shared/types';
+import { Maybe } from 'purify-ts';
 import {
     IChickenStub,
     IEggStub,
@@ -15,7 +15,7 @@ export class SlackUser implements ISlackUserStub, IViewModel {
         public readonly slackId: string,
         public readonly teamSlackId: string,
 
-        public readonly eggsLastRefreshedDate: Nullable<Date>,
+        public readonly eggsLastRefreshedDate: Maybe<Date>,
 
         public readonly team: ISlackTeamStub,
         public readonly chickens: IChickenStub[] = [],

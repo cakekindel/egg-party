@@ -1,5 +1,5 @@
-import { Nullable } from '../../shared/types';
-import { IChickenStub, ISlackUserStub, IEggStub } from './view-model-stubs';
+import { Maybe } from 'purify-ts';
+import { IChickenStub, IEggStub, ISlackUserStub } from './view-model-stubs';
 import { IViewModel } from './view-model.interface';
 
 export class Egg implements IEggStub, IViewModel {
@@ -13,6 +13,6 @@ export class Egg implements IEggStub, IViewModel {
         public readonly ownedByUser: ISlackUserStub,
 
         public readonly givenByUser: ISlackUserStub,
-        public readonly givenOnDate: Nullable<Date>
+        public readonly givenOnDate: Maybe<Date>
     ) {}
 }
