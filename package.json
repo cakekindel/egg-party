@@ -2,11 +2,11 @@
     "name": "egg-party",
     "version": "1.0.0",
     "scripts": {
-        "start": "npm run serve",
+        "start": "node --inspect=\"127.0.0.1:9230\" ./dist/src/main.js",
         "test": "npm run test:single-run",
         "\n -- Serve --": "",
-        "serve": "npm run clean && concurrently npm:build:watch npm:serve:run-on-build -k -c \"cyan.dim,green.dim\" -n \" build ,  api  \"",
-        "serve-test": "npm run clean && concurrently npm:build:watch npm:serve:run-on-build npm:test:run-on-build -k -c \"cyan.dim,green.dim,blue.dim\" -n \" build ,  api  , mocha \"",
+        "serve": "npm run clean && concurrently --raw npm:build:watch npm:serve:start",
+        "serve-test": "npm run clean && concurrently npm:build:watch npm:serve-test:start -k -c \"cyan.dim,green.dim,blue.dim\" -n \" build , serve , mocha \"",
         "\n -- Test --": "",
         "test:single-run": "npm run build && npm run test:run",
         "test:watch": "npm run clean && concurrently npm:build:watch npm:test:run-on-build -k -c \"green.dim,cyan.dim\"  -n \" build , mocha \"",
@@ -30,8 +30,7 @@
         "style:check": "npm run style:check:src & npm run style:check:test",
         "\n -- Scripts Used by Other Scripts (don't invoke directly) --": "",
         "wait-for-build": "wait-on ./dist/src/main.js",
-        "serve:run": "npm run --silent kill && node --inspect=\"127.0.0.1:9230\" ./dist/src/main.js",
-        "serve:run-on-build": "npm run wait-for-build && chokidar \"dist\" -c \"npm run serve:run\" --initial --silent",
+        "serve:start": "node .scripts/serve",
         "test:run": "npm run --silent kill && mocha --inspect=\"9231\"",
         "pretest:run-on-build": "wait-on ./dist/src/main.js",
         "test:run-on-build": "chokidar \"dist\" -c \"npm run test:run\" --initial --silent",
@@ -103,6 +102,7 @@
         "typescript": "~3.7.0"
     },
     "optionalDependencies": {
+        "fkill": "^6.2.0",
         "ngrok": "^3.2.5",
         "rimraf": "^3.0.0",
         "wait-on": "^3.3.0"
