@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BusinessModule } from '../business';
 import { DbModule } from '../db/db.module';
 import { SharedModule } from '../shared/shared.module';
 import { HealthCheckController } from './controllers';
@@ -28,7 +29,7 @@ import {
 } from './services/slack/handlers';
 
 @Module({
-    imports: [SharedModule, DbModule],
+    imports: [SharedModule, DbModule, BusinessModule],
     controllers: [
         HealthCheckController,
         SlackEventsController,

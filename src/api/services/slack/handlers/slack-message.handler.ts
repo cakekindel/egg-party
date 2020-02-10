@@ -89,9 +89,9 @@ export class SlackMessageHandler {
     ): Promise<boolean> {
         const eggPartyBotId = await this.teams
             .getBySlackId(message.workspaceId)
-            .map(team => team.botUserId)
+            .map(team => team.map(t => t.botUserId).orDefault(''))
             .run()
-            .then(id => id.orDefault(''));
+            .then(idResult => idResult.orDefault(''));
 
         return message.subtype === undefined && message.user !== eggPartyBotId;
     }

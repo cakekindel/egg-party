@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
-
+import { Nothing } from 'purify-ts';
+import { SlackTeamProvider } from '../../../../business/providers';
 import { ChickenRepo, SlackUserRepo } from '../../../../db/repos';
-
-import { SlackApiService } from '../slack-api.service';
-import { SlackMessageBuilderService } from '../slack-message-builder.service';
-
 import { SlackInteractionId } from '../../../../shared/enums';
 import { GuideBookPageId } from '../../../../shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../shared/models/slack/interactions/slack-interaction-payload.model';
-import { SlackGuideBookService } from '../slack-guide-book.service';
 import { LeaderboardService } from '../../messaging';
-import { SlackTeamProvider } from '../../../../business/providers';
+import { SlackApiService } from '../slack-api.service';
+import { SlackGuideBookService } from '../slack-guide-book.service';
+import { SlackMessageBuilderService } from '../slack-message-builder.service';
 
 // TODO: Refactor to behave more like a fan-out delegate map-based service like SlackEventHandler.
 @Injectable()
@@ -38,9 +36,9 @@ export class SlackInteractionHandler {
             : action.action_id;
 
         const userId = interaction.user.id;
-        const slackTeam = await this.slackTeams
-            .getBySlackId(interaction.team.id)
-            .run();
+        const slackTeam = (
+            await this.slackTeams.getBySlackId(interaction.team.id).run()
+        ).orDefault(Nothing);
 
         const apiToken = slackTeam.mapOrDefault(t => t.oauthToken, '');
         const botUserId = slackTeam.mapOrDefault(t => t.botUserId, '');

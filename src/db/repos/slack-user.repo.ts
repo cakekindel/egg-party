@@ -11,6 +11,7 @@ import { SlackUser, ISlackUserIntrinsic } from '../entities';
 import { ChickenRepo } from './chicken.repo';
 import { Immutable } from '../../shared/types/immutable';
 import { SlackTeamRepo } from './slack-team.repo';
+import { Nothing } from 'purify-ts';
 
 @Injectable()
 export class SlackUserRepo extends RepoBase<SlackUser, ISlackUserIntrinsic> {
@@ -65,7 +66,8 @@ export class SlackUserRepo extends RepoBase<SlackUser, ISlackUserIntrinsic> {
         user.team = await this.teams
             .getBySlackId(slackWorkspaceId)
             .run()
-            .then(t => t.extract());
+            .then(result => result.orDefault(Nothing))
+            .then(maybe => maybe.extract());
 
         const savedUser = await this.save(user);
 

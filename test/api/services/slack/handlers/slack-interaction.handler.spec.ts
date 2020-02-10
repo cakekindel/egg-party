@@ -2,17 +2,17 @@ import { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { Just } from 'purify-ts';
 import { LeaderboardService } from '../../../../../src/api/services/messaging';
-import { SlackTeamProvider } from '../../../../../src/business/providers';
 import {
     SlackApiService,
     SlackGuideBookService,
     SlackMessageBuilderService,
 } from '../../../../../src/api/services/slack';
 import { SlackInteractionHandler } from '../../../../../src/api/services/slack/handlers';
+import { SlackTeamProvider } from '../../../../../src/business/providers';
 import { SlackTeam } from '../../../../../src/business/view-models';
 import { Chicken, SlackUser } from '../../../../../src/db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../../../../src/db/repos';
-import { CreateMaybeAsync } from '../../../../../src/purify/create-maybe-async.fns';
+import { CreateEitherAsync } from '../../../../../src/purify/create-either-async.fns';
 import { SlackInteractionId } from '../../../../../src/shared/enums';
 import { GuideBookPageId } from '../../../../../src/shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../../src/shared/models/slack/interactions/slack-interaction-payload.model';
@@ -252,7 +252,7 @@ export class SlackInteractionHandlerSpec
         test.dependencies
             .get(SlackTeamProvider)
             .getBySlackId(this.testData.team.slackTeamId)
-            .returns(CreateMaybeAsync.fromMaybe(Just(this.testData.team)));
+            .returns(CreateEitherAsync.wrapRight(Just(this.testData.team)));
 
         return test;
     }

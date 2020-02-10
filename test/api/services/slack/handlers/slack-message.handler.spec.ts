@@ -1,21 +1,22 @@
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
+import { Arg } from '@fluffy-spoon/substitute';
 import { isEqual } from 'lodash';
+import { Just } from 'purify-ts';
 import { ChickenRenamingService } from '../../../../../src/api/services/chicken-renaming.service';
 import { EggGivingService } from '../../../../../src/api/services/egg-giving.service';
 import {
     SlackCommandHandler,
     SlackMessageHandler,
 } from '../../../../../src/api/services/slack/handlers';
+import { SlackTeamProvider } from '../../../../../src/business/providers';
+import { SlackTeam } from '../../../../../src/business/view-models';
 import { Chicken } from '../../../../../src/db/entities';
+import { CreateEitherAsync } from '../../../../../src/purify/create-either-async.fns';
 import { SlackDmCommand } from '../../../../../src/shared/enums';
 import { ConversationType } from '../../../../../src/shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../../src/shared/models/slack/events';
 import { MessageSubtype } from '../../../../../src/shared/models/slack/events/message-subtype.enum';
 import { UnitTestSetup } from '../../../../test-utilities';
 import { TestClass, TestMethod } from '../../../../test-utilities/directives';
-import { SlackTeamProvider } from '../../../../../src/business/providers';
-import { CreateMaybeAsync } from '../../../../../src/purify/create-maybe-async.fns';
-import { SlackTeam } from '../../../../../src/business/view-models';
 
 @TestClass()
 export class SlackMessageHandlerSpec {
@@ -205,7 +206,9 @@ export class SlackMessageHandlerSpec {
             .get(SlackTeamProvider)
             .getBySlackId(Arg.any())
             .returns(
-                CreateMaybeAsync.fromJust({ botUserId: '🤖' } as SlackTeam)
+                CreateEitherAsync.wrapRight(
+                    Just({ botUserId: '🤖' } as SlackTeam)
+                )
             );
 
         return test;

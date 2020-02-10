@@ -1,9 +1,9 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
-import { ProviderBase } from '../../../src/business/providers';
-import { ResourceMapperBase } from '../../../src/business/providers/resource-mappers';
-import { RepoBase } from '../../../src/db/repos';
-import { TestClass, TestMethod } from '../../test-utilities/directives';
+import { ProviderBase } from '../../../../src/business/providers';
+import { ResourceMapperBase } from '../../../../src/business/providers/resource-mappers';
+import { RepoBase } from '../../../../src/db/repos';
+import { TestClass, TestMethod } from '../../../test-utilities/directives';
 
 class MockVm {
     public id: number;

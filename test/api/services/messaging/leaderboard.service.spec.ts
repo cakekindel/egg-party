@@ -2,11 +2,11 @@ import { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import { Just } from 'purify-ts';
 import { LeaderboardService } from '../../../../src/api/services/messaging';
-import { SlackTeamProvider } from '../../../../src/business/providers';
 import { SlackApiService } from '../../../../src/api/services/slack';
+import { SlackTeamProvider } from '../../../../src/business/providers';
 import * as ViewModel from '../../../../src/business/view-models';
 import { SlackUserRepo } from '../../../../src/db/repos';
-import { CreateMaybeAsync } from '../../../../src/purify/create-maybe-async.fns';
+import { CreateEitherAsync } from '../../../../src/purify/create-either-async.fns';
 import {
     EnumUtility,
     SlackInteractionId,
@@ -204,7 +204,7 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
         test.dependencies
             .get(SlackTeamProvider)
             .getBySlackId(this.testData.wsId)
-            .returns(CreateMaybeAsync.fromMaybe(Just(this.testData.team)));
+            .returns(CreateEitherAsync.wrapRight(Just(this.testData.team)));
 
         return test;
     }

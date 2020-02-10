@@ -3,6 +3,7 @@ import * as Entity from '../../../db/entities';
 
 import { ResourceMapperBase } from './resource-mapper.base';
 import { Injectable } from '@nestjs/common';
+import { Maybe } from 'purify-ts';
 
 @Injectable()
 export class SlackUserStubMapper extends ResourceMapperBase<
@@ -15,7 +16,7 @@ export class SlackUserStubMapper extends ResourceMapperBase<
             slackWorkspaceId: vm.teamSlackId,
             slackUserId: vm.slackId,
             isActive: true,
-            dailyEggsLastRefreshedDate: vm.eggsLastRefreshedDate ?? undefined,
+            dailyEggsLastRefreshedDate: vm.eggsLastRefreshedDate.extract(),
         };
     }
     public mapToViewModel(
@@ -25,7 +26,9 @@ export class SlackUserStubMapper extends ResourceMapperBase<
             ...entity,
             teamSlackId: entity.slackWorkspaceId,
             slackId: entity.slackUserId,
-            eggsLastRefreshedDate: entity.dailyEggsLastRefreshedDate,
+            eggsLastRefreshedDate: Maybe.fromNullable(
+                entity.dailyEggsLastRefreshedDate
+            ),
         };
     }
 }
