@@ -1,21 +1,38 @@
 name: CICD
 
 on:
+  create:
   push:
     branches:
     - master
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
-    - uses: digitalocean/action-doctl@v1.6.0
-      env:
-        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
     - name: install, build
       run: |
           npm ci --no-optional
-          npm run build
+          npm run test:single-run
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v2
+    - uses: digitalocean/action-doctl@master      
+      env:
+        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      with:
+        args: doctl compute ssh egg-party-droplet
+    - name: run remote build
+      run: |
+        npm ci --no-optional
+        npm run build
+    - name: run app
+      run: |
+        pm2 stop 'all'
+        pm2 start dist/main.js
