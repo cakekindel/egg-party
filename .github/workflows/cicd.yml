@@ -23,15 +23,13 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - uses: digitalocean/action-doctl@master      
-      env:
-        DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
       with:
-        args: compute ssh egg-party-droplet
-    - name: remote - install deps
-      run: npm ci --no-optional
-    - name: remote - run tests
-      run: npm run test:single-run
-    - name: remote - restart app
-      run: pm2 restart all
-      continue-on-error: true
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        script: |
+          cd egg-party
+          npm run build
+          pm2 restart all
