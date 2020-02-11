@@ -10,6 +10,6 @@ import { Controller, Get } from '@nestjs/common';
 export class HealthCheckController {
     @Get()
     public getHealth(): { status: string } {
-        return { status: 'pass', testing: true };
+        return { status: 'pass', testing: true } as { status: string };
     }
 }
