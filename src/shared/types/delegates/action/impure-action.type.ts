@@ -1,4 +1,4 @@
-import { ImpureFunc } from '../func';
+import { Func } from '../func';
 
 /**
  * Impure delegate type that performs some action.
@@ -16,4 +16,4 @@ import { ImpureFunc } from '../func';
  *
  * console.log(deepCompare(thing, thingSnapshot)); // false, object was mutated
  */
-export type ImpureAction<T> = ImpureFunc<T, void>;
+export type ImpureAction<T> = Func<T, void>;

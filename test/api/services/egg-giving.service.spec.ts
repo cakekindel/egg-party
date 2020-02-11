@@ -6,7 +6,7 @@ import {
     SlackApiService,
     SlackMessageBuilderService,
 } from '../../../src/api/services/slack';
-import { Egg, SlackUser } from '../../../src/db/entities';
+import { Egg, SlackUser, SlackTeam } from '../../../src/db/entities';
 import { EggRepo, SlackUserRepo } from '../../../src/db/repos';
 import {
     SlackMessageYouCantGiveEggsToEggParty,
@@ -127,6 +127,7 @@ export class EggGivingServiceSpec {
         const egg = new Egg();
         user.slackUserId = userId;
         user.eggs = [egg, egg];
+        user.team = { oauthToken: '🗝' } as SlackTeam;
 
         // - dependency setup
         userRepo
@@ -151,6 +152,7 @@ export class EggGivingServiceSpec {
 
         // assert
         slackApi.received().sendDirectMessage(
+            user.team.oauthToken,
             userId,
             Arg.is(m => m instanceof SlackMessageYouCantGiveEggsToYourself)
         );
@@ -168,8 +170,8 @@ export class EggGivingServiceSpec {
 
         // - test data
         const userId = 'U1234';
-        const botId = 'BEEPBOOP';
-        const giveToIds = [botId];
+        const botUserId = 'BEEPBOOP';
+        const giveToIds = [botUserId];
         const workspaceId = 'W222';
         const eggCount = 2;
 
@@ -177,9 +179,9 @@ export class EggGivingServiceSpec {
         const egg = new Egg();
         user.slackUserId = userId;
         user.eggs = [egg, egg];
+        user.team = { oauthToken: '🗝', botUserId } as SlackTeam;
 
         // - dependency setup
-        slackApi.getBotUserId().returns(Promise.resolve(botId));
         userRepo
             .getOrCreateAndSendGuideBook(userId, workspaceId)
             .returns(Promise.resolve(user));
@@ -202,6 +204,7 @@ export class EggGivingServiceSpec {
 
         // assert
         slackApi.received().sendDirectMessage(
+            user.team.oauthToken,
             userId,
             Arg.is(m => m instanceof SlackMessageYouCantGiveEggsToEggParty)
         );
@@ -225,6 +228,7 @@ export class EggGivingServiceSpec {
 
         const user = new SlackUser();
         user.slackUserId = userId;
+        user.team = { oauthToken: '🗝' } as SlackTeam;
 
         const egg = new Egg();
         user.eggs = [egg, egg];
@@ -252,6 +256,7 @@ export class EggGivingServiceSpec {
 
         // assert
         slackApi.received().sendDirectMessage(
+            user.team.oauthToken,
             userId,
             Arg.is(m => m instanceof SlackMessageYouGaveEggs)
         );

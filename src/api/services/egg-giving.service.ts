@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
-import { Egg, SlackUser, IEggIntrinsic } from '../../db/entities';
+import { IEggIntrinsic, SlackUser } from '../../db/entities';
 import { EggRepo, SlackUserRepo } from '../../db/repos';
 import {
     SlackMessageYouCantGiveEggsToEggParty,
@@ -52,7 +51,11 @@ export class EggGivingService {
                 giveableEggsLeft
             );
 
-            await this.slackApi.sendDirectMessage(giver.slackUserId, message);
+            await this.slackApi.sendDirectMessage(
+                giver.team?.oauthToken ?? '',
+                giver.slackUserId,
+                message
+            );
         }
     }
 
@@ -78,19 +81,22 @@ export class EggGivingService {
         user: SlackUser,
         recipientIds: string[]
     ): Promise<boolean> {
-        const botId = await this.slackApi.getBotUserId();
         const giverIsARecipient = recipientIds.some(
             id => id === user.slackUserId
         );
-        const botIsARecipient = recipientIds.some(id => id === botId);
+        const botIsARecipient = recipientIds.some(
+            id => id === user.team?.botUserId ?? ''
+        );
 
         if (giverIsARecipient) {
             await this.slackApi.sendDirectMessage(
+                user.team?.oauthToken ?? '',
                 user.slackUserId,
                 new SlackMessageYouCantGiveEggsToYourself()
             );
         } else if (botIsARecipient) {
             await this.slackApi.sendDirectMessage(
+                user.team?.oauthToken ?? '',
                 user.slackUserId,
                 new SlackMessageYouCantGiveEggsToEggParty()
             );
@@ -107,11 +113,13 @@ export class EggGivingService {
 
         if (giveableEggCount === 0) {
             await this.slackApi.sendDirectMessage(
+                user.team?.oauthToken ?? '',
                 user.slackUserId,
                 this.messageBuilder.outOfEggs()
             );
         } else if (numberOfEggs > giveableEggCount) {
             await this.slackApi.sendDirectMessage(
+                user.team?.oauthToken ?? '',
                 user.slackUserId,
                 this.messageBuilder.triedToGiveTooManyEggs()
             );

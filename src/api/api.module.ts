@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { BusinessModule } from '../business';
 import { DbModule } from '../db/db.module';
 import { SharedModule } from '../shared/shared.module';
 import { HealthCheckController } from './controllers';
@@ -14,10 +15,10 @@ import {
 } from './services';
 import { LeaderboardService } from './services/messaging';
 import {
-    SlackApiOauthService,
     SlackApiService,
     SlackGuideBookService,
     SlackMessageBuilderService,
+    SlackOauthService,
 } from './services/slack';
 import {
     SlackCommandHandler,
@@ -28,7 +29,7 @@ import {
 } from './services/slack/handlers';
 
 @Module({
-    imports: [SharedModule, DbModule],
+    imports: [SharedModule, DbModule, BusinessModule],
     controllers: [
         HealthCheckController,
         SlackEventsController,
@@ -37,7 +38,7 @@ import {
     ],
     providers: [
         SlackApiService,
-        SlackApiOauthService,
+        SlackOauthService,
         SlackMessageBuilderService,
         SlackGuideBookService,
         SlackMessageHandler,

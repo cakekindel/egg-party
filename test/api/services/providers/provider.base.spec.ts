@@ -1,49 +1,23 @@
 import Substitute, { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
-import { ResourceMapperBase } from '../../../../src/api/services/providers/resource-mappers';
-import { ProviderBase } from '../../../../src/api/services/providers';
+import { ProviderBase } from '../../../../src/business/providers';
+import { ResourceMapperBase } from '../../../../src/business/providers/resource-mappers';
 import { RepoBase } from '../../../../src/db/repos';
 import { TestClass, TestMethod } from '../../../test-utilities/directives';
-import { Maybe } from 'purify-ts/Maybe';
-import { Argument } from '@fluffy-spoon/substitute/dist/src/Arguments';
 
-class VM {
+class MockVm {
     public id: number;
     public createdDate: Date;
 }
-class Entity {
+class MockEntity {
     public id: number;
     public createdDate: Date;
     public isActive: boolean;
 }
 
-class MockProvider extends ProviderBase<VM, Entity> {
-    // TODO: figure out if theres a better solution for this than hiding the substitute with an object instance
-    // expl: Ramda's .pipe(...fn) throws when passed a Symbol (what SubstituteJS uses)
-    public mapper = {
-        mapToEntity: vm => this.mapperSub.mapToEntity(vm),
-        mapToViewModel: e => this.mapperSub.mapToViewModel(e),
-        mapMaybeToEntity: vm => this.mapperSub.mapMaybeToEntity(vm),
-        mapMaybeToViewModel: e => this.mapperSub.mapMaybeToViewModel(e),
-        mapArrayToEntities: vms => this.mapperSub.mapArrayToEntities(vms),
-        mapArrayToViewModels: es => this.mapperSub.mapArrayToViewModels(es),
-    } as ResourceMapperBase<VM, Entity>;
-    public mapperSub = Substitute.for<ResourceMapperBase<VM, Entity>>();
-
-    public repo = ({
-        getById: (id: number) => this.repoSub.getById(id),
-        getAll: () => this.repoSub.getAll(),
-        getByIds: (ids: number[]) => this.repoSub.getByIds(ids),
-        delete: (e: Entity) => this.repoSub.delete(e),
-        save: (e: Entity) => this.repoSub.save(e),
-        saveOne: (e: Entity) => this.repoSub.saveOne(e),
-        saveMany: (es: Entity[]) => this.repoSub.saveMany(es),
-    } as unknown) as RepoBase<Entity>;
-    public repoSub = Substitute.for<RepoBase<Entity>>();
-}
-
-function maybeArg<T>(value: T | undefined): Maybe<T> & Argument<Maybe<T>> {
-    return Arg.is((m: Maybe<T>) => m.extract() === value);
+class MockProvider extends ProviderBase<MockVm, MockEntity> {
+    public mapper = Substitute.for<ResourceMapperBase<MockVm, MockEntity>>();
+    public repo = Substitute.for<RepoBase<MockEntity>>();
 }
 
 @TestClass()
@@ -54,26 +28,24 @@ export class ProviderBaseSpec {
         const testId = 2;
         const provider = new MockProvider();
 
-        const entity: Entity = {
-            id: 2,
+        const entity: MockEntity = {
+            id: testId,
             createdDate: new Date(),
             isActive: true,
         };
 
-        provider.repoSub.getById(testId).returns(Promise.resolve(entity));
-
-        provider.mapperSub
-            .mapMaybeToViewModel(Arg.any())
-            .returns(Maybe.of(entity));
+        provider.repo.getById(testId).returns(Promise.resolve(entity));
+        provider.mapper.mapToViewModel(Arg.any()).returns(entity as MockVm);
 
         // act
         const actual = await provider.getById(testId).run();
 
         // assert
-        provider.repoSub.received().getById(testId);
-
-        provider.mapperSub.received().mapMaybeToViewModel(maybeArg(entity));
-        expect(actual.extract()).to.deep.equal(entity);
+        actual
+            .ifLeft(() => expect.fail('getById returned Error'))
+            .unsafeCoerce()
+            .ifNothing(() => expect.fail('getById returned Nothing'))
+            .ifJust(val => expect(val).to.deep.equal(entity));
     }
 
     @TestMethod()
@@ -82,7 +54,7 @@ export class ProviderBaseSpec {
         const id = 2;
         const provider = new MockProvider();
 
-        provider.repoSub.getById(id).returns(Promise.resolve(null));
+        provider.repo.getById(id).returns(Promise.resolve(null));
 
         // act
         await provider.getById(id).run();
@@ -94,64 +66,64 @@ export class ProviderBaseSpec {
     public async getAll_should_callThroughRepo(): Promise<void> {
         // arrange
         const provider = new MockProvider();
-        provider.repoSub.getAll().returns(Promise.resolve([]));
-        provider.mapperSub.mapArrayToViewModels(Arg.any()).returns([]);
+        provider.repo.getAll().returns(Promise.resolve([]));
+        provider.mapper.mapArrayToViewModels(Arg.any()).returns([]);
 
         // act
         await provider.getAll();
 
         // assert
-        provider.repoSub.received().getAll();
+        provider.repo.received().getAll();
     }
 
     @TestMethod()
     public async delete_should_callThroughRepo(): Promise<void> {
         // arrange
         const provider = new MockProvider();
-        provider.mapperSub.mapToEntity(Arg.any()).returns({} as Entity);
+        provider.mapper.mapToEntity(Arg.any()).returns({} as MockEntity);
 
         // act
-        await provider.delete({} as VM);
+        await provider.delete({} as MockVm);
 
         // assert
-        provider.repoSub.received().delete(Arg.any());
+        provider.repo.received().delete(Arg.any());
     }
 
     @TestMethod()
     public async saveOne_should_callThroughRepo(): Promise<void> {
         // arrange
         const provider = new MockProvider();
-        const mockVm = { id: 2 } as VM;
-        provider.mapperSub.mapToEntity(Arg.any()).returns(mockVm as Entity);
-        provider.repoSub
+        const mockVm = { id: 2 } as MockVm;
+        provider.mapper.mapToEntity(Arg.any()).returns(mockVm as MockEntity);
+        provider.repo
             .saveOne(Arg.any())
-            .returns(Promise.resolve(mockVm as Entity));
+            .returns(Promise.resolve(mockVm as MockEntity));
 
         // act
         const actual = await provider.saveOne(mockVm);
 
         // assert
         expect(actual).to.equal(mockVm.id);
-        provider.repoSub.received().saveOne(mockVm as Entity);
+        provider.repo.received().saveOne(mockVm as MockEntity);
     }
 
     @TestMethod()
     public async saveMany_should_callThroughRepo(): Promise<void> {
         // arrange
         const provider = new MockProvider();
-        const mockVms = [{ id: 2 } as VM, { id: 3 } as VM];
-        provider.mapperSub
+        const mockVms = [{ id: 2 } as MockVm, { id: 3 } as MockVm];
+        provider.mapper
             .mapArrayToEntities(Arg.any())
-            .returns(mockVms as Entity[]);
-        provider.repoSub
+            .returns(mockVms as MockEntity[]);
+        provider.repo
             .saveMany(Arg.any())
-            .returns(Promise.resolve(mockVms as Entity[]));
+            .returns(Promise.resolve(mockVms as MockEntity[]));
 
         // act
         const actual = await provider.saveMany(mockVms);
 
         // assert
         expect(actual).to.deep.equal(mockVms.map(v => v.id));
-        provider.repoSub.received().saveMany(mockVms as Entity[]);
+        provider.repo.received().saveMany(mockVms as MockEntity[]);
     }
 }

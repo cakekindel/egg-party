@@ -1,24 +1,36 @@
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
+import { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
+import { Just } from 'purify-ts';
+import { LeaderboardService } from '../../../../../src/api/services/messaging';
 import {
     SlackApiService,
     SlackGuideBookService,
     SlackMessageBuilderService,
 } from '../../../../../src/api/services/slack';
 import { SlackInteractionHandler } from '../../../../../src/api/services/slack/handlers';
+import { SlackTeamProvider } from '../../../../../src/business/providers';
+import { SlackTeam } from '../../../../../src/business/view-models';
 import { Chicken, SlackUser } from '../../../../../src/db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../../../../src/db/repos';
+import { CreateEitherAsync } from '../../../../../src/purify/create-either-async.fns';
 import { SlackInteractionId } from '../../../../../src/shared/enums';
 import { GuideBookPageId } from '../../../../../src/shared/models/guide-book';
 import { ISlackInteractionPayload } from '../../../../../src/shared/models/slack/interactions/slack-interaction-payload.model';
 import { SlackBlockMessage } from '../../../../../src/shared/models/slack/messages';
-import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 import { ISpec, UnitTestSetup } from '../../../../test-utilities';
-import { LeaderboardService } from '../../../../../src/api/services/messaging';
+import { TestClass, TestMethod } from '../../../../test-utilities/directives';
 
 @TestClass()
 export class SlackInteractionHandlerSpec
     implements ISpec<SlackInteractionHandler> {
+    public testData = {
+        team: {
+            slackTeamId: '🏦',
+            botUserId: '🤖',
+            oauthToken: '🗝',
+        } as SlackTeam,
+    };
+
     @TestMethod()
     public async should_deferToLeaderboardService_when_leaderboardInteraction(): Promise<
         void
@@ -32,7 +44,7 @@ export class SlackInteractionHandlerSpec
             .returns(true);
 
         const interaction = this.makePayload({
-            team: { id: 'foo', domain: '' },
+            team: { id: this.testData.team.slackTeamId, domain: '' },
             user: { id: 'U' } as any,
             actions: [{ action_id: '' } as any],
             response_url: 'fart',
@@ -70,19 +82,18 @@ export class SlackInteractionHandlerSpec
             .build(Arg.all())
             .returns(testPage);
 
-        const botId = 'Z789';
-        setup.dependencies
-            .get(SlackApiService)
-            .getBotUserId()
-            .returns(Promise.resolve(botId));
-
         const userId = 'U1234';
         const goToPage = GuideBookPageId.LearnAboutChicks;
         const responseHookUrl = 'respond_here';
 
         const interaction = this.makePayload({
             response_url: responseHookUrl,
-            user: { id: userId, username: 'test_user', team_id: '1234' },
+            team: { id: this.testData.team.slackTeamId, domain: '' },
+            user: {
+                id: userId,
+                username: 'test_user',
+                team_id: this.testData.team.slackTeamId,
+            },
             actions: [
                 {
                     block_id: '1234',
@@ -102,11 +113,15 @@ export class SlackInteractionHandlerSpec
         setup.dependencies
             .get(SlackGuideBookService)
             .received()
-            .build(userId, botId, goToPage);
+            .build(userId, this.testData.team.botUserId, goToPage);
         setup.dependencies
             .get(SlackApiService)
             .received()
-            .sendHookMessage(responseHookUrl, testPage);
+            .sendHookMessage(
+                this.testData.team.oauthToken,
+                responseHookUrl,
+                testPage
+            );
     }
 
     @TestMethod()
@@ -123,13 +138,12 @@ export class SlackInteractionHandlerSpec
             .returns(false);
 
         const userId = '1234';
-        const teamId = 'slack';
         const user = new SlackUser();
         user.chickens = [new Chicken()];
 
         setup.dependencies
             .get(SlackUserRepo)
-            .getBySlackId(userId, teamId)
+            .getBySlackId(userId, this.testData.team.slackTeamId)
             .returns(Promise.resolve(user));
 
         const message = new SlackBlockMessage([], 'test');
@@ -139,8 +153,12 @@ export class SlackInteractionHandlerSpec
             .returns(message);
 
         const interaction = this.makePayload({
-            team: { domain: 'slack', id: teamId },
-            user: { id: userId, team_id: teamId, username: 'foo' },
+            team: { domain: 'slack', id: this.testData.team.slackTeamId },
+            user: {
+                id: userId,
+                team_id: this.testData.team.slackTeamId,
+                username: 'foo',
+            },
             actions: [
                 {
                     block_id: '1',
@@ -161,7 +179,7 @@ export class SlackInteractionHandlerSpec
         setup.dependencies
             .get(SlackApiService)
             .received()
-            .sendDirectMessage(userId, message);
+            .sendDirectMessage(this.testData.team.oauthToken, userId, message);
     }
 
     @TestMethod()
@@ -212,12 +230,12 @@ export class SlackInteractionHandlerSpec
             response_url: '',
             team: {
                 domain: 'test',
-                id: 'test',
+                id: this.testData.team.slackTeamId,
             },
             token: '1234',
             user: {
                 id: 'U123',
-                team_id: 'test',
+                team_id: this.testData.team.slackTeamId,
                 username: 'sally_user',
             },
             actions: [],
@@ -229,6 +247,13 @@ export class SlackInteractionHandlerSpec
     }
 
     public getUnitTestSetup(): UnitTestSetup<SlackInteractionHandler> {
-        return new UnitTestSetup(SlackInteractionHandler);
+        const test = new UnitTestSetup(SlackInteractionHandler);
+
+        test.dependencies
+            .get(SlackTeamProvider)
+            .getBySlackId(this.testData.team.slackTeamId)
+            .returns(CreateEitherAsync.wrapRight(Just(this.testData.team)));
+
+        return test;
     }
 }

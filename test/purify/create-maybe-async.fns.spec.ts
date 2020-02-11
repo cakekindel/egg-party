@@ -1,6 +1,6 @@
 import { expect, use } from 'chai';
 import * as promiseAssertions from 'chai-as-promised';
-import { Maybe } from 'purify-ts/Maybe';
+import { Maybe, Just, Nothing } from 'purify-ts';
 import { CreateMaybeAsync } from '../../src/purify/create-maybe-async.fns';
 import { TestClass, TestMethod } from '../test-utilities/directives';
 
@@ -9,7 +9,9 @@ use(promiseAssertions);
 @TestClass()
 export class CreateMaybeAsyncSpec {
     @TestMethod()
-    public fromPromiseOfMaybe_should_wrapPromiseInMaybeAsync(): void {
+    public async fromPromiseOfMaybe_should_wrapPromiseInMaybeAsync(): Promise<
+        void
+    > {
         // arrange
         const result = 10;
         const promiseWork = new Promise<Maybe<number>>(res => {
@@ -20,11 +22,14 @@ export class CreateMaybeAsyncSpec {
         const maybeAsync = CreateMaybeAsync.fromPromiseOfMaybe(promiseWork);
 
         // assert
-        expect(maybeAsync.run()).to.eventually.equal(result);
+        const actual = await maybeAsync.run();
+        expect(actual).to.deep.equal(Just(result));
     }
 
     @TestMethod()
-    public fromPromiseOfNullable_should_wrapPromiseInMaybeAsync(): void {
+    public async fromPromiseOfNullable_should_wrapPromiseInMaybeAsync(): Promise<
+        void
+    > {
         // arrange
         const result: undefined = undefined;
         const promiseWork = new Promise<number | undefined>(res => {
@@ -35,6 +40,7 @@ export class CreateMaybeAsyncSpec {
         const maybeAsync = CreateMaybeAsync.fromPromiseOfNullable(promiseWork);
 
         // assert
-        expect(maybeAsync.run()).to.eventually.equal(result);
+        const actual = await maybeAsync.run();
+        expect(actual).to.equal(Nothing);
     }
 }

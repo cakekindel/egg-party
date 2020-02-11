@@ -2,13 +2,8 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { createHmac, timingSafeEqual as hashesEqual } from 'crypto';
 import { Request } from 'express';
-
 import { IRequestWithRawBody } from '../../../shared/models/express/request-with-raw-body.model';
 import { ISlackResponse } from '../../../shared/models/slack/api';
-import {
-    ISlackAuthTestResponse,
-    SlackAuthTestRequest,
-} from '../../../shared/models/slack/api/auth';
 import {
     ISlackGetConversationInfoResponse,
     ISlackGetConversationsListResponse,
@@ -49,10 +44,10 @@ export class SlackApiService {
         return false;
     }
 
-    public async getAllPublicChannels(): Promise<ISlackConversation[]> {
-        const getChannels = new SlackGetConversationsListRequest(
-            this.config.slackApiToken
-        );
+    public async getAllPublicChannels(
+        apiToken: string
+    ): Promise<ISlackConversation[]> {
+        const getChannels = new SlackGetConversationsListRequest(apiToken);
         const response = await axios.request<
             ISlackGetConversationsListResponse
         >(getChannels);
@@ -62,10 +57,11 @@ export class SlackApiService {
     }
 
     public async getChannelInfo(
+        apiToken: string,
         channelId: string
     ): Promise<ISlackConversation> {
         const getChannel = new SlackGetConversationInfoRequest(
-            this.config.slackApiToken,
+            apiToken,
             channelId
         );
         const response = await axios.request<ISlackGetConversationInfoResponse>(
@@ -76,68 +72,54 @@ export class SlackApiService {
         return response.data.channel;
     }
 
-    public async getBotUserId(): Promise<string> {
-        const getOwnIdentity = new SlackAuthTestRequest(
-            this.config.slackApiToken
-        );
-        const response = await axios.request<ISlackAuthTestResponse>(
-            getOwnIdentity
-        );
-        this.throwIfNotOk(response.data);
-
-        return response.data.user_id;
-    }
-
     public async sendHookMessage(
+        apiToken: string,
         hookUrl: string,
         message: SlackBlockMessage
     ): Promise<void> {
         const sendMessage = new SlackSendMessageRequest(
-            this.config.slackApiToken,
-            message
+            apiToken,
+            message,
+            hookUrl
         );
-        sendMessage.baseURL = '';
-        sendMessage.url = hookUrl;
 
         const response = await axios.request<ISlackResponse>(sendMessage);
         this.throwIfNotOk(response.data);
     }
 
     public async sendMessage(
+        apiToken: string,
         channelId: string,
         message: SlackBlockMessage
     ): Promise<void> {
         message.channel = channelId;
-        const sendMessage = new SlackSendMessageRequest(
-            this.config.slackApiToken,
-            message
-        );
+        const sendMessage = new SlackSendMessageRequest(apiToken, message);
         const response = await axios.request<ISlackResponse>(sendMessage);
         this.throwIfNotOk(response.data);
     }
 
     public async sendDirectMessage(
+        apiToken: string,
         userId: string,
         message: SlackBlockMessage
     ): Promise<void> {
         const directMessageChannelId = await this.getDirectMessageChannelId(
+            apiToken,
             userId
         );
+
         message.channel = directMessageChannelId;
 
-        const sendMessage = new SlackSendMessageRequest(
-            this.config.slackApiToken,
-            message
-        );
+        const sendMessage = new SlackSendMessageRequest(apiToken, message);
         const response = await axios.request<ISlackResponse>(sendMessage);
         this.throwIfNotOk(response.data);
     }
 
-    private async getDirectMessageChannelId(userId: string): Promise<string> {
-        const openDm = new SlackOpenDirectMessageRequest(
-            this.config.slackApiToken,
-            userId
-        );
+    private async getDirectMessageChannelId(
+        apiToken: string,
+        userId: string
+    ): Promise<string> {
+        const openDm = new SlackOpenDirectMessageRequest(apiToken, userId);
         const response = await axios.request<ISlackOpenDirectMessageResponse>(
             openDm
         );

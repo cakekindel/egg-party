@@ -1,4 +1,4 @@
-import { Expose, Type, Transform, deserialize } from 'class-transformer';
+import { Expose, Type, Transform, plainToClass } from 'class-transformer';
 import { SlackNamedIdentifier } from '../slack-named-identifier.trait';
 import { ISlackResponse } from '../slack-response.model';
 import { SlackOauthScope } from './slack-oauth-scope.enum';
@@ -31,9 +31,6 @@ export class SlackOauthAccessResponse implements ISlackResponse {
     public enterprise?: SlackNamedIdentifier;
 
     public static fromRaw(rawResponse: object): SlackOauthAccessResponse {
-        return deserialize(
-            SlackOauthAccessResponse,
-            JSON.stringify(rawResponse)
-        );
+        return plainToClass(SlackOauthAccessResponse, rawResponse);
     }
 }

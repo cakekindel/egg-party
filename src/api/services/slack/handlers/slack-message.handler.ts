@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-
 import { SlackDmCommand } from '../../../../shared/enums';
 import { ConversationType } from '../../../../shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../shared/models/slack/events';
-import { MessageSubtype } from '../../../../shared/models/slack/events/message-subtype.enum';
 import { ChickenRenamingService } from '../../chicken-renaming.service';
 import { EggGivingService } from '../../egg-giving.service';
+import { SlackTeamProvider } from '../../../../business/providers';
 import { SlackCommandHandler } from './slack-command.handler';
 
 @Injectable()
 export class SlackMessageHandler {
     constructor(
         private eggGivingService: EggGivingService,
+        private readonly teams: SlackTeamProvider,
         private commandHandler: SlackCommandHandler,
         private chickenRenamingService: ChickenRenamingService
     ) {}
@@ -19,7 +19,8 @@ export class SlackMessageHandler {
     public async handleMessage(
         message: ISlackEventMessagePosted
     ): Promise<void> {
-        if (!this.isMessageFromAUser(message)) return;
+        const shouldAct = await this.shouldActOnMessage(message);
+        if (!shouldAct) return;
 
         if (message.channel_type === ConversationType.DirectMessage) {
             await this.handleDirectMessage(message);
@@ -83,7 +84,15 @@ export class SlackMessageHandler {
         return eggCount;
     }
 
-    private isMessageFromAUser(message: ISlackEventMessagePosted): boolean {
-        return message.subtype === undefined;
+    private async shouldActOnMessage(
+        message: ISlackEventMessagePosted
+    ): Promise<boolean> {
+        const eggPartyBotId = await this.teams
+            .getBySlackId(message.workspaceId)
+            .map(team => team.map(t => t.botUserId).orDefault(''))
+            .run()
+            .then(idResult => idResult.orDefault(''));
+
+        return message.subtype === undefined && message.user !== eggPartyBotId;
     }
 }

@@ -20,51 +20,64 @@
 ![GitHub](https://img.shields.io/github/license/cakekindel/egg-party)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fcakekindel%2Fegg-party?ref=badge_shield)
 
----
 
-#### Table of Contents
+### Table of Contents
+---
 - [**Want to contribute?**](#want-to-contribute)
-- [**Local Setup**](#local-setup)
-    - [**Local Configuration**](#local-configuration)
-- [**Scripts**](#scripts)
+- [**Setup**](#setup)
+    - [**Set up your local .env / dotenv file**](#local-environment-config)
+    - [**Set up your local SQL Database**](#sql-database-setup)
+    - [**Set up a Slack App for testing in Slack**](#sql-database-setup)
 - [**Slack Setup**](#slack-setup)
     - [**Slack App Settings**](#slack-app-settings)
     - [**Using your Local API with your Slack App**](#using-your-local-api-with-your-slack-app)
+- [**Scripts**](#scripts)
 - [**Debugging**](#debugging)
     - [**Visual Studio Code**](#visual-studio-code)
 - [**Common Errors**](#common-errors)
 - [**Helpful Links**](#helpful-links)
 
----
+<br/>
 
 ### **Want to contribute?**
-
-* **Read**: [Contributing Guidelines](CONTRIBUTING.md)
-* **Install**: [SQL Server Express or Developer][sql-server-download]
-* **Install**: [Node v10+][node-download]
-    * *Optionally Install:* [TypeORM CLI][typeorm-install]
-
 ---
 
-### **Local Setup**
+* **Read**: [Contributing Guidelines](CONTRIBUTING.md)
+* **Install** all of the following:
+    - [SQL Server Express][sql-server-download] or your favorite SQL technology that [TypeORM supports][typeorm-connection-types].
+    - [Node v10+][node-download]
+    - [TypeORM CLI][typeorm-install]
+
+<br/>
+
+### **Setup**
+---
+
 1. Clone this repo
 1. Run `npm install`
-1. Create both of the [Local Config Files](#local-configuration-files)
-1. Set up your local database:
-    * Create a local database named `EggParty`
-    * Ensure your local database has [SQL Server Auth][sql-server-auth-mode] and [TCP/IP][sql-enable-tcp] enabled.
-    * [Create a local SQL admin][create-sql-admin] with the credentials in `ormconfig.json`
-    * Run `npm run migration:run` to initialize your schema
+1. Set up your [.env / dotenv file](#local-environment-config)
+1. Set up your [local database](#sql-database-setup)
+1. In a shell in Egg Party, run `npm test` to build the project
+    and run the unit tests.
+    * If your tests run and pass, WOO! 🎉💃
+    * If they don't, check:
+        - That you [**installed everything**](#want-to-contribute)
+        - The [**Troubleshooting**](#common-errors) section
+        - Our [**GitHub project's issues**][issues-list]
+    * If all else fails, [report an issue here][report-issue].
+      Sorry we couldn't get you fixed sooner 😢
 
-#### **Local Configuration**
-`egg-party/.env`
-```ahk
+#### **Local Environment Config**
+Make a file called "`.env`" in project root, with these contents:
+```python
 ENVIRONMENT="Local"
 
-SLACK_APITOKEN="Api_Token_Here"
-SLACK_SIGNINGSECRET="Signing_Secret_Here"
+SLACK_CLIENT_ID=""     # CLIENT ID HERE
+SLACK_CLIENT_SECRET="" # CLIENT SECRET HERE
+SLACK_SIGNING_SECRET=""# SIGNING SECRET HERE
 
-TYPEORM_CONNECTION="mssql"
+# For more information see https://typeorm.io/#/connection-options/common-connection-options
+TYPEORM_CONNECTION="" # if you're using SQL Server, use "mssql"
 TYPEORM_DATABASE="EggParty"
 TYPEORM_ENTITIES="./dist/src/db/entities/*.entity.js"
 TYPEORM_MIGRATIONS="./dist/src/db/migrations/*.js"
@@ -73,9 +86,73 @@ TYPEORM_USERNAME="admin"
 TYPEORM_PASSWORD="password"
 ```
 
+#### **SQL Database Setup**
+
+1. Create a local SQL Database named `EggParty`
+    * e.g. `CREATE DATABASE EggParty;`
+1. Make sure your local database server has these features enabled:
+    * [SQL Server Auth][sql-server-auth-mode]
+    * [TCP/IP][sql-enable-tcp]
+1. [Create a local SQL admin][create-sql-admin] with the credentials in your `.env` file
+1. Run `npm run migration:run` to set up the Egg Party schema in your local database.
+
+<br/>
+
+### **Slack Setup**
 ---
 
+**[Something out of date? Click here to report an issue!][report-issue]**
+
+In order to run locally against Slack, you'll need:
+- A Slack Workspace to test in (_[create one here][slack-create-workspace]_), and
+- A Slack App (_[create one here][slack-manage-apps]_)
+
+#### Slack App Setup
+
+1. You should be taken to a **Basic Information** view after creating your app.
+1. Scroll down to **App Credentials**, and copy these credentials to the `.env` file you [created earlier](#local-configuration-files):
+    - **Client ID** > `SLACK_CLIENT_ID`
+    - **Client Secret** > `SLACK_CLIENT_SECRET`
+    - **Signing Secret** > `SLACK_SIGNING_SECRET`
+1. From the **Features** sidebar, go to **Oauth & Permissions**.
+1. For now, add a **Redirect URL** of `https://www.egg-party.com/api/v1/slack/oauth/redirect`.
+1. Down in the **Scopes** view, add the following scopes:
+    - `channels:history`
+    - `reactions:read`
+    - `im:history`
+    - `im:write`
+    - `chat:write`
+1. From the **Features** sidebar, go to **Event Subscriptions**.
+1. Turn **Events** on.
+1. For now, put a **Request URL** of `https://www.egg-party.com/api/v1/slack/events`.
+1. Down in the **Subscribe to Bot Events** view, add the following **Bot User Events**:
+    - `message.channels`
+    - `message.im`
+    - `reaction_added`
+1. From the **Features** sidebar, go to **Interactive Components**.
+1. Turn **Interactivity** on.
+1. For now, put a **Request URL** of `https://www.egg-party.com/api/v1/slack/interactions`.
+
+#### Using your Local API with your Slack App
+
+1. In a shell, run `npm start` to run your local API.
+1. In another shell, run `npm run tunnel` to tunnel your local traffic to a public URL.
+1. The URL printed by `ngrok` is a URL that Slack can use to interact with your local environment.
+1. From the **Features** sidebar, go to **Oauth & Permissions**.
+1. Replace the Redirect URL you added earlier with `https://{{ngrokUrl}}/api/v1/slack/oauth/redirect`
+1. From the **Features** sidebar, go to **Event Subscriptions**.
+1. Replace the Request URL you put earlier with `https://{{ngrokUrl}}/api/v1/slack/events`
+1. From the **Features** sidebar, go to **Interactive Components**.
+1. Replace the Request URL you put earlier with `https://{{ngrokUrl}}/api/v1/slack/interactions`
+1. From the **Features** sidebar, go to **Manage Distribution**.
+1. Click the **Embeddable Slack Button** to install your app to your workspace.
+    * This should create a `slack_team` entry in your database,
+        and redirect you to Egg Party in your Slack Workspace.
+
+<br/>
+
 ### **Scripts**
+---
 
 <table>
     <tr></tr>
@@ -153,70 +230,36 @@ TYPEORM_PASSWORD="password"
     </tr>
 </table>
 
----
-
-### **Slack Setup**
-
-In order to run locally against Slack, you'll need a Workspace to test in,
-and a Slack App to represent your local environment.
-
-Don't have a Slack Workspace you can develop in? [Create one here][slack-create-workspace]!
-
-In [your Slack Apps][slack-manage-apps], create a new app *e.g. "Egg Party Local"* and install it to your workspace.
-
-#### Slack App Settings:
-
-`Basic Information:` Save the value for "Signing Secret" to `SlackSigningSecret` in `.env`
-
-`Bot Users:` Create a bot user
-
-`OAuth & Permissions:`
-  1. Use `Install App to Workspace`
-  1. Save `Bot User OAuth Token` to `SlackApiToken` in `.env`
-
-`Event Subscriptions:`
-  1. Turn `Events` on
-  1. `Request URL:` use `https://{{requestUrlBase}}/api/v1/slack/events` (see [Using your Local API](#using-your-local-api-with-your-slack-app))
-  1. `Subscribe to bot events:` add the following event subscriptions:
-      * `message.channels`
-      * `message.im`
-
-`Interactive Components`
-  1. Turn `Interactivity` on
-  1. For `Request URL` use `https://{{requestUrlBase}}/api/v1/slack/interactions` (see [Using your Local API](#using-your-local-api-with-your-slack-app))
-
-#### Using your Local API with your Slack App
-
-1. In a shell, run `npm run tunnel`
-1. The URL printed by `ngrok` is the Request URL
-
----
+<br/>
 
 ### **Debugging**
+---
 
 #### Visual Studio Code
 
 Run the command `Debug: Start Debugging` by pressing `F5`, by searching in the command palette (`F1`),
 or from the Debug panel (`Ctrl/Cmd + Shift + D`)
 
----
+<br/>
 
 ### **Common Errors**
+---
 * `Failed to connect to localhost:1433 - Could not connect (sequence)`
     * **Cause**: [TCP is not enabled][sql-enable-tcp] or
         the [SQL Server Browser Service][sql-enable-server-browser] is not running
         *(Related: [typeorm#2333][typeorm#2333])*
 
----
+<br/>
 
 ### **Helpful Links:**
+---
 * Making changes to the Guide Book? Use the [Guide Book Template][guide-book-template]!
 
-<!-- Links -->
-
-<!-- Downloads -->
+[issues-list]: https://github.com/cakekindel/egg-party/issues
+[report-issue]: https://github.com/cakekindel/egg-party/issues/new
 [sql-server-download]: https://www.microsoft.com/en-us/sql-server/sql-server-downloads
 [node-download]: https://nodejs.org/en/
+[typeorm-connection-types]: https://typeorm.io/#/connection-options/common-connection-options
 [typeorm-install]: https://github.com/typeorm/typeorm/blob/master/docs/using-cli.md
 
 [sql-server-auth-mode]: https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/change-server-authentication-mode?view=sql-server-2017

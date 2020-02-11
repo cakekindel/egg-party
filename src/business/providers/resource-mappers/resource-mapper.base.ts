@@ -1,4 +1,4 @@
-import { Maybe } from 'purify-ts/Maybe';
+import { Maybe } from 'purify-ts';
 
 export abstract class ResourceMapperBase<TVm, TEntity> {
     public abstract mapToEntity(vm: TVm): TEntity;

@@ -1,12 +1,16 @@
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
+import { Arg } from '@fluffy-spoon/substitute';
 import { isEqual } from 'lodash';
+import { Just } from 'purify-ts';
 import { ChickenRenamingService } from '../../../../../src/api/services/chicken-renaming.service';
 import { EggGivingService } from '../../../../../src/api/services/egg-giving.service';
 import {
     SlackCommandHandler,
     SlackMessageHandler,
 } from '../../../../../src/api/services/slack/handlers';
+import { SlackTeamProvider } from '../../../../../src/business/providers';
+import { SlackTeam } from '../../../../../src/business/view-models';
 import { Chicken } from '../../../../../src/db/entities';
+import { CreateEitherAsync } from '../../../../../src/purify/create-either-async.fns';
 import { SlackDmCommand } from '../../../../../src/shared/enums';
 import { ConversationType } from '../../../../../src/shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../../src/shared/models/slack/events';
@@ -149,34 +153,26 @@ export class SlackMessageHandlerSpec {
 
         for (const testCase of testCases) {
             // arrange
-            // - dependencies
-            const commandHandler = Substitute.for<SlackCommandHandler>();
-            const eggGivingService = Substitute.for<EggGivingService>();
-            const chickenRenamingSvc = Substitute.for<ChickenRenamingService>();
-
-            // - test data
             const message = this.createMessage({
                 text: testCase.message,
                 channel_type: ConversationType.Public,
             });
 
-            // - unit under test
-            const uut = new SlackMessageHandler(
-                eggGivingService,
-                commandHandler,
-                chickenRenamingSvc
-            );
+            const test = this.getUnitTestSetup();
 
             // act
-            await uut.handleMessage(message);
+            await test.unitUnderTest.handleMessage(message);
 
             // assert
-            eggGivingService.received(1).giveEggs(
-                message.workspaceId,
-                message.user,
-                testCase.expectedEggCount,
-                Arg.is(ids => isEqual(ids, testCase.expectedUserIds))
-            );
+            test.dependencies
+                .get(EggGivingService)
+                .received(1)
+                .giveEggs(
+                    message.workspaceId,
+                    message.user,
+                    testCase.expectedEggCount,
+                    Arg.is(ids => isEqual(ids, testCase.expectedUserIds))
+                );
         }
     }
 
@@ -185,34 +181,37 @@ export class SlackMessageHandlerSpec {
         void
     > {
         // arrange
-        // - dependencies
-        const eggGivingService = Substitute.for<EggGivingService>();
-        const commandHandler = Substitute.for<SlackCommandHandler>();
-        const chickenRenamingSvc = Substitute.for<ChickenRenamingService>();
-        // - test data
         const messageText = '<@U1234> have you been to spatula city?';
         const message = this.createMessage({
             text: messageText,
             channel_type: ConversationType.Public,
         });
-        // - unit under test
-        const uut = new SlackMessageHandler(
-            eggGivingService,
-            commandHandler,
-            chickenRenamingSvc
-        );
+
+        const test = this.getUnitTestSetup();
 
         // act
-        await uut.handleMessage(message);
+        await test.unitUnderTest.handleMessage(message);
 
         // assert
-        eggGivingService
+        test.dependencies
+            .get(EggGivingService)
             .didNotReceive()
             .giveEggs(Arg.any(), Arg.any(), Arg.any(), Arg.any());
     }
 
     private getUnitTestSetup(): UnitTestSetup<SlackMessageHandler> {
-        return new UnitTestSetup(SlackMessageHandler);
+        const test = new UnitTestSetup(SlackMessageHandler);
+
+        test.dependencies
+            .get(SlackTeamProvider)
+            .getBySlackId(Arg.any())
+            .returns(
+                CreateEitherAsync.wrapRight(
+                    Just({ botUserId: '🤖' } as SlackTeam)
+                )
+            );
+
+        return test;
     }
 
     private createMessage(

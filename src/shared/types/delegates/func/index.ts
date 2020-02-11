@@ -1,2 +1,2 @@
-export * from './impure-func.type';
+export * from './func.type';
 export * from './pure-func.type';

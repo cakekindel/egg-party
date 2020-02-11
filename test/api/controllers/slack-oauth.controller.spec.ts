@@ -1,78 +1,87 @@
+import Substitute from '@fluffy-spoon/substitute';
 import { Request, Response } from 'express';
 import { SlackOauthController } from '../../../src/api/controllers/slack';
-import { SlackApiOauthService } from '../../../src/api/services/slack';
-import { ConfigService } from '../../../src/shared/utility';
+import { sendRedirectResponse } from '../../../src/api/functions/response';
+import { SlackTeamProvider } from '../../../src/business/providers';
+import { SlackOauthService } from '../../../src/api/services/slack/slack-oauth.service';
+import { SlackOauthAccessResponse } from '../../../src/shared/models/slack/api/oauth';
 import { ISpec, UnitTestSetup } from '../../test-utilities';
 import { TestClass, TestMethod } from '../../test-utilities/directives';
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
-import { expect } from 'chai';
+import sinon = require('sinon');
 
 @TestClass()
 export class SlackOauthControllerSpec implements ISpec<SlackOauthController> {
+    private testData = {
+        installCode: 'foo',
+        mockAuthResponse: {
+            team: {
+                id: 'robot team',
+            },
+            accessToken: '🔑',
+            botUserId: '🤖',
+        } as SlackOauthAccessResponse,
+    };
+
     @TestMethod()
-    public async should_authorizeWithCodeFromUrl_when_userRedirected(): Promise<
+    public async should_authenticateAndCreateTeam_when_installed(): Promise<
         void
     > {
         // arrange
-        const code = 'foo';
-        const clientId = 'meep';
-        const clientSecret = 'shhh';
-
         const test = this.getUnitTestSetup();
 
-        test.dependencies
-            .get(ConfigService)
-            .slackClientId()
-            .returns(clientId);
-
-        test.dependencies
-            .get(ConfigService)
-            .slackClientSecret()
-            .returns(clientSecret);
-
-        const request = ({ query: { code } } as unknown) as Request;
+        const request = ({
+            query: { code: this.testData.installCode },
+        } as unknown) as Request;
 
         // act
-        test.unitUnderTest.redirect(request, undefined);
+        await test.unitUnderTest.redirect(request, Substitute.for<Response>());
 
         // assert
         test.dependencies
-            .get(SlackApiOauthService)
+            .get(SlackOauthService)
             .received()
-            .access(code, clientId, clientSecret);
+            .authenticate(this.testData.installCode);
+
+        test.dependencies
+            .get(SlackTeamProvider)
+            .received()
+            .create(
+                this.testData.mockAuthResponse.team.id,
+                this.testData.mockAuthResponse.accessToken,
+                this.testData.mockAuthResponse.botUserId
+            );
     }
 
     @TestMethod()
-    public async should_redirectToSlackOauthInstall_when_installRequest(): Promise<
-        void
-    > {
+    public async should_redirectToAppInSlack_when_installed(): Promise<void> {
         // arrange
-        const clientId = 'meep';
-
         const test = this.getUnitTestSetup();
 
-        test.dependencies
-            .get(ConfigService)
-            .slackClientId()
-            .returns(clientId);
+        const redirectSpy = sinon.spy(sendRedirectResponse);
 
-        const respond = Substitute.for<Response>();
+        const response = Substitute.for<Response>();
+        const request = ({
+            query: { code: this.testData.installCode },
+        } as unknown) as Request;
 
         // act
-        test.unitUnderTest.install(respond);
+        await test.unitUnderTest.redirect(request, response);
 
         // assert
-        respond.received().sendStatus(301);
-        respond.received().header(
-            'Location',
-            Arg.is((url: string) => {
-                expect(url).to.include('https://slack.com/oauth/v2/authorize');
-                return true;
-            })
+        redirectSpy.calledWith(
+            response,
+            `https://slack.com/app_redirect?app=${this.testData.mockAuthResponse.appId}`
         );
     }
 
     public getUnitTestSetup(): UnitTestSetup<SlackOauthController> {
-        return new UnitTestSetup(SlackOauthController);
+        const test = new UnitTestSetup(SlackOauthController);
+
+        test.dependencies
+            .get(SlackOauthService)
+            .authenticate(this.testData.installCode)
+            .returns(Promise.resolve(this.testData.mockAuthResponse));
+
+        return test;
     }
 }

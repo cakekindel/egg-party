@@ -1,24 +1,24 @@
-import Substitute, { Arg } from '@fluffy-spoon/substitute';
+import { Arg } from '@fluffy-spoon/substitute';
+import { expect } from 'chai';
+import { Just } from 'purify-ts';
 import { LeaderboardService } from '../../../../src/api/services/messaging';
 import { SlackApiService } from '../../../../src/api/services/slack';
-import {
-    LeaderboardSlackMessage,
-    LeaderboardMode,
-    LeaderboardConstants,
-} from '../../../../src/shared/models/messages/leaderboard';
-import { ISpec, UnitTestSetup } from '../../../test-utilities';
-import {
-    TestClass,
-    TestMethod,
-    TestCase,
-} from '../../../test-utilities/directives';
+import { SlackTeamProvider } from '../../../../src/business/providers';
+import * as ViewModel from '../../../../src/business/view-models';
 import { SlackUserRepo } from '../../../../src/db/repos';
-import { expect } from 'chai';
+import { CreateEitherAsync } from '../../../../src/purify/create-either-async.fns';
 import {
+    EnumUtility,
     SlackInteractionId,
     TimePeriod,
-    EnumUtility,
 } from '../../../../src/shared/enums';
+import {
+    LeaderboardConstants,
+    LeaderboardMode,
+    LeaderboardSlackMessage,
+} from '../../../../src/shared/models/messages/leaderboard';
+import { ISpec, UnitTestSetup } from '../../../test-utilities';
+import { TestClass, TestMethod } from '../../../test-utilities/directives';
 import qs = require('qs');
 import sinon = require('sinon');
 import Sinon = require('sinon');
@@ -29,6 +29,7 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
         userId: 'U123',
         wsId: 'W123',
         hookUrl: 'http://www.cheese.com',
+        team: { oauthToken: '🔑' } as ViewModel.SlackTeam,
     };
 
     private sandbox: Sinon.SinonSandbox;
@@ -43,19 +44,17 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
     @TestMethod()
     public async should_sendLeaderboard_when_sendInvoked(): Promise<void> {
         // arrange
-        const testSetup = this.getUnitTestSetup();
+        const test = this.getUnitTestSetup();
 
         // act
-        await testSetup.unitUnderTest.send(
-            this.testData.userId,
-            this.testData.wsId
-        );
+        await test.unitUnderTest.send(this.testData.userId, this.testData.wsId);
 
         // assert
-        testSetup.dependencies
+        test.dependencies
             .get(SlackApiService)
             .received()
             .sendDirectMessage(
+                this.testData.team.oauthToken,
                 this.testData.userId,
                 Arg.is(m => m instanceof LeaderboardSlackMessage)
             );
@@ -131,6 +130,7 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
             .get(SlackApiService)
             .received()
             .sendHookMessage(
+                this.testData.team.oauthToken,
                 this.testData.hookUrl,
                 Arg.is((m: LeaderboardSlackMessage) => {
                     expect(m).to.be.instanceOf(LeaderboardSlackMessage);
@@ -149,7 +149,8 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
         // arrange
         const testSetup = this.getUnitTestSetup();
 
-        const badMode = 'eek bad data';
+        const badMode =
+            'eeshould_sendUnknownCommandMessage_when_unknownCommandSentk bad data';
         const goodPeriod = TimePeriod.Week;
 
         this.sandbox.stub(EnumUtility, 'Parse').callsFake((_, val) => {
@@ -178,6 +179,7 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
             .get(SlackApiService)
             .received()
             .sendHookMessage(
+                this.testData.team.oauthToken,
                 this.testData.hookUrl,
                 Arg.is((m: LeaderboardSlackMessage) => {
                     expect(m).to.be.instanceOf(LeaderboardSlackMessage);
@@ -192,13 +194,18 @@ export class LeaderboardServiceSpec implements ISpec<LeaderboardService> {
     }
 
     public getUnitTestSetup(): UnitTestSetup<LeaderboardService> {
-        const setup = new UnitTestSetup(LeaderboardService);
+        const test = new UnitTestSetup(LeaderboardService);
 
-        setup.dependencies
+        test.dependencies
             .get(SlackUserRepo)
             .getAllInWorkspace(this.testData.wsId)
             .returns(Promise.resolve([]));
 
-        return setup;
+        test.dependencies
+            .get(SlackTeamProvider)
+            .getBySlackId(this.testData.wsId)
+            .returns(CreateEitherAsync.wrapRight(Just(this.testData.team)));
+
+        return test;
     }
 }

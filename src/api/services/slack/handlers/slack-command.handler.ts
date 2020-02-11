@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
-
 import { SlackUser } from '../../../../db/entities';
 import { SlackUserRepo } from '../../../../db/repos';
 import { SlackDmCommand as Command } from '../../../../shared/enums';
 import { GuideBookPageId } from '../../../../shared/models/guide-book';
 import { SlackMessageUnknownCommand } from '../../../../shared/models/messages';
+import { AsyncFunc } from '../../../../shared/types/delegates/func/async';
+import { LeaderboardService } from '../../messaging';
 import { SlackApiService } from '../slack-api.service';
 import { SlackGuideBookService } from '../slack-guide-book.service';
 import { SlackMessageBuilderService } from '../slack-message-builder.service';
-import { LeaderboardService } from '../../messaging';
-import { ImpureFuncAsync } from '../../../../shared/types/delegates/func/async';
 
 @Injectable()
 export class SlackCommandHandler {
     private readonly commandDelegateMap: Map<
         Command,
-        ImpureFuncAsync<SlackUser, void>
+        (u: SlackUser) => Promise<void>
     >;
 
     constructor(
@@ -57,6 +56,7 @@ export class SlackCommandHandler {
     ): Promise<void> {
         const unknownCommandMessage = new SlackMessageUnknownCommand();
         await this.slackApi.sendDirectMessage(
+            user.team?.oauthToken ?? '',
             user.slackUserId,
             unknownCommandMessage
         );
@@ -71,7 +71,11 @@ export class SlackCommandHandler {
         const userId = user.slackUserId;
         const message = this.messageBuilder.manageChickens(user.chickens ?? []);
 
-        return this.slackApi.sendDirectMessage(userId, message);
+        return this.slackApi.sendDirectMessage(
+            user.team?.oauthToken ?? '',
+            userId,
+            message
+        );
     }
 
     private async handleLeaderboard(user: SlackUser): Promise<void> {

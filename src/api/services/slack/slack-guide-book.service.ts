@@ -88,10 +88,17 @@ export class SlackGuideBookService {
         user: SlackUser,
         page: GuideBookPageId = GuideBookPageId.Welcome
     ): Promise<void> {
-        const botId = await this.slackApi.getBotUserId();
-        const guideBook = this.build(user.slackUserId, botId, page);
+        const guideBook = this.build(
+            user.slackUserId,
+            user.team?.botUserId ?? '',
+            page
+        );
 
-        return this.slackApi.sendDirectMessage(user.slackUserId, guideBook);
+        return this.slackApi.sendDirectMessage(
+            user.team?.oauthToken ?? '',
+            user.slackUserId,
+            guideBook
+        );
     }
 
     public build(

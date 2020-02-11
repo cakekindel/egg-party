@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Environment } from '../enums/environment.enum';
-import { ITypeormConfig } from './typeorm-options.interface';
+import { ITypeormConfig } from './typeorm-config.interface';
 
 @Injectable()
 export class ConfigService {
@@ -11,10 +11,6 @@ export class ConfigService {
 
     public slackClientSecret(): string {
         return this.getRequiredEnv('SLACK_CLIENT_SECRET');
-    }
-
-    public get slackApiToken(): string {
-        return this.getRequiredEnv('SLACK_APITOKEN');
     }
 
     public get slackSigningSecret(): string {
@@ -29,7 +25,14 @@ export class ConfigService {
         const adminUsername = this.getRequiredEnv('TYPEORM_USERNAME');
         const adminPassword = this.getRequiredEnv('TYPEORM_PASSWORD');
         const databaseName = this.getRequiredEnv('TYPEORM_DATABASE');
-        return { hostUrl, adminUsername, adminPassword, databaseName };
+        const entities = this.getRequiredEnv('TYPEORM_ENTITIES');
+        return {
+            hostUrl,
+            adminUsername,
+            adminPassword,
+            databaseName,
+            entities,
+        };
     }
 
     private getRequiredEnv(variableName: string): string {
@@ -42,6 +45,7 @@ export class ConfigService {
                 `Required Environment Variable not set: ${variableName}`
             );
         }
+
         return val;
     }
 

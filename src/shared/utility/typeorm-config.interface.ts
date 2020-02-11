@@ -3,4 +3,5 @@ export interface ITypeormConfig {
     adminUsername: string;
     adminPassword: string;
     databaseName: string;
+    entities: string;
 }
