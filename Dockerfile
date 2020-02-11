@@ -2,16 +2,16 @@
 FROM    node:10
 
 # make required directories
-RUN     mkdir /home/node/egg-party/node_modules --parents
+RUN     mkdir /home/node/egg-party --parents
 RUN     chown node:node /home/node/egg-party  --recursive
 
-# cd to app directory 
+# cd to app directory
 WORKDIR /home/node/egg-party
 USER    node
 
 # install deps
 COPY    package*.json ./
-RUN     npm ci --ignore-scripts
+RUN     npm ci --no-optional
 
 # copy source code
 COPY    --chown=node:node . .
