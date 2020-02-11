@@ -71,6 +71,7 @@
         "purify-ts": "^0.14.1",
         "qs": "^6.9.0",
         "reflect-metadata": "^0.1.13",
+        "rxjs": "^6.5.4",
         "typeorm": "^0.2.20"
     },
     "devDependencies": {
