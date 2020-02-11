@@ -31,5 +31,6 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         script: |
           cd egg-party
+          git pull
           npm run build
           pm2 restart all
