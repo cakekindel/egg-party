@@ -88,7 +88,7 @@
         "chai-as-promised": "^7.1.1",
         "chokidar-cli": "^2.1.0",
         "concurrently": "^5.0.0",
-        "fkill-cli": "^5.2.0",
+        "fkill-cli": "^6.0.0",
         "gts": "^1.1.2",
         "mocha": "^7.0.1",
         "mocha-junit-reporter": "^1.23.1",
