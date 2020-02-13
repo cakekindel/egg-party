@@ -36,8 +36,8 @@ deploy:
         ref: origin/master
         repo: git@github.com:cakekindel/egg-party.git
         path: /home/site
-        post-deploy: |
-            npm ci
-            npm run build
-            copyfiles --up 1 './dist/**/*.js' ./www/development
-            pm2 reload pm2.config.yml development
+        post-deploy: >
+            npm ci;
+            npm run build;
+            copyfiles --up 1 './dist/**/*.js' ./www/development;
+            pm2 reload pm2.config.yml development;
