@@ -40,4 +40,4 @@ deploy:
             npm ci;
             npm run build;
             copyfiles --up 1 './dist/**/*.js' ./www/development;
-            pm2 reload pm2.config.yml development;
+            pm2 reload pm2.config.yml --only development;
