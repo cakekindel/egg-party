@@ -35,5 +35,5 @@ deploy:
         host: egg-party.com
         ref: origin/master
         path: /home/site/
-        post-deploy: "ls -l .; npm run build; copyfiles --up 1 './dist/**/*.js' ./www/development; pm2 reload ./pm2.config.yml ;"
+        post-deploy: "pwd; npm run build; copyfiles --up 1 './dist/**/*.js' ./www/development; pm2 reload ./pm2.config.yml ;"
         repo: git@github.com:cakekindel/egg-party.git
