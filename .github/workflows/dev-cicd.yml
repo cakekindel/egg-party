@@ -18,5 +18,5 @@ jobs:
       run: npm ci; npm run test:single-run;
     - name: deploy
       env:
-        DEVELOPMENT_BRANCH: ${{ github.event.pull_request.head.ref }}
+        DEVELOPMENT_BRANCH: ${{ github.head_ref }}
       run: npx pm2 deploy development
