@@ -1,0 +1,30 @@
+name: Deploy to Development
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+    - name: install deps
+      run: npm ci --no-optional
+    - name: run tests
+      run: npm run test:single-run
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: deploy prod
+      run: npx pm2 deploy pm2.config.yml development
