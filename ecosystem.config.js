@@ -1,3 +1,12 @@
+const deployShared = {
+    user: 'ci_agent',
+    host: 'egg-party.com',
+    repo: 'https://github.com/cakekindel/egg-party.git',
+    ssh_options: process.env.SSH_AUTH_SOCK
+        ? `IdentityFile=${process.env.SSH_AUTH_SOCK}`
+        : undefined,
+};
+
 module.exports = {
     apps: [
         {
@@ -25,20 +34,16 @@ module.exports = {
     ],
     deploy: {
         production: {
-            user: 'ci_agent',
-            host: 'egg-party.com',
+            ...deployShared,
             ref: 'origin/master',
             path: '/home/site',
             'post-deploy': '.scripts/postdeploy.sh production',
-            repo: 'https://github.com/cakekindel/egg-party.git',
         },
         development: {
-            user: 'ci_agent',
-            host: 'egg-party.com',
+            ...deployShared,
             ref: process.env.DEVELOPMENT_BRANCH || 'origin/master',
             path: '/home/site_dev',
             'post-deploy': '.scripts/postdeploy.sh development',
-            repo: 'https://github.com/cakekindel/egg-party.git',
         },
     },
 };
