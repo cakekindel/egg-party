@@ -7,6 +7,8 @@ const deployShared = {
         : undefined,
 };
 
+console.log(JSON.stringify(process.env.GITHUB_REF))
+
 module.exports = {
     apps: [
         {
@@ -43,6 +45,7 @@ module.exports = {
             ...deployShared,
             ref: process.env.DEVELOPMENT_BRANCH || 'origin/master',
             path: '/home/site_dev',
+            'pre-deploy': 'git checkout ' + process.env.DEVELOPMENT_BRANCH || 'master',
             'post-deploy': '.scripts/postdeploy.sh development',
         },
     },
