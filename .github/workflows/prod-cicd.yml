@@ -26,4 +26,4 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: deploy prod
-      run: npx pm2 deploy pm2.config.yml production
+      run: npx pm2 deploy production

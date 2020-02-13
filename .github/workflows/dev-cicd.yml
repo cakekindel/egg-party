@@ -27,5 +27,5 @@ jobs:
     - uses: webfactory/ssh-agent@v0.2.0
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    - name: deploy prod
-      run: npx pm2 deploy pm2.config.yml development
+    - name: deploy
+      run: npx pm2 deploy development
