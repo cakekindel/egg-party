@@ -1,0 +1,22 @@
+name: Deploy to Development
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: webfactory/ssh-agent@v0.2.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: test run
+      run: npm ci; npm run test:single-run;
+    - name: deploy
+      env:
+        DEVELOPMENT_BRANCH: ${{ github.head_ref }}
+      run: npx pm2 deploy development

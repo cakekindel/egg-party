@@ -101,6 +101,7 @@
     },
     "optionalDependencies": {
         "ngrok": "^3.2.5",
+        "pm2": "^4.2.3",
         "rimraf": "^3.0.0",
         "wait-on": "^3.3.0"
     }
