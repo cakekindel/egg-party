@@ -1,11 +1,14 @@
 #!/bin/bash
-echo '[postdeploy] Installing Packages...'
+exec > >(sed 's/^/[postdeploy] /')
+exec 2> >(sed 's/^/[postdeploy] /' >&2)
+
+echo '-- Installing Packages... --'
 npm ci
 
-echo '[postdeploy] Running Build...'
+echo '-- Running Build... --'
 npm run build
 
-echo '[postdeploy] Restarting Server...'
+echo '-- Restarting Server... --'
 pm2 reload all
 
-echo '[postdeploy] Complete!'
+echo '-- Complete! --'
