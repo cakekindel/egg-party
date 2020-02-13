@@ -1,0 +1,43 @@
+apps:
+    - name: production
+      script: ./www/production/src/main.js
+      max_memory_restart: 500M
+      autorestart: true
+      env:
+          NODE_ENV: production
+          ENVIRONMENT: Production
+          TYPEORM_DATABASE: EggParty
+
+    - name: development
+      script: ./www/development/src/main.js
+      max_memory_restart: 250M
+      autorestart: true
+      env:
+          NODE_ENV: development
+          ENVIRONMENT: Development
+          TYPEORM_DATABASE: EggPartyDev
+
+deploy:
+    production:
+        user: ci_agent
+        host: egg-party.com
+        ref: origin/master
+        repo: git@github.com:cakekindel/egg-party.git
+        path: /home/site
+        post-deploy: |
+            npm ci &&
+            npm build &&
+            copyfiles --up 1 './dist/**/*' ./www/production &&
+            pm2 reload pm2.config.yml production
+
+    development:
+        user: ci_agent
+        host: egg-party.com
+        ref: origin/master
+        repo: git@github.com:cakekindel/egg-party.git
+        path: /home/site
+        post-deploy: |
+            npm ci &&
+            npm build &&
+            copyfiles --up 1 './dist/**/*' ./www/development &&
+            pm2 reload pm2.config.yml development
