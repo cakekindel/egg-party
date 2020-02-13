@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# prefix child processes' stdout and stderr with '[postdeploy] '
 exec > >(sed 's/^/[postdeploy] /')
 exec 2> >(sed 's/^/[postdeploy] /' >&2)
 
