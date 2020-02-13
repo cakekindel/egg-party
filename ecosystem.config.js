@@ -1,10 +1,14 @@
+const sshOptions = ['StrictHostKeyChecking=no'];
+
+if (process.env.SSH_AUTH_SOCK) {
+    sshOptions.push(`IdentityFile=${process.env.SSH_AUTH_SOCK}`);
+}
+
 const deployShared = {
     user: 'ci_agent',
     host: 'egg-party.com',
     repo: 'https://github.com/cakekindel/egg-party.git',
-    ssh_options: process.env.SSH_AUTH_SOCK
-        ? `IdentityFile=${process.env.SSH_AUTH_SOCK}`
-        : undefined,
+    ssh_options: sshOptions,
 };
 
 module.exports = {
