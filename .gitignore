@@ -5,4 +5,4 @@ dist
 .env
 test-results.xml
 www
-pm2.config.working.yml
+ecosystem.yml
