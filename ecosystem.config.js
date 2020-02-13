@@ -17,23 +17,13 @@ module.exports = {
             name: 'production',
             script: '/home/site/current/dist/src/main.js',
             max_memory_restart: '500M',
-            autorestart: true,
-            env: {
-                NODE_ENV: 'production',
-                ENVIRONMENT: 'Production',
-                TYPEORM_DATABASE: 'EggParty',
-            },
+            autorestart: true
         },
         {
             name: 'development',
             script: '/home/site_dev/current/dist/src/main.js',
             max_memory_restart: '250M',
-            autorestart: true,
-            env: {
-                NODE_ENV: 'development',
-                ENVIRONMENT: 'Development',
-                TYPEORM_DATABASE: 'EggPartyDev',
-            },
+            autorestart: false
         },
     ],
     deploy: {
