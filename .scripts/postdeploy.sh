@@ -9,6 +9,6 @@ echo '-- Running Build... --'
 npm run build
 
 echo '-- Restarting Server... --'
-pm2 reload --only $0
+pm2 reload $1 --update-env
 
 echo '-- Complete! --'

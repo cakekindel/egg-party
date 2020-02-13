@@ -2,8 +2,9 @@ name: Deploy to Development
 
 on:
   push:
-    branches:
-    - master
+    branches: [master]
+  pull_request:
+    types: [opened, edited, reopened]
 
 jobs:
   test:

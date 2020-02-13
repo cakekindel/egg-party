@@ -4,5 +4,3 @@ local.settings.json
 dist
 .env
 test-results.xml
-www
-ecosystem.json
