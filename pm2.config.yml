@@ -36,6 +36,7 @@ deploy:
         ref: origin/master
         repo: git@github.com:cakekindel/egg-party.git
         path: /home/site
+        post-setup: ls -la
         post-deploy: |
             npm ci &&
             npm build &&
