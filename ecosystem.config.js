@@ -7,8 +7,6 @@ const deployShared = {
         : undefined,
 };
 
-console.log(JSON.stringify(process.env.GITHUB_REF))
-
 module.exports = {
     apps: [
         {

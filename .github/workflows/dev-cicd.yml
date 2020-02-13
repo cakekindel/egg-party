@@ -16,5 +16,7 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: test run
       run: npm ci; npm run test:single-run;
+    - env:
+        DEVELOPMENT_BRANCH: ${{ github.payload.pull_request.head.ref }}
     - name: deploy
       run: npx pm2 deploy development
