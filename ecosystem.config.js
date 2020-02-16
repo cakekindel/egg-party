@@ -17,13 +17,13 @@ module.exports = {
             name: 'production',
             script: '/home/site/current/dist/src/main.js',
             max_memory_restart: '500M',
-            autorestart: true
+            autorestart: true,
         },
         {
             name: 'development',
             script: '/home/site_dev/current/dist/src/main.js',
             max_memory_restart: '250M',
-            autorestart: false
+            autorestart: false,
         },
     ],
     deploy: {
@@ -37,7 +37,12 @@ module.exports = {
             ...deployShared,
             ref: process.env.DEVELOPMENT_BRANCH || 'origin/master',
             path: '/home/site_dev',
-            'pre-deploy': 'git checkout ' + process.env.DEVELOPMENT_BRANCH || 'master',
+            'pre-deploy':
+                // update remote branches
+                'git remote update origin --prune;' +
+                    // checkout PR source branch
+                    'git checkout ' +
+                    process.env.DEVELOPMENT_BRANCH || 'master',
             'post-deploy': '.scripts/postdeploy.sh development',
         },
     },
