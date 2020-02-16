@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EitherAsync, Maybe } from 'purify-ts';
+import { EitherAsync, Maybe, Nothing } from 'purify-ts';
+import { assoc } from 'ramda';
 import * as Entity from '../../db/entities';
 import { SlackTeamRepo } from '../../db/repos';
 import { SlackTeam } from '../view-models';
@@ -26,7 +27,7 @@ export class SlackTeamProvider extends ProviderBase<
             .map(e => this.mapper.mapMaybeToViewModel(e));
     }
 
-    public async create(
+    public async teamInstalled(
         slackTeamId: string,
         oauthToken: string,
         botUserId: string
@@ -40,8 +41,20 @@ export class SlackTeamProvider extends ProviderBase<
             createdDate: new Date(),
         };
 
-        const newTeamId = await this.saveOne(newTeam);
+        const updateIfReinstalled = (
+            maybe: Maybe<SlackTeam>
+        ): Maybe<SlackTeam> =>
+            maybe
+                // update botUserId
+                .map(assoc('botUserId', botUserId))
+                // update oauthToken
+                .map(assoc('oauthToken', oauthToken));
 
-        return newTeamId;
+        return this.getBySlackId(slackTeamId)
+            .run()
+            .then(teamOrErr => teamOrErr.orDefault(Nothing))
+            .then(updateIfReinstalled)
+            .then(existing => existing.orDefault(newTeam))
+            .then(team => this.saveOne(team));
     }
 }

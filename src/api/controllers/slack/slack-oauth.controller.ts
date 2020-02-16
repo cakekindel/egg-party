@@ -19,7 +19,7 @@ export class SlackOauthController {
         const installCode: string = req.query.code;
         const authResponse = await this.slackOauth.authenticate(installCode);
 
-        await this.slackTeams.create(
+        await this.slackTeams.teamInstalled(
             authResponse.team.id,
             authResponse.accessToken,
             authResponse.botUserId
