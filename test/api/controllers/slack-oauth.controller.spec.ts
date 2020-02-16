@@ -45,7 +45,7 @@ export class SlackOauthControllerSpec implements ISpec<SlackOauthController> {
         test.dependencies
             .get(SlackTeamProvider)
             .received()
-            .create(
+            .teamInstalled(
                 this.testData.mockAuthResponse.team.id,
                 this.testData.mockAuthResponse.accessToken,
                 this.testData.mockAuthResponse.botUserId

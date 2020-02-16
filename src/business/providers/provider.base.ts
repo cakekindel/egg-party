@@ -42,7 +42,7 @@ export abstract class ProviderBase<
             .map(toEntity)
             .map(save)
             .map(pickId)
-            .orDefault(Promise.reject()); // TODO: Remove when this method returns an Either
+            .orDefault(Promise.resolve(0)); // TODO: Remove when this method returns an Either
     }
 
     public async saveMany(

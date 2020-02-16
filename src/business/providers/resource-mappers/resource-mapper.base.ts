@@ -4,12 +4,12 @@ export abstract class ResourceMapperBase<TVm, TEntity> {
     public abstract mapToEntity(vm: TVm): TEntity;
     public abstract mapToViewModel(entity: TEntity): TVm;
 
-    public mapMaybeToEntity(vm: Maybe<TVm>): Maybe<TEntity> {
-        return vm.map(this.mapToEntity);
+    public mapMaybeToEntity(viewmodel: Maybe<TVm>): Maybe<TEntity> {
+        return viewmodel.map(vm => this.mapToEntity(vm));
     }
 
     public mapMaybeToViewModel(entity: Maybe<TEntity>): Maybe<TVm> {
-        return entity.map(this.mapToViewModel);
+        return entity.map(e => this.mapToViewModel(e));
     }
 
     public mapArrayToEntities(vms: TVm[]): TEntity[] {
