@@ -2,6 +2,7 @@
     "$schema": "http://json.schemastore.org/tslint",
     "extends": "gts/tslint.json",
     "rules": {
+        "unified-signatures": false,
         "arrow-return-shorthand": true,
         "callable-types": true,
         "class-name": true,

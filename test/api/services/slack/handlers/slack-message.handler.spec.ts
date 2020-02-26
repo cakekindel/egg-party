@@ -13,7 +13,10 @@ import { Chicken } from '../../../../../src/db/entities';
 import { CreateEitherAsync } from '../../../../../src/purify/create-either-async.fns';
 import { SlackDmCommand } from '../../../../../src/shared/enums';
 import { ConversationType } from '../../../../../src/shared/models/slack/conversations';
-import { ISlackEventMessagePosted } from '../../../../../src/shared/models/slack/events';
+import {
+    ISlackEventMessagePosted,
+    ISlackEventWrapper,
+} from '../../../../../src/shared/models/slack/events';
 import { MessageSubtype } from '../../../../../src/shared/models/slack/events/message-subtype.enum';
 import { UnitTestSetup } from '../../../../test-utilities';
 import { TestClass, TestMethod } from '../../../../test-utilities/directives';
@@ -42,7 +45,7 @@ export class SlackMessageHandlerSpec {
             .returns(Promise.resolve(undefined));
 
         // act
-        await unitTestSetup.unitUnderTest.handleMessage(message);
+        await unitTestSetup.unitUnderTest.handleMessage(this.wrap(message));
 
         // assert
         unitTestSetup.dependencies
@@ -77,7 +80,7 @@ export class SlackMessageHandlerSpec {
             .returns(Promise.resolve(new Chicken()));
 
         // act
-        await unitTestSetup.unitUnderTest.handleMessage(message);
+        await unitTestSetup.unitUnderTest.handleMessage(this.wrap(message));
 
         // assert
         unitTestSetup.dependencies
@@ -108,7 +111,7 @@ export class SlackMessageHandlerSpec {
         const unitTestSetup = this.getUnitTestSetup();
 
         // act
-        await unitTestSetup.unitUnderTest.handleMessage(message);
+        await unitTestSetup.unitUnderTest.handleMessage(this.wrap(message));
 
         // assert
         unitTestSetup.dependencies
@@ -161,7 +164,7 @@ export class SlackMessageHandlerSpec {
             const test = this.getUnitTestSetup();
 
             // act
-            await test.unitUnderTest.handleMessage(message);
+            await test.unitUnderTest.handleMessage(this.wrap(message));
 
             // assert
             test.dependencies
@@ -190,7 +193,7 @@ export class SlackMessageHandlerSpec {
         const test = this.getUnitTestSetup();
 
         // act
-        await test.unitUnderTest.handleMessage(message);
+        await test.unitUnderTest.handleMessage(this.wrap(message));
 
         // assert
         test.dependencies
@@ -212,6 +215,14 @@ export class SlackMessageHandlerSpec {
             );
 
         return test;
+    }
+
+    private wrap(
+        message: ISlackEventMessagePosted
+    ): ISlackEventWrapper<ISlackEventMessagePosted> {
+        return { event: message } as ISlackEventWrapper<
+            ISlackEventMessagePosted
+        >;
     }
 
     private createMessage(

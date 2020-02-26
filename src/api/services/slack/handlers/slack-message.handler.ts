@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SlackDmCommand } from '../../../../shared/enums';
 import { ConversationType } from '../../../../shared/models/slack/conversations';
-import { ISlackEventMessagePosted } from '../../../../shared/models/slack/events';
+import {
+    ISlackEventMessagePosted,
+    ISlackEventWrapper,
+} from '../../../../shared/models/slack/events';
 import { ChickenRenamingService } from '../../chicken-renaming.service';
 import { EggGivingService } from '../../egg-giving.service';
 import { SlackTeamProvider } from '../../../../business/providers';
@@ -17,8 +20,11 @@ export class SlackMessageHandler {
     ) {}
 
     public async handleMessage(
-        message: ISlackEventMessagePosted
+        event: ISlackEventWrapper<ISlackEventMessagePosted>
     ): Promise<void> {
+        const message = event.event;
+        message.workspaceId = event.team_id;
+
         const shouldAct = await this.shouldActOnMessage(message);
         if (!shouldAct) return;
 
@@ -62,7 +68,7 @@ export class SlackMessageHandler {
         const eggsEachCount = this.getNumberOfEggsInMessage(messageEvent.text);
 
         if (toUserIds.length && eggsEachCount > 0) {
-            this.eggGivingService.giveEggs(
+            await this.eggGivingService.giveEggs(
                 workspaceId,
                 giverId,
                 eggsEachCount,

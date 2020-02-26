@@ -1,6 +1,7 @@
+.idea
 node_modules
+dist
 ormconfig.json
 local.settings.json
-dist
 .env
 test-results.xml

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BusinessModule } from '../business';
-import { DbModule } from '../db/db.module';
+import { DbModule } from '../db';
 import { SharedModule } from '../shared/shared.module';
 import { HealthCheckController } from './controllers';
 import {
@@ -22,7 +22,6 @@ import {
 } from './services/slack';
 import {
     SlackCommandHandler,
-    SlackEventHandler,
     SlackInteractionHandler,
     SlackMessageHandler,
     SlackReactionHandler,
@@ -42,7 +41,6 @@ import {
         SlackMessageBuilderService,
         SlackGuideBookService,
         SlackMessageHandler,
-        SlackEventHandler,
         SlackInteractionHandler,
         EggGivingService,
         SlackCommandHandler,
