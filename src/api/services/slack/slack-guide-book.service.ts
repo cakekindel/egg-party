@@ -426,10 +426,10 @@ export class SlackGuideBookService {
                     `_View your team's Egg Party stats, and see how you stack up!_`
                 ),
             ]),
-            new Context([
-                new Text(TextType.Markdown, '`profile`'),
-                new Text(TextType.Markdown, `_View your own Egg Party stats_`),
-            ]),
+            // new Context([
+            //     new Text(TextType.Markdown, '`profile`'),
+            //     new Text(TextType.Markdown, `_View your own Egg Party stats_`),
+            // ]),
         ];
     }
 }
