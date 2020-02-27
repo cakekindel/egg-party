@@ -5,9 +5,9 @@ export class YouReceivedEggsSlackMessage extends SlackBlockMessage {
         const plural = eggCount !== 1;
         super(
             [],
-            `<@${giverId} gave you ${plural ? eggCount : 'an'} egg${
+            `<@${giverId}> gave you ${plural ? eggCount : 'an'} egg${
                 plural ? 's' : ''
-            }>`
+            }!`
         );
     }
 }
