@@ -92,7 +92,7 @@ export class SlackMessageHandlerSpec {
         unitTestSetup.dependencies
             .get(ChickenRenamingService)
             .received()
-            .renameChicken(Arg.any(), message.text);
+            .renameChicken(Arg.any(), Arg.any(), Arg.any(), message.text);
     }
 
     @TestMethod()
@@ -119,7 +119,7 @@ export class SlackMessageHandlerSpec {
         unitTestSetup.dependencies
             .get(ChickenRenamingService)
             .didNotReceive()
-            .renameChicken(Arg.any(), Arg.any());
+            .renameChicken(Arg.any(), Arg.any(), Arg.any(), Arg.any());
     }
 
     @TestMethod()

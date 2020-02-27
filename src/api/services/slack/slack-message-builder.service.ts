@@ -3,15 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { Chicken } from '../../../db/entities';
 import { SlackInteractionId } from '../../../shared/enums';
 import { SlackBlockMessage as BlockMessage } from '../../../shared/models/slack/messages';
-import { SlackMessageOptionComposition as Option } from '../../../shared/models/slack/messages/blocks/composition/option/slack-message-option-composition.model';
-import { SlackMessageOptionGroupComposition as OptionGroup } from '../../../shared/models/slack/messages/blocks/composition/option/slack-message-option-group-composition.model';
 import { SlackMessageTextCompositionType as TextType } from '../../../shared/models/slack/messages/blocks/composition/text/slack-message-text-composition-type.enum';
 import { SlackMessageTextComposition as Text } from '../../../shared/models/slack/messages/blocks/composition/text/slack-message-text-composition.model';
 import { SlackMessageButtonElement as Button } from '../../../shared/models/slack/messages/blocks/element/button';
-import { SlackMessageStaticSelectElement as StaticSelect } from '../../../shared/models/slack/messages/blocks/element/select/static';
-import { ISlackMessageLayoutBlock as ILayoutBlock } from '../../../shared/models/slack/messages/blocks/layout';
-import { SlackMessageActionsBlock as Actions } from '../../../shared/models/slack/messages/blocks/layout/actions';
-import { SlackMessageContextBlock as Context } from '../../../shared/models/slack/messages/blocks/layout/context';
 import { SlackMessageDividerBlock as Divider } from '../../../shared/models/slack/messages/blocks/layout/divider';
 import { SlackMessageSectionBlock as Section } from '../../../shared/models/slack/messages/blocks/layout/section';
 import { SlackGuideBookService } from './slack-guide-book.service';
@@ -27,11 +21,11 @@ export class SlackMessageBuilderService {
     }
 
     public triedToGiveTooManyEggs(): BlockMessage {
-        return new BlockMessage([], 'You can\'t give that many eggs!');
+        return new BlockMessage([], `You can't give that many eggs!`);
     }
 
     public outOfEggs(): BlockMessage {
-        return new BlockMessage([], 'You\'re out of eggs!');
+        return new BlockMessage([], `You're out of eggs!`);
     }
 
     public testGiveEggsResponse(
@@ -109,7 +103,7 @@ export class SlackMessageBuilderService {
 
     private garbleText(text: string): string {
         const words = text.split(' ');
-        const garbWords = words.map(this.garbleWord);
+        const garbWords = words.map(w => this.garbleWord(w));
 
         return garbWords.join(' ');
     }
