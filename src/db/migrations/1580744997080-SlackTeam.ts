@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class SlackTeam1580744997080 implements MigrationInterface {
-    name = 'SlackTeam1580744997080';
+    public name = 'SlackTeam1580744997080';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
