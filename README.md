@@ -42,7 +42,7 @@
 ### **Want to contribute?**
 ---
 
-* **Read**: [Contributing Guidelines](CONTRIBUTING.md)
+* **Read**: [Contributing Guidelines](.github/CONTRIBUTING.md)
 * **Install** all of the following:
     - [SQL Server Express][sql-server-download] or your favorite SQL technology that [TypeORM supports][typeorm-connection-types].
     - [Node v10+][node-download]
