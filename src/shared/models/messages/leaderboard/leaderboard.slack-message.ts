@@ -6,10 +6,8 @@ import { SlackBlockMessage } from '../../slack/messages';
 import { SlackMarkdown } from '../../slack/messages/blocks/composition/text/slack-markdown.model';
 import { SlackMessageDividerBlock } from '../../slack/messages/blocks/layout/divider';
 import { SlackMessageSectionBlock } from '../../slack/messages/blocks/layout/section';
-import { ILeaderboardEntry } from './data';
-import { LeaderboardData } from './data/leaderboard-data.model';
+import { ILeaderboardEntry, LeaderboardData } from './data';
 import { LeaderboardDropdown } from './interaction';
-import _ = require('lodash');
 
 @JsonConfigurable()
 export class LeaderboardSlackMessage extends SlackBlockMessage {

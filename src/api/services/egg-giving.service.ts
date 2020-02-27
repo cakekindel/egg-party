@@ -5,6 +5,7 @@ import {
     SlackMessageYouCantGiveEggsToEggParty,
     SlackMessageYouCantGiveEggsToYourself,
     SlackMessageYouGaveEggs,
+    YouReceivedEggsSlackMessage,
 } from '../../shared/models/messages';
 import { DailyEggsService } from './daily-eggs.service';
 import { SlackApiService, SlackMessageBuilderService } from './slack';
@@ -75,6 +76,17 @@ export class EggGivingService {
             const egg = giveableEggs[i];
             await this.eggRepo.giveToUser(egg, receiver);
         }
+
+        const receiverMessage = new YouReceivedEggsSlackMessage(
+            giver.slackUserId,
+            numberOfEggs
+        );
+
+        await this.slackApi.sendDirectMessage(
+            giver.team?.oauthToken ?? '',
+            toUserId,
+            receiverMessage
+        );
     }
 
     private async ensureRecipientsValid(
