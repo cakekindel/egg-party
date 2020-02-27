@@ -1,8 +1,9 @@
 ## Coding Standards
 ### In short:
-Egg Party is an [idiomatic](#idiomatic) TypeScript codebase that embraces functional programming paradigms,
-and uses `gts` as a starting point for linting and formatting configuration.
+Egg Party is an [idiomatic](#idiomatic) TypeScript codebase that embraces some [functional programming paradigms](#functional),
+and uses [`gts` (Google Typescript Style)](https://github.com/google/gts) as a starting point for linting and formatting configuration.
 
+### In long:
 #### Idiomatic
 - Use `T | undefined` over `Nullable<T>` <sup>[[1]](#expl-1)</sup>
 - Use `(val: T) => R` over generic delegate types like `Func<T, R>` <sup>[[2]](#expl-2)</sup>
