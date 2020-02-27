@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { Nothing } from 'purify-ts';
+import { SlackTeamProvider } from '../../business/providers';
 import { Chicken, SlackUser } from '../../db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../db/repos';
 import { ErrorMissingRelatedData } from '../../shared/errors';
+import { SlackApiService, SlackMessageBuilderService } from './slack';
 
 @Injectable()
 export class ChickenRenamingService {
     constructor(
-        private chickenRepo: ChickenRepo,
-        private slackUserRepo: SlackUserRepo
+        private readonly chickenRepo: ChickenRepo,
+        private readonly slackUserRepo: SlackUserRepo,
+        private readonly messageBuilder: SlackMessageBuilderService,
+        private readonly slackApi: SlackApiService,
+        private readonly teamProvider: SlackTeamProvider
     ) {}
 
     public async markChickenForRename(chicken: Chicken): Promise<void> {
@@ -19,7 +25,22 @@ export class ChickenRenamingService {
         await this.setAwaitingRenameAndSave(chicken, true);
     }
 
-    public async renameChicken(chicken: Chicken, name: string): Promise<void> {
+    public async renameChicken(
+        slackUserId: string,
+        slackTeamId: string,
+        chicken: Chicken,
+        name: string
+    ): Promise<void> {
+        const message = this.messageBuilder.chickenRenamed(chicken.name, name);
+        await this.teamProvider
+            .getBySlackId(slackTeamId)
+            .run()
+            .then(e => e.orDefault(Nothing))
+            .then(m => m.map(t => t.oauthToken).orDefault(''))
+            .then(token =>
+                this.slackApi.sendDirectMessage(token, slackUserId, message)
+            );
+
         chicken.name = name;
         await this.setAwaitingRenameAndSave(chicken, false);
     }
@@ -61,6 +82,7 @@ export class ChickenRenamingService {
             user.slackUserId,
             user.slackWorkspaceId
         );
+
         if (waitingChicken)
             await this.setAwaitingRenameAndSave(waitingChicken, false);
     }

@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { SlackTeamProvider } from '../../../../business/providers';
 import { SlackDmCommand } from '../../../../shared/enums';
 import { ConversationType } from '../../../../shared/models/slack/conversations';
 import { ISlackEventMessagePosted } from '../../../../shared/models/slack/events';
 import { ChickenRenamingService } from '../../chicken-renaming.service';
 import { EggGivingService } from '../../egg-giving.service';
-import { SlackTeamProvider } from '../../../../business/providers';
 import { SlackCommandHandler } from './slack-command.handler';
 
 @Injectable()
 export class SlackMessageHandler {
     constructor(
-        private eggGivingService: EggGivingService,
+        private readonly eggGivingService: EggGivingService,
         private readonly teams: SlackTeamProvider,
-        private commandHandler: SlackCommandHandler,
-        private chickenRenamingService: ChickenRenamingService
+        private readonly commandHandler: SlackCommandHandler,
+        private readonly chickenRenamingService: ChickenRenamingService
     ) {}
 
     public async handleMessage(
@@ -40,6 +40,8 @@ export class SlackMessageHandler {
 
         if (chickenAwaitingRename !== undefined) {
             return this.chickenRenamingService.renameChicken(
+                message.user,
+                message.workspaceId,
                 chickenAwaitingRename,
                 text
             );
@@ -80,8 +82,7 @@ export class SlackMessageHandler {
     }
 
     private getNumberOfEggsInMessage(messageText: string): number {
-        const eggCount = (messageText.match(/:egg:/g) || []).length;
-        return eggCount;
+        return (messageText.match(/:egg:/g) || []).length;
     }
 
     private async shouldActOnMessage(
