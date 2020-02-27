@@ -2,10 +2,13 @@
 import { Arg } from '@fluffy-spoon/substitute';
 import { expect } from 'chai';
 import * as _ from 'lodash';
-import { ChickenRenamingService } from '../../../src/api/services/chicken-renaming.service';
+import { EitherAsync, Just, Right } from 'purify-ts';
+import { ChickenRenamingService } from '../../../src/api/services';
+import { SlackTeamProvider } from '../../../src/business/providers';
+import { SlackTeam } from '../../../src/business/view-models';
 import { Chicken, SlackUser } from '../../../src/db/entities';
 import { ChickenRepo, SlackUserRepo } from '../../../src/db/repos';
-import { ErrorMissingRelatedData } from '../../../src/shared/errors';
+import { CreateEitherAsync } from '../../../src/purify/create-either-async.fns';
 import { UnitTestSetup } from '../../test-utilities';
 import { TestClass, TestMethod } from '../../test-utilities/directives';
 
@@ -199,20 +202,37 @@ export class ChickenRenamingServiceSpec {
         const oldName = 'Cluck Kent';
         const newName = 'Superhen';
 
+        const teamId = 'team!';
+        const userId = 'meat!';
+
         const chicken = new Chicken();
         chicken.name = oldName;
         chicken.awaitingRename = true;
 
-        const unitTestSetup = this.getUnitTestSetup();
+        const test = this.getUnitTestSetup();
+
+        test.dependencies
+            .get(SlackTeamProvider)
+            .getBySlackId(teamId)
+            .returns(
+                CreateEitherAsync.wrapRight(
+                    Just({ oauthToken: '🔑' } as SlackTeam)
+                )
+            );
 
         // act
-        await unitTestSetup.unitUnderTest.renameChicken(chicken, newName);
+        await test.unitUnderTest.renameChicken(
+            userId,
+            teamId,
+            chicken,
+            newName
+        );
 
         // assert
         expect(chicken.awaitingRename).to.be.false;
         expect(chicken.name).to.equal(newName);
 
-        unitTestSetup.dependencies
+        test.dependencies
             .get(ChickenRepo)
             .received()
             .save(chicken);
