@@ -55,7 +55,7 @@
     "dependencies": {
         "@nestjs/common": "^6.8.4",
         "@nestjs/core": "^6.8.4",
-        "@nestjs/microservices": "^6.8.4",
+        "@nestjs/microservices": "^7.0.0",
         "@nestjs/platform-express": "^6.8.4",
         "@nestjs/websockets": "^6.8.4",
         "@wufe/mapper": "^0.5.0",
