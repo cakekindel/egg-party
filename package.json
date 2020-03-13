@@ -56,7 +56,7 @@
         "@nestjs/common": "^7.0.0",
         "@nestjs/core": "^7.0.0",
         "@nestjs/microservices": "^6.8.4",
-        "@nestjs/platform-express": "^6.8.4",
+        "@nestjs/platform-express": "^7.0.0",
         "@nestjs/websockets": "^6.8.4",
         "@wufe/mapper": "^0.5.0",
         "axios": "^0.19.0",
