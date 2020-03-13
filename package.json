@@ -54,7 +54,7 @@
     "license": "ISC",
     "dependencies": {
         "@nestjs/common": "^7.0.0",
-        "@nestjs/core": "^6.8.4",
+        "@nestjs/core": "^7.0.0",
         "@nestjs/microservices": "^6.8.4",
         "@nestjs/platform-express": "^6.8.4",
         "@nestjs/websockets": "^6.8.4",
