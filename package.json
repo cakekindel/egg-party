@@ -53,7 +53,7 @@
     "author": "Orion Kindel",
     "license": "ISC",
     "dependencies": {
-        "@nestjs/common": "^6.8.4",
+        "@nestjs/common": "^7.0.0",
         "@nestjs/core": "^6.8.4",
         "@nestjs/microservices": "^6.8.4",
         "@nestjs/platform-express": "^6.8.4",
