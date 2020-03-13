@@ -73,7 +73,7 @@
     },
     "devDependencies": {
         "@fluffy-spoon/substitute": "^1.89.0",
-        "@nestjs/testing": "^6.8.4",
+        "@nestjs/testing": "^7.0.0",
         "@testdeck/mocha": "0.0.6",
         "@types/chai": "^4.2.6",
         "@types/chai-as-promised": "^7.1.2",
