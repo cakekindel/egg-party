@@ -5,3 +5,8 @@ ormconfig.json
 local.settings.json
 .env
 test-results.xml
+
+
+#Added by cargo
+
+/target

@@ -1,3 +1,4 @@
+import { _, when, strike } from '@matchbook/ts';
 import {
     Controller,
     HttpCode,
@@ -6,13 +7,27 @@ import {
     Req,
     Res,
 } from '@nestjs/common';
-import { Either, Left, Nothing, Right } from 'purify-ts';
+import { Either, Left, Maybe, Nothing, Right } from 'purify-ts';
 import { then } from 'ramda';
+import { SlackTeam } from '../../../business/view-models';
+import { SlackDmCommand } from '../../../shared/enums';
 import { wrapWithPromise } from '../../../shared/functions/promise';
+import { SlackNamedIdentifier } from '../../../shared/models/slack/api/slack-named-identifier.trait';
+import { ConversationType } from '../../../shared/models/slack/conversations';
 import {
-    matchSlackEvent,
-    SlackEventMatcher,
-} from '../../../shared/models/slack/events/pattern-matching';
+    ISlackEvent,
+    ISlackEventChallenge, ISlackEventMessagePosted, ISlackEventWrapper,
+} from '../../../shared/models/slack/events';
+import {
+    eventIsChallenge,
+    eventIsMessage,
+    eventIsReaction,
+    eventIsWrappedMessage,
+    eventIsWrappedReaction,
+} from '../../../shared/models/slack/events/type-guards';
+import { Brand } from '../../../types/brand';
+import {SlackUserContext} from '../../../types/slack/user';
+import {SlackEscapedText} from '../../../types/slack/brands';
 import { SlackApiService } from '../../services/slack';
 import {
     SlackMessageHandler,
@@ -41,17 +56,33 @@ export class SlackEventsController {
     ): Promise<ExpressResponse> {
         const authentic = this.api.verifySlackRequest(req);
 
-        return Either.of<typeof Nothing, typeof Nothing>(Nothing)
-            .chain(() => (authentic ? Right(Nothing) : Left(Nothing)))
-            .map<SlackEventMatcher<Promise<void | string>>>(() => ({
-                challenge: e => wrapWithPromise(e.challenge),
-                message: e => this.messageHandler.handleMessage(e),
-                reaction: e => this.reactionHandler.handleReaction(e),
-                _: Promise.resolve,
-            }))
-            .map(matcher => matchSlackEvent(req.body, matcher))
-            .map(then(body => respondOk(res, body)))
-            .mapLeft(() => respondUnauthorized(res))
-            .extract();
+        if (!authentic) return respondUnauthorized(res);
+
+        return strike<ISlackEvent, ExpressResponse>(
+            req.body as ISlackEvent,
+            when(eventIsChallenge, (e) => respondOk(res, e.challenge)),
+            when(eventIsWrappedMessage, handleMessageAsync),
+            when(eventIsWrappedReaction, e =>
+                this.reactionHandler.handleReaction(e).then(() => '')
+            ),
+            _('')
+        );
+
+        return respondOk(res, responseText);
     }
 }
+
+
+
+// tslint:disable-next-line:interface-over-type-literal
+
+
+// IO
+
+
+
+
+function actOnCommandAsync(
+    text: SlackEscapedText,
+    command: SlackDmCommand
+): Promise<Either<CommandErr, undefined>>;

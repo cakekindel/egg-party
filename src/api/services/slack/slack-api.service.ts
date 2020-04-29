@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { createHmac, timingSafeEqual as hashesEqual } from 'crypto';
 import { Request } from 'express';
+import { Either, Left, Nothing, Right } from 'purify-ts';
 import { IRequestWithRawBody } from '../../../shared/models/express/request-with-raw-body.model';
 import { ISlackResponse } from '../../../shared/models/slack/api';
 import {

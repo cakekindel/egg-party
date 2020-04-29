@@ -2,8 +2,8 @@
     "$schema": "http://json.schemastore.org/tslint",
     "extends": "gts/tslint.json",
     "rules": {
-        "unified-signatures": false,
         "arrow-return-shorthand": true,
+        "interface-over-type-literal": false,
         "callable-types": true,
         "class-name": true,
         "comment-format": [
@@ -25,7 +25,6 @@
             true,
             "spaces"
         ],
-        "interface-over-type-literal": true,
         "label-position": true,
         "max-line-length": [
             true,
