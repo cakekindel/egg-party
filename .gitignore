@@ -3,10 +3,11 @@ node_modules
 dist
 ormconfig.json
 local.settings.json
-.env
+.env*
 test-results.xml
 
 
 #Added by cargo
 
 /target
+/.serverless

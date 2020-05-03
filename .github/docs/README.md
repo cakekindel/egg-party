@@ -22,6 +22,7 @@
 
 
 ### Table of Contents
+
 ---
 - [**Want to contribute?**](#want-to-contribute)
 - [**Setup**](#setup)
@@ -31,15 +32,10 @@
 - [**Slack Setup**](#slack-setup)
     - [**Slack App Settings**](#slack-app-settings)
     - [**Using your Local API with your Slack App**](#using-your-local-api-with-your-slack-app)
-- [**Scripts**](#scripts)
-- [**Debugging**](#debugging)
-    - [**Visual Studio Code**](#visual-studio-code)
-- [**Common Errors**](#common-errors)
 - [**Helpful Links**](#helpful-links)
 
-<br/>
+### Want to contribute?
 
-### **Want to contribute?**
 ---
 
 * **Read**: [Contributing Guidelines](CONTRIBUTING.md)

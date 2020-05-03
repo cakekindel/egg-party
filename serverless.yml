@@ -1,0 +1,19 @@
+service: egg_party
+
+provider:
+  name: aws
+  runtime: rust
+
+plugins:
+  - serverless-rust
+
+package:
+  individually: true
+
+functions:
+  egg_party:
+    handler: egg_party
+    events:
+      - http:
+          path: /slack-events
+          method: POST
