@@ -16,3 +16,7 @@ fp-core = "^0.1.9"
 simple_logger = "1.6.0"
 log = "0.4.8"
 lambda_http = "0.1.1"
+
+[[bin]]
+name = "bootstrap"
+path = "src/main.rs"
