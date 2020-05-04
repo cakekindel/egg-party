@@ -48,7 +48,8 @@ fn handle_invocation(
 fn log_response(res: &Res) {
     match res.get_kind() {
         ResKind::ServerError => error!("{}", res.0.body()),
-        ResKind::ClientError => warn!("{}", res.0.body()),
-        _ => info!("{}", res.0.body()), // Log client errors just in case
+        ResKind::ClientError => warn!("{}", res.0.body()), // Log client errors just in case
+        ResKind::Other => info!("{}", res.0.body()),
+        _ => (),
     };
 }
