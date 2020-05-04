@@ -28,6 +28,9 @@ fn handle_invocation(
     request: Request,
     _ctx: lambda_runtime::Context,
 ) -> Result<impl IntoResponse, HandlerError> {
+    // This Result is special, we use:
+    //  - the Err lane to construct error responses,
+    //  - the Ok lane to deserialize & act on the slack event
     let response = Ok(request)
         .and_then(Req::try_from)
         .map_err(Res::bad_request)
@@ -35,7 +38,7 @@ fn handle_invocation(
         .and_then(|j: JsonString| j.deserialize::<SlackEvent>().map_err(Res::bad_request))
         .and_then(|event| act_on_event(event).map_err(Res::err))
         .map(Res::ok)
-        .unwrap_or_else(|e| e);
+        .unwrap_or_else(|e| e); // Since the result is either Res or Res, unwrap
 
     log_response(&response);
 
@@ -44,9 +47,8 @@ fn handle_invocation(
 
 fn log_response(res: &Res) {
     match res.get_kind() {
-        ResKind::ClientError => warn!("{}", res.0.body()),
         ResKind::ServerError => error!("{}", res.0.body()),
-        ResKind::Other => info!("{}", res.0.body()),
-        _ => (),
+        ResKind::ClientError => warn!("{}", res.0.body()),
+        _ => info!("{}", res.0.body()), // Log client errors just in case
     };
 }
