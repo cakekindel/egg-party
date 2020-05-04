@@ -1,4 +1,4 @@
-pub mod event;
-pub mod user;
-pub mod org;
 pub(in crate::db) mod common;
+pub mod event;
+pub mod org;
+pub mod user;

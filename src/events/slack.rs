@@ -1,13 +1,13 @@
-use std::error::Error;
-use std::collections::HashMap;
 use serde::Deserialize;
 use simple_error::{SimpleError, SimpleResult};
+use std::collections::HashMap;
+use std::error::Error;
 
 #[derive(Deserialize, Debug)]
 #[serde(tag = "type")]
 pub enum SlackEvent {
     #[serde(rename = "event_callback")]
-    Envelope { event: InnerEvent, team_id: String, },
+    Envelope { event: InnerEvent, team_id: String },
 
     #[serde(rename = "url_verification")]
     Challenge { challenge: String },
@@ -17,10 +17,14 @@ pub enum SlackEvent {
 #[serde(tag = "type")]
 pub enum InnerEvent {
     #[serde(rename = "message")]
-    Message  { user: String, text: String, },
+    Message { user: String, text: String },
 
     #[serde(rename = "reaction_added")]
-    Reaction { user: String, reaction: String, item_user: String },
+    Reaction {
+        user: String,
+        reaction: String,
+        item_user: String,
+    },
 }
 
 // impl InnerEvent {
@@ -98,18 +102,21 @@ pub enum InnerEvent {
 //     }
 // }
 
-pub fn act_on_event(json: &str) -> SimpleResult<String> {
-    serde_json::from_str::<SlackEvent>(json)
-        .map_err(SimpleError::from)
-        .and_then(|event| {
-            match event {
-                SlackEvent::Challenge { challenge } => Ok(challenge),
-                SlackEvent::Envelope  { team_id: _, event: e } => match e {
-                    InnerEvent::Message  { user: _, text: _ } => handle_message(),
-                    InnerEvent::Reaction { user: _, reaction: _, item_user: _ } => handle_reaction(),
-                },
-            }
-        })
+pub fn act_on_event(event: SlackEvent) -> SimpleResult<String> {
+    match event {
+        SlackEvent::Challenge { challenge } => Ok(challenge),
+        SlackEvent::Envelope {
+            team_id: _,
+            event: e,
+        } => match e {
+            InnerEvent::Message { user: _, text: _ } => handle_message(),
+            InnerEvent::Reaction {
+                user: _,
+                reaction: _,
+                item_user: _,
+            } => handle_reaction(),
+        },
+    }
 }
 
 fn handle_message() -> SimpleResult<String> {

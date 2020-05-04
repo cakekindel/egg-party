@@ -178,6 +178,7 @@ name = "egg_party"
 version = "0.1.0"
 dependencies = [
  "fp-core",
+ "http",
  "lambda_http",
  "lambda_runtime",
  "log",

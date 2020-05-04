@@ -1,2 +1,2 @@
-pub mod model;
 pub mod func;
+pub mod model;
