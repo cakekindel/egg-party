@@ -1,15 +1,13 @@
 use crate::http_ez::err::ReqErr;
-use crate::http_ez::json::JsonString;
 use http::Request;
 use lambda_http::Body;
-use std::convert::{TryFrom, TryInto};
+use std::convert::{TryFrom};
+use crate::http_ez::StringInputErr;
 
 pub struct Req(http::Request<String>);
 
-impl TryInto<JsonString> for Req {
-    type Error = ReqErr;
-
-    fn try_into(self) -> Result<JsonString, Self::Error> {
+impl Req {
+    pub fn get_json_body(&self) -> Result<&str, ReqErr> {
         use crate::http_ez::err::{HeaderErr::*, StringInputErr::*};
 
         self.0
@@ -23,7 +21,7 @@ impl TryInto<JsonString> for Req {
             })
             .and_then(|content_type_val| {
                 if content_type_val.contains("application/json") {
-                    Ok(self.0.body().to_owned().into())
+                    Ok(self.0.body().as_str())
                 } else {
                     Err(ReqErr::Header(ContentType(ValueInvalid {
                         expected: "application/json".to_string(),
@@ -31,6 +29,14 @@ impl TryInto<JsonString> for Req {
                     })))
                 }
             })
+    }
+
+    pub fn parse_json_body<'a, T : serde::Deserialize<'a>>(&'a self) -> Result<T, ReqErr> {
+        let json_parse_err = ReqErr::Body(StringInputErr::ParseErr);
+
+        self.get_json_body()
+            .map(serde_json::from_str::<T>)
+            .and_then(|r| r.map_err(|_| json_parse_err))
     }
 }
 

@@ -28,7 +28,7 @@ impl fmt::Display for StringInputErr {
                 format!("was {}, but expected {}", actual, expected)
             }
             Missing => "missing".to_string(),
-            ParseErr => "was invalid string".to_string(),
+            ParseErr => "could not be parsed".to_string(),
         };
 
         writeln!(f, "{}", message)

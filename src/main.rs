@@ -1,19 +1,19 @@
 use lambda_http::{lambda, IntoResponse, Request};
 use lambda_runtime::error::HandlerError;
 use log::{error, info, warn};
-use std::convert::{TryFrom, TryInto};
+use std::convert::{TryFrom};
 
 mod db;
 mod events;
 mod http_ez;
 
-use crate::events::slack::{SlackEvent, act_on_event};
-use crate::http_ez::{JsonString, Req, Res, ResKind};
+use crate::events::slack::{SlackEvent};
+use crate::http_ez::{Req, Res, ResKind};
 
 type Error = Box<dyn std::error::Error>;
 
 fn main() -> Result<(), Error> {
-    simple_logger::init_with_level(log::Level::Debug)?;
+    simple_logger::init_with_level(log::Level::Info)?;
     lambda!(handle_invocation);
     Ok(())
 }
@@ -28,11 +28,12 @@ fn handle_invocation(
     let response = Ok(request)
         .and_then(Req::try_from)
         .map_err(Res::bad_request)
-        .and_then(|req| req.try_into().map_err(Res::bad_request))
-        .and_then(|j: JsonString| j.deserialize::<SlackEvent>().map_err(Res::bad_request))
-        .and_then(|event| act_on_event(event).map_err(Res::err))
+        .map(|req| req.parse_json_body::<SlackEvent>())
+        .and_then(|result| result.map_err(Res::bad_request))
+        .map(events::slack::act_on_event)
+        .and_then(|result| result.map_err(Res::err))
         .map(Res::ok)
-        .unwrap_or_else(|e| e); // Since the result is either Res or Res, unwrap
+        .unwrap_or_else(|e| e); // Result is either Res or Res
 
     log_response(&response);
 
