@@ -1,12 +1,17 @@
 use crate::http_ez::err::ReqErr;
 use http::Request;
-use lambda_http::Body;
 use std::convert::{TryFrom};
 use crate::http_ez::StringInputErr;
+
+type LambdaRequest = Request<lambda_http::Body>;
 
 pub struct Req(http::Request<String>);
 
 impl Req {
+    pub fn try_from_lambda(request: LambdaRequest) -> Result<Self, ReqErr> {
+        Self::try_from(request)
+    }
+
     pub fn get_json_body(&self) -> Result<&str, ReqErr> {
         use crate::http_ez::err::{HeaderErr::*, StringInputErr::*};
 
@@ -46,11 +51,12 @@ impl From<http::Request<String>> for Req {
     }
 }
 
-impl TryFrom<http::Request<lambda_http::Body>> for Req {
+impl TryFrom<LambdaRequest> for Req {
     type Error = ReqErr;
 
-    fn try_from(request: Request<Body>) -> Result<Self, Self::Error> {
+    fn try_from(request: LambdaRequest) -> Result<Self, Self::Error> {
         use crate::http_ez::err::StringInputErr::*;
+        use lambda_http::Body;
 
         Ok(request)
             .and_then(|req| match req.body() {
