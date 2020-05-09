@@ -2,7 +2,6 @@ use crate::http_ez::err::ReqErr;
 use crate::http_ez::json::JsonString;
 use http::Request;
 use lambda_http::Body;
-use simple_error::SimpleError;
 use std::convert::{TryFrom, TryInto};
 
 pub struct Req(http::Request<String>);

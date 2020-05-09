@@ -1,20 +1,14 @@
-use events::slack::{InnerEvent, SlackEvent};
-use lambda_http::{http, lambda, Body, IntoResponse, Request, RequestExt};
+use lambda_http::{lambda, IntoResponse, Request};
 use lambda_runtime::error::HandlerError;
 use log::{error, info, warn};
-use serde_json::json;
-use simple_error::{SimpleError, SimpleResult};
 use std::convert::{TryFrom, TryInto};
 
 mod db;
 mod events;
 mod http_ez;
 
-use crate::events::slack::act_on_event;
-use crate::http_ez::err::ReqErr;
-use crate::http_ez::json::JsonString;
-use crate::http_ez::req::Req;
-use crate::http_ez::res::{Res, ResKind};
+use crate::events::slack::{SlackEvent, act_on_event};
+use crate::http_ez::{JsonString, Req, Res, ResKind};
 
 type Error = Box<dyn std::error::Error>;
 

@@ -17,10 +17,6 @@ pub enum StringInputErr {
         actual: String,
         expected: String,
     },
-    ValueUnsupported {
-        actual: String,
-        allowed: Vec<String>,
-    },
 }
 
 impl fmt::Display for StringInputErr {
@@ -31,10 +27,6 @@ impl fmt::Display for StringInputErr {
             ValueInvalid { expected, actual } => {
                 format!("was {}, but expected {}", actual, expected)
             }
-            ValueUnsupported { allowed, actual } => format!(
-                "was {}, which is not one of allowed values: {:?}",
-                actual, allowed
-            ),
             Missing => "missing".to_string(),
             ParseErr => "was invalid string".to_string(),
         };
@@ -45,11 +37,13 @@ impl fmt::Display for StringInputErr {
 
 impl fmt::Display for HeaderErr {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        #![allow(clippy::borrow_interior_mutable_const)]
+
         use http::header::*;
         use HeaderErr::*;
 
         let (header_name, message) = match self {
-            ContentType(err) => (CONTENT_TYPE.to_string(), err.to_string()),
+            ContentType(err) => (CONTENT_TYPE.as_str().to_string(), err.to_string()),
         };
 
         writeln!(f, "Header '{}' {}", header_name, message)

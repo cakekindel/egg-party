@@ -1,11 +1,6 @@
 use serde::Serialize;
 
 #[derive(Serialize)]
-pub struct OkResponse {
-    pub ok: bool,
-}
-
-#[derive(Serialize)]
 pub struct ErrorResponse {
     pub ok: bool,
     pub message: String,
@@ -17,13 +12,6 @@ impl ErrorResponse {
     }
 }
 
-impl OkResponse {
-    pub fn new() -> Self {
-        OkResponse { ok: true }
-    }
-}
-
-impl JsonSer for OkResponse {}
 impl JsonSer for ErrorResponse {}
 
 pub trait JsonSer: serde::Serialize {

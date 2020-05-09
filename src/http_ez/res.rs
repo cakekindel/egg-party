@@ -1,8 +1,7 @@
-use crate::http_ez::res_body::{ErrorResponse, JsonSer, OkResponse};
+use crate::http_ez::{ErrorResponse, JsonSer};
 use http::status::StatusCode;
 use lambda_http::{Body, IntoResponse, Response};
 use serde::export::Formatter;
-use simple_error::SimpleError;
 use std::fmt;
 
 pub struct Res(pub http::Response<String>);
@@ -28,7 +27,7 @@ impl From<http::Response<String>> for Res {
 
 impl IntoResponse for Res {
     fn into_response(self) -> Response<Body> {
-        self.0.map(|str| Body::Text(str))
+        self.0.map(Body::Text)
     }
 }
 
@@ -45,7 +44,7 @@ impl Res {
     pub fn ok(body: String) -> Res {
         http::Response::builder()
             .status(StatusCode::OK)
-            .body(body.to_string())
+            .body(body)
             .unwrap()
             .into()
     }
