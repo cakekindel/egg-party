@@ -1,4 +1,8 @@
 #![allow(dead_code)]
 
-pub mod func;
-pub mod model;
+pub mod user;
+pub use user::*;
+
+pub mod org;
+pub use org::*;
+
