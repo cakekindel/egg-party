@@ -60,7 +60,7 @@
         "@nestjs/websockets": "^6.8.4",
         "@wufe/mapper": "^0.5.0",
         "axios": "^0.19.0",
-        "class-transformer": "^0.2.3",
+        "class-transformer": "^0.3.1",
         "dotenv": "^8.2.0",
         "lodash": "^4.17.15",
         "moment": "^2.24.0",
